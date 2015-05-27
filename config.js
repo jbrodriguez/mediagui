@@ -45,7 +45,7 @@ module.exports = {
 	},	
 
 	build: {
-		bin: "/Volumes/Users/kayak/code/bin/"
+		bin: "/Volumes/Users/kayak/code/bin/",
 		src: server,
 		dst: build
 	},
@@ -59,11 +59,6 @@ module.exports = {
 		index: client + "index.html",
 		go: server + "**/*.go"
 	},
-
-
-
-
-
 
 
 
