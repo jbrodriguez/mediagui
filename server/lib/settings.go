@@ -3,7 +3,6 @@ package lib
 import (
 	"errors"
 	"github.com/namsral/flag"
-	"os"
 	"path/filepath"
 	"strings"
 )
@@ -21,24 +20,9 @@ type Settings struct {
 	LogDir  string
 }
 
-// Check if File / Directory Exists
-func exists(path string) (bool, error) {
-	_, err := os.Stat(path)
-
-	if err == nil {
-		return true, nil
-	}
-
-	if os.IsNotExist(err) {
-		return false, nil
-	}
-
-	return false, err
-}
-
 func searchConfig(locations []string) string {
 	for _, location := range locations {
-		if b, _ := exists(location); b {
+		if b, _ := Exists(location); b {
 			return location
 		}
 	}

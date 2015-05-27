@@ -3,9 +3,11 @@ package main
 import (
 	"fmt"
 	"github.com/jbrodriguez/mlog"
+	// "github.com/jbrodriguez/pubsub"
 	"github.com/stretchr/testify/assert"
 	"io"
 	"jbrodriguez/mediagui/server/lib"
+	// "jbrodriguez/mediagui/server/services"
 	"os"
 	"path/filepath"
 	"strings"
@@ -26,21 +28,6 @@ func write(filename, text string) error {
 	}
 
 	return nil
-}
-
-// Check if File / Directory Exists
-func exists(path string) (bool, error) {
-	_, err := os.Stat(path)
-
-	if err == nil {
-		return true, nil
-	}
-
-	if os.IsNotExist(err) {
-		return false, nil
-	}
-
-	return false, err
 }
 
 func TestSettingsNotFound(t *testing.T) {
@@ -83,7 +70,7 @@ func TestSettingsFound(t *testing.T) {
 
 	assert.NoError(t, err)
 
-	b, err := exists(filepath.Join(path, "mediagui.conf"))
+	b, err := lib.Exists(filepath.Join(path, "mediagui.conf"))
 
 	assert.Equal(t, true, b)
 
@@ -103,6 +90,53 @@ func TestSettingsFound(t *testing.T) {
 	}
 
 }
+
+// func TestServerService(t *testing.T) {
+// 	home := os.Getenv("HOME")
+
+// 	// cwd, err := os.Getwd()
+// 	// if err != nil {
+// 	// 	mlog.Info("Unable to get current directory: %s", err.Error)
+// 	// 	os.Exit(1)
+// 	// }
+// 	path := filepath.Join(home, "tmp/mgtest/.mediagui")
+// 	os.MkdirAll(path, 0777)
+// 	defer os.RemoveAll(path)
+
+// 	html := filepath.Join(home, "tmp/mgtest/web/index.html")
+// 	text := fmt.Sprintf("datadir=mg_datadir\nwebdir=%s\nmediafolders=movies/bluray|tv shows|movies/blurip", html)
+// 	err := write(filepath.Join(path, "mediagui.conf"), text)
+
+// 	assert.NoError(t, err)
+
+// 	b, err := lib.Exists(filepath.Join(path, "mediagui.conf"))
+
+// 	assert.Equal(t, true, b)
+
+// 	locations := []string{
+// 		filepath.Join(home, "tmp/mgtest/.mediagui/mediagui.conf"),
+// 		filepath.Join(home, "tmp/mgtest/usr/local/etc/mediagui.conf"),
+// 		filepath.Join(home, "tmp/mgtest/mediagui.conf"),
+// 	}
+
+// 	settings, err := lib.NewSettings(Version, home, locations)
+
+// 	if assert.NoError(t, err) {
+// 		assert.Equal(t, "mg_datadir", settings.DataDir)
+// 		assert.Equal(t, "mg_webdir", settings.WebDir)
+// 		assert.Equal(t, "", settings.LogDir)
+// 		assert.Equal(t, strings.Split("movies/bluray|tv shows|movies/blurip", "|"), settings.MediaFolders)
+// 	}
+
+// 	text = "<body><h1>we shall overcome</h1></body>"
+// 	err = write(html, text)
+// 	assert.NoError(t, err)
+
+// 	bus := pubsub.New(623)
+
+// 	server := services.NewServer(bus, settings)
+// 	server.Start()
+// }
 
 func TestMain(m *testing.M) {
 	mlog.Start(mlog.LevelInfo, "")

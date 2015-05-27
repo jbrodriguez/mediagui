@@ -2,19 +2,16 @@ package main
 
 import (
 	"github.com/jbrodriguez/mlog"
-	"github.com/julienschmidt/httprouter"
+	"github.com/jbrodriguez/pubsub"
 	"jbrodriguez/mediagui/server/lib"
+	"jbrodriguez/mediagui/server/services"
 	"log"
-	"net/http"
 	"os"
+	"os/signal"
 	"path/filepath"
 )
 
 var Version string
-
-func index(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, "/Volumes/Users/kayak/code/src/jbrodriguez/mediagui/target/build/index.html")
-}
 
 func main() {
 	// look for mediagui.conf at the following places
@@ -41,14 +38,37 @@ func main() {
 		os.Exit(2)
 	}
 
-	mlog.Start(mlog.LevelInfo, settings.LogDir)
+	if settings.LogDir != "" {
+		mlog.Start(mlog.LevelInfo, filepath.Join(settings.LogDir, "mediagui.log"))
+	} else {
+		mlog.Start(mlog.LevelInfo, "")
+	}
 
 	mlog.Info("mediagui v%s starting ...", Version)
 
-	router := httprouter.New()
+	bus := pubsub.New(623)
 
-	router.HandlerFunc("GET", "/", index)
-	router.ServeFiles("/app/*filepath", http.Dir("/Volumes/Users/kayak/code/src/jbrodriguez/mediagui/target/build//app"))
+	// socket := services.NewSocket(bus, &settings)
+	server := services.NewServer(bus, settings)
+	// core := services.NewCore(bus, &settings)
 
-	log.Fatal(http.ListenAndServe(":7623", router))
+	// socket.Start()
+	server.Start()
+	// core.Start()
+
+	mlog.Info("Press Ctrl+C to stop ...")
+
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	for _ = range c {
+		mlog.Info("Received an interrupt, shutting the app down ...")
+
+		// core.Stop()
+		server.Stop()
+		// socket.Stop()
+
+		break
+	}
+
+	mlog.Stop()
 }
