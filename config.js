@@ -1,5 +1,5 @@
-var client = "src/client/";
-var server = "src/server/";
+var client = "client/";
+var server = "server/";
 var build = "target/build/"
 
 var distTar = "unbalance";
@@ -59,6 +59,11 @@ module.exports = {
 		index: client + "index.html",
 		go: server + "**/*.go"
 	},
+
+
+
+
+
 
 
 
