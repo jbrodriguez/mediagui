@@ -1,0 +1,12 @@
+.DS_Store
+
+src/art
+target
+
+node_modules
+
+*.zip
+*.tar.gz
+*.log
+
+_vendor
