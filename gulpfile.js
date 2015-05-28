@@ -87,20 +87,16 @@ function app() {
 }
 
 function server(done) {
+	command('ls', 'ls -al /Volumes/Users/kayak/code/src/jbrodriguez/mediagui/target')
 
 	stop()
 	build()
-	start()
 
 	done()
 }
 
 function stop() {
-	gutil.log(mediagui)
-
-	if (mediagui) {
-		mediagui.kill()
-	}
+	command('kill9', 'pkill -9 mediagui')
 }
 
 function build() {
@@ -109,17 +105,27 @@ function build() {
 	var hash = command('hash', 'git rev-parse --short HEAD')
 
 	gutil.log('\n src: ' + config.build.src + '\n dst: ' + config.build.dst)
-	command('build', config.build.bin + 'gom build -ldflags \"-X main.Version ' + version + '-' + count + '.' + hash + '\" -v -o ' + path.join(config.build.dst, 'mediagui') + ' ' + path.join(config.build.src, 'main.go'))
+	command('build', 'cd server && ' + config.build.bin + 'gom build -ldflags \"-X main.Version ' + version + '-' + count + '.' + hash + '\" -v -o ' + path.join(config.build.dst, 'mediagui') + ' main.go && cd ..')
 }
 
 function start() {
-    mediagui = spawn(path.join(process.cwd(), config.start.src, "mediagui"), [])
+	arg = path.join(process.cwd(), config.start.arg)
+	cmd = path.join(process.cwd(), config.start.src, "mediagui") + " -webdir " + arg
+	gutil.log('executing: ', cmd)
+    mediagui = exec(cmd, [' -webdir', arg])
     // add a 'data' event listener for the spawn instance
-    mediagui.stdout.on('data', function(data) { gutil.log(data); })
+    mediagui.stdout.on('data', function(data) {
+    	gutil.log("sup dude:\n" + data);
+    })
     // add an 'end' event listener to close the writeable stream
     mediagui.stdout.on('end', function(data) {
         gutil.log('mediagui stopped');
     });
+
+    mediagui.on('error', function(data) {
+		gutil.log(data);
+    })
+
     // when the spawn child process exits, check if there were any errors and close the writeable stream
     mediagui.on('close', function(code) {
         if (code != 0) {

@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 )
 
+const api = "api/v1/"
+
 type Server struct {
 	bus      *pubsub.PubSub
 	settings *lib.Settings
@@ -25,6 +27,7 @@ func (s *Server) Start() {
 	mlog.Info("Starting service Server ...")
 
 	html := filepath.Join(s.settings.WebDir, "index.html")
+	mlog.Info("html is %s", html)
 	if b, _ := lib.Exists(html); !b {
 		mlog.Fatalf("Looked for index.html in %s, but didn't find it", s.settings.WebDir)
 	}

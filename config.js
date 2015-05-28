@@ -47,11 +47,12 @@ module.exports = {
 	build: {
 		bin: "/Volumes/Users/kayak/code/bin/",
 		src: server,
-		dst: build
+		dst: "../" + build
 	},
 
 	start: {
-		src: build
+		src: build,
+		arg: build
 	},
 
 	watch: {
