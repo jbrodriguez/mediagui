@@ -50,11 +50,11 @@ func main() {
 
 	// socket := services.NewSocket(bus, &settings)
 	server := services.NewServer(bus, settings)
-	// core := services.NewCore(bus, &settings)
+	core := services.NewCore(bus, settings)
 
 	// socket.Start()
 	server.Start()
-	// core.Start()
+	core.Start()
 
 	mlog.Info("Press Ctrl+C to stop ...")
 
@@ -63,7 +63,7 @@ func main() {
 	for _ = range c {
 		mlog.Info("Received an interrupt, shutting the app down ...")
 
-		// core.Stop()
+		core.Stop()
 		server.Stop()
 		// socket.Stop()
 
