@@ -1,20 +1,19 @@
 package services
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/jbrodriguez/mlog"
 	"github.com/jbrodriguez/pubsub"
-	"github.com/julienschmidt/httprouter"
 	"jbrodriguez/mediagui/server/lib"
-	"net/http"
 	"path/filepath"
 )
 
-const api = "api/v1/"
+const apiVersion = "api/v1"
 
 type Server struct {
 	bus      *pubsub.PubSub
 	settings *lib.Settings
-	router   *httprouter.Router
+	router   *gin.Engine
 	// socket   *Socket
 }
 
@@ -34,21 +33,29 @@ func (s *Server) Start() {
 
 	mlog.Info("Serving files from %s", s.settings.WebDir)
 
-	s.router = httprouter.New()
+	s.router = gin.Default()
 
-	s.router.HandlerFunc("GET", "/", s.index)
-	s.router.ServeFiles("/app/*filepath", http.Dir(filepath.Join(s.settings.WebDir, "app/")))
+	s.router.GET("/", s.index)
+	s.router.Static("/app", filepath.Join(s.settings.WebDir, "app"))
+
+	api := s.router.Group(apiVersion)
+	{
+		api.GET("/config", s.getConfig)
+	}
 
 	port := ":7623"
+	go s.router.Run(port)
 	mlog.Info("Listening on %s", port)
-
-	go http.ListenAndServe(port, s.router)
 }
 
 func (s *Server) Stop() {
 	mlog.Info("Stopped service Server ...")
 }
 
-func (s *Server) index(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, filepath.Join(s.settings.WebDir, "index.html"))
+func (s *Server) index(c *gin.Context) {
+	c.File(filepath.Join(s.settings.WebDir, "index.html"))
+}
+
+func (s *Server) getConfig(c *gin.Context) {
+
 }
