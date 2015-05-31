@@ -42,13 +42,17 @@ func NewSettings(version, home string, locations []string) (*Settings, error) {
 	flag.StringVar(&dataDir, "datadir", filepath.Join(home, ".mediagui/data"), "folder containing the database files")
 	flag.StringVar(&webDir, "webdir", filepath.Join(home, ".mediagui/web"), "folder where web app will be read from")
 	flag.StringVar(&logDir, "logdir", "", "folder where log file will be written to")
-	flag.StringVar(&mediaFolders, "mediafolders", filepath.Join(home, ""), "folders that will be scanned for media")
+	flag.StringVar(&mediaFolders, "mediafolders", "", "folders that will be scanned for media")
 
 	flag.Set("config", location)
 	flag.Parse()
 
 	s := &Settings{}
-	s.MediaFolders = strings.Split(mediaFolders, "|")
+	if mediaFolders == "" {
+		s.MediaFolders = make([]string, 0)
+	} else {
+		s.MediaFolders = strings.Split(mediaFolders, "|")
+	}
 	s.Version = version
 	s.DataDir = dataDir
 	s.WebDir = webDir

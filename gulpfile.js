@@ -27,6 +27,9 @@ function command(tag, cmd) {
 var isDebug = process.env.NODE_ENV === 'debug'
 var mediagui;
 
+
+gulp.task('client', gulp.series(client))
+
 gulp.task('dev', gulp.series(
 		clean,
 		gulp.parallel(client, server),

@@ -55,9 +55,6 @@ func (s *Server) Stop() {
 
 func (s *Server) index(c *gin.Context) {
 	c.File(filepath.Join(s.settings.WebDir, "index.html"))
-
-	msg := &pubsub.Message{Payload: "hello, world", Reply: make(chan interface{}, capacity)}
-	s.bus.Pub(msg, "/get/config")
 }
 
 func (s *Server) getConfig(c *gin.Context) {
@@ -66,5 +63,6 @@ func (s *Server) getConfig(c *gin.Context) {
 
 	reply := <-msg.Reply
 	resp := reply.(*lib.Config)
+	mlog.Info("config: %+v", resp)
 	c.JSON(200, &resp)
 }
