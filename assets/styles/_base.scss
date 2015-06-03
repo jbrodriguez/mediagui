@@ -2,10 +2,11 @@ body {
 	font: 100%/1.625em 'Lucida Sans Unicode', 'Lucida Grande', sans-serif;
 	color: $primaryTextColor;
 
-	display: flex;
-	flex-direction: column;
+	background-image: url("paper.png");
+	// display: flex;
+	// flex-direction: column;
 
-	min-height: 100vh;
+	// min-height: 100vh;
 }
 
 h1,

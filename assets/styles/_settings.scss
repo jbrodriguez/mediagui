@@ -5,7 +5,15 @@
 $maxWidth: 1250px;
 $pad: 1em;
 
+// Breakpoints
+$breakpoint-1: 480px;
+$breakpoint-2: 600px;
+
 // Colors
 $primaryTextColor: #666;
 $primaryAnchorColor: #333;
 $primaryHeaderColor: #204862;
+
+$headerColor: white;
+// $headerBackground: blue;
+$headerBackground: #DAD7CF;

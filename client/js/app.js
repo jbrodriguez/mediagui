@@ -33,7 +33,7 @@ appState.onValue((state) => {
 	if (state.settings != null) {
 		console.log('rendering')
 		Router.run(routes, Router.HistoryLocation, function(Handler) {
-			React.render(<Handler { ...state} />, document.getElementById('app'), function() {
+			React.render(<Handler { ...state} />, document.body, function() {
 				console.log('marrano')
 			})
 		})

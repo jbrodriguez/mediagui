@@ -1,0 +1,19 @@
+// LAYOUT
+.body {
+	display: flex;
+	flex-direction: column;
+
+	min-height: 100vh;	
+}
+
+.row-fluid {
+//	display: block;
+	width: 100%;
+	margin-bottom: 1em;
+}
+
+.row {
+	width: 100%;
+	max-width: $maxWidth;
+	padding: $pad;
+}

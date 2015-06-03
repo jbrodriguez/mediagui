@@ -1,38 +1,43 @@
 // 'use strict';
 
-var gulp       	= require('gulp'),
-    gutil      	= require('gulp-util'),
+var gulp       		= require('gulp'),
+    gutil      		= require('gulp-util'),
     // nodemon    	= require('gulp-nodemon'),
-    source     	= require('vinyl-source-stream'),
-    buffer     	= require('vinyl-buffer'),
-    browserify 	= require('browserify'),
-    babelify   	= require('babelify'),
-    watchify   	= require('watchify'),
-    lrload 		= require('livereactload'),
-    path 		= require('path'),
-    del 		= require('del'),
-	strings 	= require('string'),
-	exec 		= require('child_process').execSync,
-	spawn 		= require('child_process').spawn,
-    config		= require('./config.js')
+    source     		= require('vinyl-source-stream'),
+    buffer     		= require('vinyl-buffer'),
+    browserify 		= require('browserify'),
+    babelify   		= require('babelify'),
+    watchify   		= require('watchify'),
+    lrload 			= require('livereactload'),
+    path 			= require('path'),
+    del 			= require('del'),
+	strings 		= require('string'),
+	exec 			= require('child_process').execSync,
+	spawn 			= require('child_process').spawn,
 
-function command(tag, cmd) {
-	gutil.log(gutil.colors.blue('executing ' + cmd))
-	var result = exec(cmd, {encoding: 'utf-8'})
-	var output = strings(result).chompRight('\n').toString()
-	gutil.log(gutil.colors.yellow('tag: [' + tag + '] ') + gutil.colors.green(output))
-	return output
-}
+	sass 			= require('gulp-sass');
+	autoprefixer 	= require('gulp-autoprefixer');
+	concat 			= require('gulp-concat');
+	minifyCss 		= require('gulp-minify-css');
+	bytediff 		= require('gulp-bytediff');
+	plumber 		= require('gulp-plumber');
+
+	imagemin = require('gulp-imagemin');
+	cache = require('gulp-cache');
+
+    config			= require('./config.js')
+
 
 var isDebug = process.env.NODE_ENV === 'debug'
 var mediagui;
 
 
 gulp.task('client', gulp.series(client))
+gulp.task('styles', gulp.series(styles))
 
 gulp.task('dev', gulp.series(
 		clean,
-		gulp.parallel(client, server),
+		gulp.parallel(client, server, styles, images),
 		watch
 	)
 )
@@ -137,11 +142,43 @@ function build() {
 //     });
 // }
 
+function styles() {
+    gutil.log('Bundling, minifying, and copying the app\'s css');
+
+    return gulp.src(config.styles.src)
+        .pipe(plumber())
+		.pipe(sass())
+        .pipe(concat('app.min.css')) // Before bytediff or after
+        .pipe(autoprefixer('last 2 version', '> 5%'))
+        .pipe(bytediff.start())
+        .pipe(minifyCss({processImport: false}))
+        .pipe(bytediff.stop(bytediffFormatter))
+        //        .pipe(plug.concat('all.min.css')) // Before bytediff or after
+        .pipe(plumber.stop())
+        .pipe(gulp.dest(config.styles.dst));
+}
+
+function images() {
+    gutil.log('Compressing, caching, and copying images ');
+
+    gutil.log('cache: ' + gutil.colors.green(config.images.cache));
+    gutil.log('src: ' + gutil.colors.green(config.images.src));
+    gutil.log('dst: ' + gutil.colors.green(config.images.dst));
+
+    var custom = new cache.Cache({ tmpDir: config.images.cache, cacheDirName: '' })
+
+    return gulp
+		.src(config.images.src)
+        .pipe(cache(imagemin({optimizationLevel: 3}), {fileCache: custom, name: ''}))
+        .pipe(gulp.dest(config.images.dst))	
+}
+
 function watch() {
     gutil.log('Watching ...')
 
 	gulp.watch(config.watch.index, index)
 	gulp.watch(config.watch.go, server)
+	gulp.watch(config.watch.styles, styles)
 
 	// start listening reload notifications
 	lrload.monitor(path.join(config.watch.app, 'bundle.js'), {displayNotification: true})
@@ -177,3 +214,23 @@ function watch() {
 // gulp.task('default', function(cb) {
 // 	series('clean', 'copy', 'build:server', 'watch', cb)
 // })
+
+// HELPERS
+function bytediffFormatter(data) {
+    var difference = (data.savings > 0) ? ' smaller.' : ' larger.'
+    return data.fileName + ' went from ' +
+        (data.startSize / 1000).toFixed(2) + ' kB to ' + (data.endSize / 1000).toFixed(2) + ' kB' +
+        ' and is ' + formatPercent(1 - data.percent, 2) + '%' + difference
+}
+
+function formatPercent(num, precision) {
+    return (num * 100).toFixed(precision)
+}
+
+function command(tag, cmd) {
+	gutil.log(gutil.colors.blue('executing ' + cmd))
+	var result = exec(cmd, {encoding: 'utf-8'})
+	var output = strings(result).chompRight('\n').toString()
+	gutil.log(gutil.colors.yellow('tag: [' + tag + '] ') + gutil.colors.green(output))
+	return output
+}
