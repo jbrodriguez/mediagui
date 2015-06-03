@@ -3,15 +3,44 @@ const 	React 			= require('react'),
 		Link			= Router.Link,
 		RouteHandler 	= Router.RouteHandler
 
+var FilterWrapper = React.createClass({
+  render: function() {
+    return <option value={this.props.option.value}>{this.props.option.label}</option>
+  }
+})
+
+var SortWrapper = React.createClass({
+  render: function() {
+    return <option value={this.props.option.value}>{this.props.option.label}</option>
+  }
+})
+
 module.exports = React.createClass({
 	componentWillMount: function() {
 		console.log('reminiscing')
 		console.log(Array.isArray(this.props.children)); // => true
 	},
 
+	getInitialState: function() {
+		return {
+			selectedFilter: this.props.options.filterBy,
+			selectedSort: this.props.options.sortBy
+		}
+	},
+
 	render: function() {
 		console.log('somebody to love')
 		const settings = this.props.settings
+		const options = this.props.options
+
+        var filterByNodes = options.filterByOptions.map(function(option){
+            return <FilterWrapper key={option.id} option={option} />
+        })
+
+        var sortByNodes = options.sortByOptions.map(function(option){
+            return <SortWrapper key={option.id} option={option} />
+        })
+
 		return (
 			<div className="body">
 				<header>
@@ -21,12 +50,14 @@ module.exports = React.createClass({
 						</ul>
 						<ul>
 							<Link to="movies">Movies</Link>
-							<select data-ng-model="home.options.filterBy" data-ng-options="option.value as option.display for option in home.options.filterByOptions">
+							<select value={this.state.selectedFilter}>
+								{filterByNodes}
 							</select>
 							<input type="search" placeholder="Enter search string" data-ng-model="home.options.searchTerm" ng-model-options="{ debounce: 750 }" />
-							<select data-ng-model="home.options.sortBy" data-ng-options="option.value as option.display for option in home.options.sortByOptions">
+							<select value={this.state.selectedSort}>
+								{sortByNodes}
 							</select>
-							<a href="#" data-ng-click="home.sortOrder()"><i class="fa" data-ng-class="home.options.sortOrder === 'desc' ? 'fa-chevron-circle-down' : 'fa-chevron-circle-up'"></i></a>
+							<a href="#" data-ng-click="home.sortOrder()"><i className="fa" data-ng-class="home.options.sortOrder === 'desc' ? 'fa-chevron-circle-down' : 'fa-chevron-circle-up'"></i></a>
 						</ul>
 					</nav>
 				</header>

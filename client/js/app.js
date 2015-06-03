@@ -5,6 +5,7 @@ const	React 		= require('react'),
 		settings 	= require('./settings'),
 		movies 		= require('./movies'),
 		api 		= require('./api'),
+		storage		= require('./storage'),
 		options 	= require('./options'),
 		Router 		= require('react-router'),
 		Route 		= require('react-router').Route
@@ -18,7 +19,7 @@ const	routes 		= (
 
 // const	settingsP 	= settings.toProperty({mediaFolders:[], version:"0.4.0-7.fbb280b"}),
 const	settingsP 	= settings.toProperty({}),
-		optionsP 	= options.toProperty({}),
+		optionsP 	= options.toProperty(getInitialOptions()),
       	moviesP  	= movies.toProperty([])
 
 const	appState 	= Bacon.combineTemplate({
@@ -48,6 +49,46 @@ appState.onValue((state) => {
 
 settings.getConfig()
 
+function getInitialOptions() {
+	var searchTerm = ''
+
+    var filterByOptions = [
+        {id: 1, value: 'title', label: 'Title'}, 
+        {id: 2, value: 'genre', label: 'Genre'},
+        {id: 3, value: 'country', label: 'Country'},
+        {id: 4, value: 'director', label: 'Director'},
+        {id: 5, value: 'actor', label: 'Actor'}
+    ]
+    var filterBy = storage.get('filterBy') || 'title'
+
+    var sortByOptions = [
+        {id: 1, value: 'title', label: 'Title'}, 
+        {id: 2, value: 'runtime', label: 'Runtime'}, 
+        {id: 3, value: 'added', label: 'Added'}, 
+        {id: 4, value: 'last_watched', label: 'Watched'}, 
+        {id: 5, value: 'year', label: 'Year'}, 
+        {id: 6, value: 'imdb_rating', label: 'Rating'}
+    ]
+    var sortBy = storage.get('sortBy') || 'added'
+
+    var sortOrderOptions = ['asc', 'desc']
+    var sortOrder = storage.get('sortOrder') || 'desc'
+
+    var mode = 'regular'
+
+	const base = {
+        searchTerm: searchTerm,
+        filterByOptions: filterByOptions,
+        filterBy: filterBy,
+        sortByOptions: sortByOptions,
+        sortBy: sortBy,
+        sortOrderOptions: sortOrderOptions,
+        sortOrder: sortOrder,
+        mode: mode
+	}
+
+	return base
+}
 
 
 
