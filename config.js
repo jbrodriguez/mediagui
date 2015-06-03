@@ -66,7 +66,8 @@ module.exports = {
 		app: build,
 		index: client + "index.html",
 		go: server + "**/*.go",
-		styles: assets + "styles/*.scss" 
+		styles: assets + "styles/*.scss",
+		images: assets + "images/*"
 	},
 
 	images: {

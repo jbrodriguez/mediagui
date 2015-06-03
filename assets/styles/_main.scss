@@ -1,0 +1,5 @@
+main {
+	@include flexbox(flex, row, center, stretch);
+
+	flex: 1;
+}

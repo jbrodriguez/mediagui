@@ -6,12 +6,14 @@
 	min-height: 100vh;	
 }
 
+// previously .row
 .row-fluid {
 //	display: block;
 	width: 100%;
 	margin-bottom: 1em;
 }
 
+// previously .column
 .row {
 	width: 100%;
 	max-width: $maxWidth;
