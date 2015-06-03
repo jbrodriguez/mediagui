@@ -1,4 +1,6 @@
-const React = require('react')
+const 	React 			= require('react'),
+		Link			= require('react-router').Link,
+		RouteHandler 	= require('react-router').RouteHandler
 
 module.exports = React.createClass({
 	componentWillMount: function() {
@@ -10,7 +12,11 @@ module.exports = React.createClass({
 		console.log('somebody to love')
 		const settings = this.props.settings
 		return (
-	    	<h1>{settings.version}</h1>
+			<div className="nav">
+				<Link to="app">Home</Link>
+				<Link to="movies">Movies</Link>
+				<RouteHandler />
+			</div>
 		)
 	}
 })
