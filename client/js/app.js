@@ -1,21 +1,23 @@
-const	React 		= require('react'),
-		Bacon 		= require('baconjs'),
-		MediaGUI 	= require('./MediaGUI.jsx'),
-		MoviesPage 	= require('./MoviesPage.jsx'),
-		settings 	= require('./settings'),
-		movies 		= require('./movies'),
-		api 		= require('./api'),
-		storage		= require('./storage'),
-		options 	= require('./options'),
-		Router 		= require('react-router'),
-		Route 		= require('react-router').Route
+const	React 			= require('react'),
+		Bacon 			= require('baconjs'),
+		MediaGUI 		= require('./MediaGUI.jsx'),
+		MoviesCover 	= require('./MoviesCover.jsx'),
+		MoviesPage 		= require('./MoviesPage.jsx'),
+		settings 		= require('./settings'),
+		movies 			= require('./movies'),
+		api 			= require('./api'),
+		storage			= require('./storage'),
+		options 		= require('./options'),
+		Router 			= require('react-router'),
+		Route 			= Router.Route,
+		DefaultRoute 	= Router.DefaultRoute		
 
 const	routes 		= (
 			<Route name="app" path="/" handler={MediaGUI}>
+				<DefaultRoute handler={MoviesCover} />
 				<Route name="movies" path="/movies" handler={MoviesPage} />
 			</Route>
 		)
-
 
 // const	settingsP 	= settings.toProperty({mediaFolders:[], version:"0.4.0-7.fbb280b"}),
 const	settingsP 	= settings.toProperty({}),

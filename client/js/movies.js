@@ -14,14 +14,24 @@ module.exports = {
             .flatMap(options => Bacon.fromPromise(api.getMovies(options)))
             .log('movies-middle')
 
+        const gotCover = d
+        	.stream('getCover')
+        	.flatMap(_ => Bacon.fromPromise(api.getCover()))
+        	.log('cover')
+
         return Bacon.update(
         	initialMovies,
-        	[gotMovies], (_, newMovies) => newMovies
+        	[gotMovies], (_, newMovies) => newMovies,
+        	[gotCover], (_, newCover) => newCover 
         )
         .log('movies')
     },
 
     // "public" methods
+    getCover: function() {
+    	d.push('getCover')
+    },
+
     getMovies: function(options) {
         d.push('getMovies', options)
     }
