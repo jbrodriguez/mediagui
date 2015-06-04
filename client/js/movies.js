@@ -29,6 +29,7 @@ module.exports = {
 
     // "public" methods
     getCover: function() {
+    	console.log('movies.getCover')
     	d.push('getCover')
     },
 

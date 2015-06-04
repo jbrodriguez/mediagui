@@ -2,37 +2,47 @@ const 	React 	= require('react'),
 		movies 	= require('./movies')
 
 module.exports = React.createClass({
-	componentWillMount: function() {
-		movies.getCover()
-	},
+	// componentWillMount: function() {
+	// 	movies.getCover()
+	// },
 
 	render: function() {
 		const movies = this.props.movies
 
-		var items = movies.map(function(movie) {
-			return (
-				<li>
-					<div className="cover-container">
-						<img src="img/p{movie.cover}" />
-						<span className="crimson">{movie.title} </span><br />
-						{movie.year} | 
-						<span className="bright">{movie.imdb_rating}</span> |
-						<span className="label">{movie.runtime | hourMinute}</span>
-						<div className="ribbon" data-ng-if="movie.count_watched > 0">
-							<span>watched</span>
-						</div>	
-					</div>
-				</li>				
-			)
-		})
+		console.log('movies: ' + movies)
 
-		return (
-			<section className="container row covers">
-				<ul className="small-block-grid-2 medium-block-grid-4 large-block-grid-6">
-					{items}
-				</ul>
-			</section>
-		)
+		if (typeof movies != 'undefined') {
+			var items = movies.map(function(movie) {
+				return (
+					<li>
+						<div className="cover-container">
+							<img src="img/p{movie.cover}" />
+							<span className="crimson">{movie.title} </span><br />
+							{movie.year} | 
+							<span className="bright">{movie.imdb_rating}</span> |
+							<span className="label">{movie.runtime | hourMinute}</span>
+							<div className="ribbon" data-ng-if="movie.count_watched > 0">
+								<span>watched</span>
+							</div>	
+						</div>
+					</li>				
+				)
+			})
+
+			return (
+				<section className="container row covers">
+					<ul className="small-block-grid-2 medium-block-grid-4 large-block-grid-6">
+						{items}
+					</ul>
+				</section>
+			)
+
+		} else {
+			return (
+				<div></div>
+			)
+		}
+
 	}
 })
 

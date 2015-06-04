@@ -19,26 +19,45 @@ const	routes 		= (
 			</Route>
 		)
 
+
+var list = api.getCover().done(function(items) {
+		return items
+	})
+
 // const	settingsP 	= settings.toProperty({mediaFolders:[], version:"0.4.0-7.fbb280b"}),
 const	settingsP 	= settings.toProperty({}),
 		optionsP 	= options.toProperty(getInitialOptions()),
-      	moviesP  	= movies.toProperty([])
+      	moviesP  	= movies.toProperty(list)
 
 const	appState 	= Bacon.combineTemplate({
 			settings: settingsP,
 			movies: moviesP,
 			options: optionsP
 		})
-		.log('hey dude')
+		.log('appState.value = ')
+
+var Handler = {}
+
+Router.run(routes, Router.HistoryLocation, function(ProxyHandler, state) {
+	Handler = ProxyHandler
+
+	console.log('handler: ', Handler)
+	console.log('routes: ' + state.routes)
+
+
+
+	// React.render(<Handler { ...state} />, document.body, function() {
+	// 	console.log('marrano')
+	// })
+})
+
 
 appState.onValue((state) => {
 	console.log('inventando: ', state.settings)
 	if (state.settings != null) {
 		console.log('rendering')
-		Router.run(routes, Router.HistoryLocation, function(Handler) {
-			React.render(<Handler { ...state} />, document.body, function() {
-				console.log('marrano')
-			})
+		React.render(<Handler { ...state} />, document.body, function() {
+			console.log('marrano')
 		})
 	}
 	console.log('tonight is what it means to be young')
@@ -49,6 +68,7 @@ appState.onValue((state) => {
 // 	React.render(<mediaGUI {...state} />, document.getElementById('app'))
 // })
 
+movies.getCover()
 settings.getConfig()
 
 function getInitialOptions() {

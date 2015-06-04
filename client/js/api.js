@@ -5,7 +5,7 @@ const 	fetch 	= require('jquery')
 const api = "http://localhost:7623/api/v1"
 
 function getConfig() {
-	console.log('inside api')
+	console.log('inside api.getConfig')
 	const sup = fetch.ajax(api + '/config')
 		// .then(function(res) {
 	 //        return res.json();
@@ -20,6 +20,7 @@ function getConfig() {
 }
 
 function getCover() {
+	console.log('inside api.getCover')
 	return fetch.ajax(api + '/movies/cover')
 }
 
@@ -29,6 +30,6 @@ function getMovies(options) {
 
 module.exports = {
 	getConfig: getConfig,
-	getCover: getConfig,
+	getCover: getCover,
 	getMovies: getMovies
 }
