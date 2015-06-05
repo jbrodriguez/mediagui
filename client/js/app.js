@@ -20,9 +20,14 @@ const	routes 		= (
 		)
 
 
-var list = api.getCover().done(function(items) {
-		return items
-	})
+var list = api
+		.getCover()
+		.then(function(resp) {
+			return resp.responseJSON
+		})
+		.then(function(json) {
+			return json
+		})
 
 // const	settingsP 	= settings.toProperty({mediaFolders:[], version:"0.4.0-7.fbb280b"}),
 const	settingsP 	= settings.toProperty({}),

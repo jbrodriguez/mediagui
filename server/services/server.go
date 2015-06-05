@@ -5,6 +5,7 @@ import (
 	"github.com/jbrodriguez/mlog"
 	"github.com/jbrodriguez/pubsub"
 	"jbrodriguez/mediagui/server/lib"
+	"jbrodriguez/mediagui/server/model"
 	"path/filepath"
 )
 
@@ -42,6 +43,7 @@ func (s *Server) Start() {
 	api := s.router.Group(apiVersion)
 	{
 		api.GET("/config", s.getConfig)
+		api.GET("/movies/cover", s.getMoviesCover)
 	}
 
 	port := ":7623"
@@ -65,4 +67,27 @@ func (s *Server) getConfig(c *gin.Context) {
 	resp := reply.(*lib.Config)
 	mlog.Info("config: %+v", resp)
 	c.JSON(200, &resp)
+}
+
+func (s *Server) getMoviesCover(c *gin.Context) {
+	// msg := &pubsub.Message{Reply: make(chan interface{}, capacity)}
+	// s.bus.Pub(msg, "/get/movies/cover")
+
+	// reply := <-msg.Reply
+	// resp := reply.(*model.MoviesDTO)
+
+	movies := make([]*model.Movie, 0)
+	movies = append(
+		movies,
+		&model.Movie{Id: 1, Title: "The Godfather", Year: "1971"},
+		&model.Movie{Id: 2, Title: "Pulp Fiction", Year: "1990"},
+	)
+
+	dto := &model.MoviesDTO{
+		Total: 2,
+		Items: movies,
+	}
+
+	mlog.Info("movieDTO: %+v", dto)
+	c.JSON(200, dto)
 }
