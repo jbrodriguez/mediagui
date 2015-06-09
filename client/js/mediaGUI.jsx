@@ -55,10 +55,12 @@ module.exports = React.createClass({
 						<ul className="col-xs-12 col-sm-10 center-xs end-sm">
 							<div className="header__menu">
 								<Link to="movies">Movies</Link>
+
 								<select value={this.state.selectedFilter}>
 									{filterByNodes}
 								</select>
 								<input type="search" placeholder="Enter search string" data-ng-model="home.options.searchTerm" ng-model-options="{ debounce: 750 }" />
+
 								<select value={this.state.selectedSort}>
 									{sortByNodes}
 								</select>

@@ -23,6 +23,16 @@ header {
 	}	
 }
 
+.header__menu > select {
+	// display: block;
+	background: #efefef;
+	padding: 0.5em;	
+}
+
+.header__menu > input {
+	padding: 0.5em;	
+}
+
 // header {
 // 	color: $headerColor;
 // 	background-color: $headerBackground;
