@@ -45,25 +45,27 @@ module.exports = React.createClass({
 		return (
 			// <div className={cx("container", "body")}>
 			<div className="container">
-				<header className="row between-xs">
-					<ul className="col-xs-12 col-sm-2 center-xs">
-						<div className="header__logo">
-							<Link to="cover">mediaGUI</Link>
-						</div>
-					</ul>
-					<ul className="col-xs-12 col-sm-10 center-xs end-sm">
-						<div className="header__menu">
-							<Link to="movies">Movies</Link>
-							<select value={this.state.selectedFilter}>
-								{filterByNodes}
-							</select>
-							<input type="search" placeholder="Enter search string" data-ng-model="home.options.searchTerm" ng-model-options="{ debounce: 750 }" />
-							<select value={this.state.selectedSort}>
-								{sortByNodes}
-							</select>
-							<a href="#" data-ng-click="home.sortOrder()"><i className="fa" data-ng-class="home.options.sortOrder === 'desc' ? 'fa-chevron-circle-down' : 'fa-chevron-circle-up'"></i></a>
-						</div>
-					</ul>
+				<header>
+					<nav className="row between-xs">
+						<ul className="col-xs-12 col-sm-2 center-xs">
+							<div className="header__logo">
+								<Link to="cover">mediaGUI</Link>
+							</div>
+						</ul>
+						<ul className="col-xs-12 col-sm-10 center-xs end-sm">
+							<div className="header__menu">
+								<Link to="movies">Movies</Link>
+								<select value={this.state.selectedFilter}>
+									{filterByNodes}
+								</select>
+								<input type="search" placeholder="Enter search string" data-ng-model="home.options.searchTerm" ng-model-options="{ debounce: 750 }" />
+								<select value={this.state.selectedSort}>
+									{sortByNodes}
+								</select>
+								<a href="#" data-ng-click="home.sortOrder()"><i className="fa" data-ng-class="home.options.sortOrder === 'desc' ? 'fa-chevron-circle-down' : 'fa-chevron-circle-up'"></i></a>
+							</div>
+						</ul>
+					</nav>
 				</header>
 
 				<main>
