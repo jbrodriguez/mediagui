@@ -15,8 +15,8 @@ module.exports = React.createClass({
 		if (typeof movies != 'undefined') {
 			var items = movies.map(function(movie, i) {
 				return (
-					<li key={i}>
-						<div className="cover-container" key={i}>
+					<div key={i} className="col-xs-12 col-sm-6 col-md-3 col-lg-2">
+						<div key={i} className="cover-container" >
 							<img src={"/img/p" + movie.cover} />
 							<span className="crimson">{movie.title} </span><br />
 							{movie.year} | 
@@ -26,15 +26,13 @@ module.exports = React.createClass({
 								<span>watched</span>
 							</div>	
 						</div>
-					</li>				
+					</div>				
 				)
 			})
 
 			return (
-				<section className="container row covers">
-					<ul className="small-block-grid-2 medium-block-grid-4 large-block-grid-6">
-						{items}
-					</ul>
+				<section className="row">
+					{items}
 				</section>
 			)
 

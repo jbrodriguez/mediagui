@@ -20,12 +20,12 @@ $container-lg: (73em + $grid-gutter-width) !default;
 
 
 // Dimensions
-$maxWidth: 1250px;
-$pad: 1em;
+// $maxWidth: 1250px;
+// $pad: 1em;
 
-// Breakpoints
-$breakpoint-1: 480px;
-$breakpoint-2: 600px;
+// // Breakpoints
+// $breakpoint-1: 480px;
+// $breakpoint-2: 600px;
 
 // Colors
 $primaryTextColor: #666;
@@ -35,10 +35,16 @@ $primaryAnchorColor: #57626C;
 
 $primaryHeaderColor: #204862;
 
-$headerColor: white;
+//$headerLegalColor: white;
 // $headerBackground: #DAD7CF;
 // $headerBackground: #C63D0F;
-$headerBackground: transparent;
+$headerLogoAnchorColor: white;
+$headerLogoBackground: #C63D0F;
+//$headerLogoBackground: #609FA2;
+// $headerLogoBackground: #F26A9A;
+
+$headerMenuAnchorColor: white;
+$headerMenuBackground: #57626C;
 
 $footerColor: white;
 // $footerBackground: #7E8F7D;

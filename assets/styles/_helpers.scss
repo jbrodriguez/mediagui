@@ -1,16 +1,14 @@
-%spacer {
-	margin-bottom: $pad;
-}
-
+// %spacer {
+// 	margin-bottom: $pad;
+// }
 
 // Mixins
-
-@mixin flexbox($display: flex, $direction: column, $justify: center, $align: center) {
-	display: $display;
-	flex-direction: $direction;
-	justify-content: $justify;
-	align-items: $align;
-}
+// @mixin flexbox($display: flex, $direction: column, $justify: center, $align: center) {
+// 	display: $display;
+// 	flex-direction: $direction;
+// 	justify-content: $justify;
+// 	align-items: $align;
+// }
 
 // Create container block
 @mixin container-fixed($gutter: $grid-gutter-width) {

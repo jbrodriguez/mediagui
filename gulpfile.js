@@ -67,6 +67,7 @@ function index() {
 
 var bundler = browserify({
 	entries:      [ path.join(config.base.client, 'js/app.js') ],
+	extension: 	  [ "jsx" ],
 	transform:    isDebug ? [ babelify, lrload ] : [ babelify ],
 	debug:        isDebug,
 	cache:        {},

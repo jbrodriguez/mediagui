@@ -1,4 +1,5 @@
 const 	React 			= require('react'),
+		cx 		 		= require('classnames'),
 		Router 			= require('react-router'),
 		Link			= Router.Link,
 		RouteHandler 	= Router.RouteHandler
@@ -42,13 +43,16 @@ module.exports = React.createClass({
         })
 
 		return (
-			<div className="body">
-				<header>
-					<nav className="row">
-						<ul>
-							<Link to="cover">Home</Link>
-						</ul>
-						<ul>
+			// <div className={cx("container", "body")}>
+			<div className="container">
+				<header className="row between-xs">
+					<ul className="col-xs-12 col-sm-2 center-xs">
+						<div className="header__logo">
+							<Link to="cover">mediaGUI</Link>
+						</div>
+					</ul>
+					<ul className="col-xs-12 col-sm-10 center-xs end-sm">
+						<div className="header__menu">
 							<Link to="movies">Movies</Link>
 							<select value={this.state.selectedFilter}>
 								{filterByNodes}
@@ -58,15 +62,15 @@ module.exports = React.createClass({
 								{sortByNodes}
 							</select>
 							<a href="#" data-ng-click="home.sortOrder()"><i className="fa" data-ng-class="home.options.sortOrder === 'desc' ? 'fa-chevron-circle-down' : 'fa-chevron-circle-up'"></i></a>
-						</ul>
-					</nav>
+						</div>
+					</ul>
 				</header>
 
 				<main>
 					<RouteHandler { ...this.props}/>
 				</main>
 
-				<footer>
+				<footer className="row">
 				    <section className="legal row">
 				        <span className="copyright">Copyright &copy; 2015 &nbsp; <a href='http://jbrodriguez.io/'>Juan B. Rodriguez</a></span>
 				        <span className="version">mediaGUI v{settings.version}</span>
