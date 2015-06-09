@@ -51,8 +51,10 @@ func main() {
 	// socket := services.NewSocket(bus, &settings)
 	server := services.NewServer(bus, settings)
 	core := services.NewCore(bus, settings)
+	dal := services.NewDal(bus, settings)
 
 	// socket.Start()
+	dal.Start()
 	server.Start()
 	core.Start()
 
@@ -65,6 +67,7 @@ func main() {
 
 		core.Stop()
 		server.Stop()
+		dal.Stop()
 		// socket.Stop()
 
 		break

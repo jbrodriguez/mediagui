@@ -38,6 +38,7 @@ gulp.task('styles', gulp.series(styles))
 gulp.task('dev', gulp.series(
 		clean,
 		gulp.parallel(client, server, styles, images),
+		link,
 		watch
 	)
 )
@@ -171,6 +172,16 @@ function images() {
 		.src(config.images.src)
         .pipe(cache(imagemin({optimizationLevel: 3}), {fileCache: custom, name: ''}))
         .pipe(gulp.dest(config.images.dst))	
+}
+
+function link(done) {
+	var home = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME']
+	var img = path.join(home, '.mediabase', 'web', 'img')
+
+	gutil.log('\n src: ' + config.build.src + '\n dst: ' + config.build.dst)
+	command('link', 'cd target/build && ln -s ' + img + ' img')
+
+	done()
 }
 
 function watch() {

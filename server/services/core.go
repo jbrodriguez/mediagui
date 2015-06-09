@@ -37,7 +37,7 @@ func (c *Core) Stop() {
 
 func (c *Core) react() {
 	for mbox := range c.mailbox {
-		mlog.Info("Topic: %s", mbox.Topic)
+		mlog.Info("Core:Topic: %s", mbox.Topic)
 		c.dispatch(mbox.Topic, mbox.Content)
 	}
 }

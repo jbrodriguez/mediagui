@@ -39,6 +39,7 @@ func (s *Server) Start() {
 
 	s.router.GET("/", s.index)
 	s.router.Static("/app", filepath.Join(s.settings.WebDir, "app"))
+	s.router.Static("/img", filepath.Join(s.settings.WebDir, "img"))
 
 	api := s.router.Group(apiVersion)
 	{
@@ -70,24 +71,24 @@ func (s *Server) getConfig(c *gin.Context) {
 }
 
 func (s *Server) getMoviesCover(c *gin.Context) {
-	// msg := &pubsub.Message{Reply: make(chan interface{}, capacity)}
-	// s.bus.Pub(msg, "/get/movies/cover")
+	msg := &pubsub.Message{Reply: make(chan interface{}, capacity)}
+	s.bus.Pub(msg, "/get/movies/cover")
 
-	// reply := <-msg.Reply
-	// resp := reply.(*model.MoviesDTO)
+	reply := <-msg.Reply
+	dto := reply.(*model.MoviesDTO)
 
-	movies := make([]*model.Movie, 0)
-	movies = append(
-		movies,
-		&model.Movie{Id: 1, Title: "The Godfather", Year: "1971"},
-		&model.Movie{Id: 2, Title: "Pulp Fiction", Year: "1990"},
-	)
+	// movies := make([]*model.Movie, 0)
+	// movies = append(
+	// 	movies,
+	// 	&model.Movie{Id: 1, Title: "The Godfather", Year: "1971"},
+	// 	&model.Movie{Id: 2, Title: "Pulp Fiction", Year: "1990"},
+	// )
 
-	dto := &model.MoviesDTO{
-		Total: 2,
-		Items: movies,
-	}
+	// dto := &model.MoviesDTO{
+	// 	Total: 2,
+	// 	Items: movies,
+	// }
 
-	mlog.Info("movieDTO: %+v", dto)
+	mlog.Info("moviesDTO: %+v", dto)
 	c.JSON(200, dto)
 }
