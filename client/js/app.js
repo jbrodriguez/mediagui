@@ -10,71 +10,101 @@ const	React 			= require('react'),
 		options 		= require('./options'),
 		Router 			= require('react-router'),
 		Route 			= Router.Route,
-		DefaultRoute 	= Router.DefaultRoute		
+		DefaultRoute 	= Router.DefaultRoute,
+		Redirect 		= Router.Redirect
 
-const	routes 		= (
-			<Route name="app" path="/" handler={MediaGUI}>
-				<DefaultRoute handler={MoviesCover} />
-				<Route name="movies" path="/movies" handler={MoviesPage} />
-			</Route>
-		)
+var config = {},
+	movieList = []
 
-
-var list = api
-		.getCover()
-		.then(function(resp) {
-			return resp.responseJSON
-		})
-		.then(function(json) {
-			return json
-		})
-
-// const	settingsP 	= settings.toProperty({mediaFolders:[], version:"0.4.0-7.fbb280b"}),
-const	settingsP 	= settings.toProperty({}),
-		optionsP 	= options.toProperty(getInitialOptions()),
-      	moviesP  	= movies.toProperty(list)
-
-const	appState 	= Bacon.combineTemplate({
-			settings: settingsP,
-			movies: moviesP,
-			options: optionsP
-		})
-		.log('appState.value = ')
-
-var Handler = {}
-
-Router.run(routes, Router.HistoryLocation, function(ProxyHandler, state) {
-	Handler = ProxyHandler
-
-	console.log('handler: ', Handler)
-	console.log('routes: ' + state.routes)
-
-
-
-	// React.render(<Handler { ...state} />, document.body, function() {
-	// 	console.log('marrano')
-	// })
+api
+.getConfig()
+.then(function(result) {
+	config = result
+	console.log('obtained getConfig result: ' + config)
+	return api.getCover()
+})
+.then(function(result) {
+	movieList = result
+	run()
 })
 
+function run() {
 
-appState.onValue((state) => {
-	console.log('inventando: ', state.settings)
-	if (state.settings != null) {
-		console.log('rendering')
+	// const	settingsP 	= settings.toProperty({mediaFolders:[], version:"0.4.0-7.fbb280b"}),
+	const	settingsP 	= settings.toProperty(config),
+			optionsP 	= options.toProperty(getInitialOptions()),
+		  	moviesP  	= movies.toProperty(movieList)
+
+	const	appState 	= Bacon.combineTemplate({
+				settings: settingsP,
+				movies: moviesP,
+				options: optionsP
+			})
+			.log('appState.value = ')
+
+	const	routes 		= (
+				<Route name="app" path="/" handler={MediaGUI}>
+					<Route name="cover" path="/movies/cover" handler={MoviesCover} />
+					<Route name="movies" path="/movies" handler={MoviesPage} />
+
+					<Redirect from="/" to="/movies/cover" />
+				</Route>
+			)
+
+	var Handler = {}
+	
+	Router.run(routes, Router.HistoryLocation, function(ProxyHandler, state) {
+		Handler = ProxyHandler
+
+		console.log('handler: ', Handler)
+		console.log('routes: ' + state.routes)
+		console.log('len(routes)=' + state.routes.length)
+		if (state.routes.length > 1) {
+			console.log('state.routes[1].path = ' + state.routes[1].path)
+
+			switch (state.routes[state.routes.length - 1].path) {
+				case "/movies/":
+					movies.getMovies()
+					break;
+				case "/movies/cover":
+					movies.getCover()
+					break;
+			}
+
+
+		}
+
+		// React.render(<Handler { ...state} />, document.body, function() {
+		// 	console.log('marrano')
+		// })
+	})
+
+	appState.onValue((state) => {
+		console.log('dentro de onValue: ', state)
 		React.render(<Handler { ...state} />, document.body, function() {
 			console.log('marrano')
 		})
-	}
-	console.log('tonight is what it means to be young')
-})
+	})
+
+	Router.transitionTo
+}
+
+
+
+
+
+
+
+
+
 
 // appState.onValue(function(state) {
 // 	console.log('inventando: ', state)
 // 	React.render(<mediaGUI {...state} />, document.getElementById('app'))
 // })
 
-movies.getCover()
-settings.getConfig()
+// movies.getCover()
+// settings.getConfig()
 
 function getInitialOptions() {
 	var searchTerm = ''

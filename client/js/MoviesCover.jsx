@@ -1,5 +1,4 @@
-const 	React 	= require('react'),
-		movies 	= require('./movies')
+const 	React 	= require('react')
 
 module.exports = React.createClass({
 	// componentWillMount: function() {
@@ -7,20 +6,22 @@ module.exports = React.createClass({
 	// },
 
 	render: function() {
-		const movies = this.props.movies
+		// console.log('MoviesCover.jsx: ' + JSON.stringify(this.props, null, 4))
+
+		const movies = this.props.movies.items
 
 		console.log('movies: ' + movies)
 
 		if (typeof movies != 'undefined') {
-			var items = movies.map(function(movie) {
+			var items = movies.map(function(movie, i) {
 				return (
-					<li>
-						<div className="cover-container">
-							<img src="img/p{movie.cover}" />
+					<li key={i}>
+						<div className="cover-container" key={i}>
+							<img src={"/img/p" + movie.cover} />
 							<span className="crimson">{movie.title} </span><br />
 							{movie.year} | 
 							<span className="bright">{movie.imdb_rating}</span> |
-							<span className="label">{movie.runtime | hourMinute}</span>
+							<span className="label">{movie.runtime}</span>
 							<div className="ribbon" data-ng-if="movie.count_watched > 0">
 								<span>watched</span>
 							</div>	
@@ -38,9 +39,7 @@ module.exports = React.createClass({
 			)
 
 		} else {
-			return (
-				<div></div>
-			)
+			return null
 		}
 
 	}

@@ -29,7 +29,7 @@ module.exports = React.createClass({
 	},
 
 	render: function() {
-		console.log('somebody to love')
+		// console.log('somebody to love: ' + JSON.stringify(this.props, null, 4))
 		const settings = this.props.settings
 		const options = this.props.options
 
@@ -46,7 +46,7 @@ module.exports = React.createClass({
 				<header>
 					<nav className="row">
 						<ul>
-							<Link to="app">Home</Link>
+							<Link to="cover">Home</Link>
 						</ul>
 						<ul>
 							<Link to="movies">Movies</Link>
@@ -63,7 +63,7 @@ module.exports = React.createClass({
 				</header>
 
 				<main>
-					<RouteHandler/>
+					<RouteHandler { ...this.props}/>
 				</main>
 
 				<footer>
