@@ -7,6 +7,17 @@ const Bacon 		= require('baconjs'),
 const d = new Dispatcher()
 
 module.exports = {
+	// PUBLIC API
+	setSortBy: function(sortBy) {
+		console.log('options.setSortBy', sortBy)
+		d.push('setSortBy', sortBy)
+	},
+	
+	getOptions: function() {
+		d.push('setOptions')
+	},
+
+	// Initializer
 	toProperty: function(initialOptions) {
 		console.log('options-before', initialOptions)
 		// const gotOptions = 
@@ -15,17 +26,18 @@ module.exports = {
 
 		return Bacon.update(
 			initialOptions,
+			[d.stream('setSortBy')], setSortBy,
 			[d.stream('setOptions')], (_, newOptions) => newOptions
 		)
+		.log('options.baconUpdate')
+
+		function setSortBy(options, sortBy) {
+			return R.merge(options, {sortBy: sortBy, firstRun: false})
+		}
 
 		function doSetOptions(options, newOptions) {
 			return options
 		}
-	},
-
-	// PUBLIC API
-	getOptions: function() {
-		d.push('setOptions')
 	}
 }
 

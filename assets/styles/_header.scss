@@ -1,10 +1,13 @@
-header {
-	padding: .5em 0;
-}
-
+header,
 .header__logo,
 .header__menu {
 	padding: .5em 0;
+}
+
+header {
+	li {
+		list-style: none;
+	}
 }
 
 .header__logo {
@@ -19,19 +22,21 @@ header {
 	background-color: $headerMenuBackground;
 
 	a {
+		font-size: 0.9em;
 		color: $headerMenuAnchorColor;
+
+		&.active {
+			padding-bottom: 3px;
+			border-bottom: 3px solid $headerMenuAnchorActive;
+		}
 	}	
 }
 
-.header__menu > select {
-	// display: block;
-	background: #efefef;
-	padding: 0.5em;	
-}
-
-.header__menu > input {
-	padding: 0.5em;	
-}
+// .header__menu > select {
+// 	// display: block;
+// 	background: #efefef;
+// 	padding: 0.5em;	
+// }
 
 // header {
 // 	color: $headerColor;

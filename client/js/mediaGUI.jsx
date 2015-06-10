@@ -2,7 +2,8 @@ const 	React 			= require('react'),
 		cx 		 		= require('classnames'),
 		Router 			= require('react-router'),
 		Link			= Router.Link,
-		RouteHandler 	= Router.RouteHandler
+		RouteHandler 	= Router.RouteHandler,
+		optionsBO 		= require('./options.js')
 
 var FilterWrapper = React.createClass({
   render: function() {
@@ -22,12 +23,12 @@ module.exports = React.createClass({
 		console.log(Array.isArray(this.props.children)); // => true
 	},
 
-	getInitialState: function() {
-		return {
-			selectedFilter: this.props.options.filterBy,
-			selectedSort: this.props.options.sortBy
-		}
-	},
+	// getInitialState: function() {
+	// 	return {
+	// 		selectedFilter: this.props.options.filterBy,
+	// 		selectedSort: this.props.options.sortBy
+	// 	}
+	// },
 
 	render: function() {
 		// console.log('somebody to love: ' + JSON.stringify(this.props, null, 4))
@@ -50,29 +51,56 @@ module.exports = React.createClass({
             return <SortWrapper key={option.id} option={option} />
         })
 
+        const handleSortBy = function() {
+			const sortBy = event.target.value
+
+        	console.log("mediaGUI.jsx.handleSortBy:" + sortBy)
+
+			// this.setState({selectedSort: sortBy})
+			optionsBO.setSortBy(sortBy)
+        }
+
+        const sortStyle = {marginLeft: "1em"}
+
+								// <select value={this.state.selectedFilter}>
+								// <select value={this.state.selectedSort}>
+										// <a href="#" className="spacer">{"prune".toUpperCase()}</a>
+
 		return (
 			// <div className={cx("container", "body")}>
 			<div className="container">
 				<header>
 					<nav className="row between-xs">
 						<ul className="col-xs-12 col-sm-2 center-xs">
-							<div className="header__logo">
+							<li className="header__logo">
 								<Link to="cover">mediaGUI</Link>
-							</div>
+							</li>
 						</ul>
-						<ul className="col-xs-12 col-sm-10 center-xs end-sm">
-							<div className="header__menu">
-								<Link to="movies" query={urlQuery}>Movies</Link>
+						<ul className="col-xs-12 col-sm-10 center-xs">
+							<div className="row between-xs">
+								<div className="col-xs-12 col-sm-8">
+									<div className="header__menu">
+										<Link to="movies" query={urlQuery} className="spacer">MOVIES</Link>
 
-								<select value={this.state.selectedFilter}>
-									{filterByNodes}
-								</select>
-								<input type="search" placeholder="Enter search string" data-ng-model="home.options.searchTerm" ng-model-options="{ debounce: 750 }" />
+										<select value={options.filterBy}>
+											{filterByNodes}
+										</select>
+										<input type="search" placeholder="Enter search string" data-ng-model="home.options.searchTerm" ng-model-options="{ debounce: 750 }" />
 
-								<select value={this.state.selectedSort}>
-									{sortByNodes}
-								</select>
-								<a href="#" data-ng-click="home.sortOrder()"><i className="fa" data-ng-class="home.options.sortOrder === 'desc' ? 'fa-chevron-circle-down' : 'fa-chevron-circle-up'"></i></a>
+										<select value={options.sortBy} onChange={handleSortBy} className="spacer">
+											{sortByNodes}
+										</select>
+
+										<a href="#" data-ng-click="home.sortOrder()" className="spacer"><i className="fa" data-ng-class="home.options.sortOrder === 'desc' ? 'fa-chevron-circle-down' : 'fa-chevron-circle-up'"></i></a>
+									</div>
+								</div>
+								<div className="col-xs-12 col-sm-4">
+									<div className="header__menu">
+										<a href="#" className="spacer">{"settings".toUpperCase()}</a>
+										<a href="#" className="spacer">{"import".toUpperCase()}</a>
+										<a href="#" className="spacer">{"duplicate".toUpperCase()}</a>
+									</div>
+								</div>
 							</div>
 						</ul>
 					</nav>

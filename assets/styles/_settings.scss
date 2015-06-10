@@ -18,6 +18,18 @@ $container-sm: (46em + $grid-gutter-width) !default;
 $container-md: (64em + $grid-gutter-width) !default;
 $container-lg: (73em + $grid-gutter-width) !default;
 
+$moviepage-sm-maxHeight: 10em;
+$moviepage-lg-maxHeight: 17em;
+
+
+// Palette
+// $rose: #F26A9A;
+$light-gray: #F6F7F8;
+$cement-gray: #DBE1E5;
+$dark-gray: #9DA3A7;
+$elegant-blue: #204862;
+// $blue-gray: #57626C;
+$bright-orange: #C63D0F;
 
 // Dimensions
 // $maxWidth: 1250px;
@@ -26,27 +38,29 @@ $container-lg: (73em + $grid-gutter-width) !default;
 // // Breakpoints
 // $breakpoint-1: 480px;
 // $breakpoint-2: 600px;
-$moviepage-sm-maxHeight: 10em;
-$moviepage-lg-maxHeight: 17em;
 
 // Colors
+//$bodyBackground: #FDF3E7;
+$bodyBackground: $light-gray;
+
 $primaryTextColor: #666;
 
 // $primaryAnchorColor: #333;
-$primaryAnchorColor: #57626C;
-
-$primaryHeaderColor: #204862;
+$primaryAnchorColor: $elegant-blue;
+$primaryHeaderColor: $elegant-blue;
 
 //$headerLegalColor: white;
 // $headerBackground: #DAD7CF;
 // $headerBackground: #C63D0F;
 $headerLogoAnchorColor: white;
-$headerLogoBackground: #C63D0F;
+$headerLogoBackground: $bright-orange;
 //$headerLogoBackground: #609FA2;
 // $headerLogoBackground: #F26A9A;
 
-$headerMenuAnchorColor: white;
-$headerMenuBackground: #57626C;
+$headerMenuAnchorColor: $elegant-blue;
+// $headerMenuBackground: #57626C;
+$headerMenuBackground: $cement-gray;
+$headerMenuAnchorActive: $elegant-blue;
 
 $footerColor: white;
 // $footerBackground: #7E8F7D;
@@ -58,5 +72,3 @@ $footerAnchor: black;
 $legalBackground: #7C8893;
 
 
-//$bodyBackground: #FDF3E7;
-$bodyBackground: #DBE1E5;

@@ -33,8 +33,9 @@ module.exports = {
         	.log('cover')
 
         optionsS.onValue((opt) => {
+        	console.log('movies.optionsS.onValue', opt)
         	if (!opt.firstRun) {
-	        	getMovies(opt)
+	        	this.getMovies(opt)
 	        }
         })
 

@@ -121,7 +121,7 @@ func (d *Dal) listMovies(options lib.Options) (total uint64, movies []*model.Mov
 				overview, tagline, resolution, filetype, location, cover, backdrop, genres, vote_average, 
 				vote_count, countries, added, modified, last_watched, all_watched, count_watched, score, 
 				director, writer, actors, awards, imdb_rating, imdb_votes 
-				from movie order by %s %s limit ? offset ?`, options.SortBy, options.SortOrder)
+				from movie order by %s %s, rowid desc limit ? offset ?`, options.SortBy, options.SortOrder)
 
 	stmt, err := tx.Prepare(sql)
 	if err != nil {
