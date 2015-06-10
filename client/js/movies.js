@@ -15,6 +15,7 @@ module.exports = {
     },
 
     getMovies: function(options) {
+    	console.log('movies.getMovies: ', options)
         d.push('getMovies', options)
     },
 
@@ -22,7 +23,8 @@ module.exports = {
     	console.log('movies-before')
         const gotMovies = d
         	.stream('getMovies')
-            .flatMap(options => Bacon.fromPromise(api.getMovies(options)))
+        	.log('movies-opt')
+            .flatMap(opt => Bacon.fromPromise(api.getMovies(opt)))
             .log('movies-middle')
 
         const gotCover = d

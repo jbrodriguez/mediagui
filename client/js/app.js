@@ -61,11 +61,12 @@ function run() {
 		console.log('len(routes)=' + state.routes.length)
 		console.log('query: ', JSON.stringify(state.query, 4, null))
 		if (state.routes.length > 1) {
-			console.log('state.routes[1].path = ' + state.routes[1].path)
+			var minus1 = state.routes.length - 1
+			console.log('state.routes['+minus1+'].path = ' + state.routes[state.routes.length - 1].path)
 
-			switch (state.routes[state.routes.length - 1].path) {
-				case "/movies/":
-					movies.getMovies()
+			switch (state.routes[minus1].path) {
+				case "/movies":
+					movies.getMovies(state.query)
 					break;
 				case "/movies/cover":
 					movies.getCover()

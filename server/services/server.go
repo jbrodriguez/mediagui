@@ -45,6 +45,7 @@ func (s *Server) Start() {
 	{
 		api.GET("/config", s.getConfig)
 		api.GET("/movies/cover", s.getMoviesCover)
+		api.GET("/movies", s.getMovies)
 	}
 
 	port := ":7623"
@@ -91,4 +92,21 @@ func (s *Server) getMoviesCover(c *gin.Context) {
 
 	mlog.Info("moviesDTO: %+v", dto)
 	c.JSON(200, dto)
+}
+
+func (s *Server) getMovies(c *gin.Context) {
+	var options lib.Options
+	c.Bind(&options) // You can also specify which binder to use. We support binding.Form, binding.JSON and binding.XML.
+
+	mlog.Info("server.getMovies.options: %+v", options)
+
+	// msg := &pubsub.Message{Payload: &options, Reply: make(chan interface{}, capacity)}
+	// s.bus.Pub(msg, "/get/movies/cover")
+
+	// reply := <-msg.Reply
+	// dto := reply.(*model.MoviesDTO)
+
+	// // mlog.Info("moviesDTO: %+v", dto)
+	// c.JSON(200, {dto})
+	c.JSON(200, options)
 }

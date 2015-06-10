@@ -25,7 +25,10 @@ function getCover() {
 }
 
 function getMovies(options) {
-	return fetch.ajax(api + '/movies')
+	return fetch.ajax({
+		url: api + '/movies',
+		data: options
+	})
 }
 
 module.exports = {
