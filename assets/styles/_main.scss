@@ -1,5 +1,11 @@
-main {
-	@include flexbox(flex, row, center, stretch);
-
-	flex: 1;
+.backdrop {
+	height: 100%;
+	overflow: hidden;
+	position: relative;
 }
+
+// main {
+// 	@include flexbox(flex, row, center, stretch);
+
+// 	flex: 1;
+// }

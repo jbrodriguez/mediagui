@@ -53,7 +53,8 @@ func (d *Dal) Start() {
 		mlog.Fatalf("Unable to open database (%s): %s", dbPath, err)
 	}
 
-	d.mailbox = d.register(d.bus, d.getCover, "/get/movies/cover")
+	d.mailbox = d.register(d.bus, "/get/movies/cover", d.getCover)
+	d.registerAdditional(d.bus, "/get/movies", d.getMovies, d.mailbox)
 
 	d.countRows = d.prepare("select count(*) from movie;")
 
@@ -81,6 +82,21 @@ func (d *Dal) getCover(msg *pubsub.Message) {
 	}
 
 	total, items := d.listMovies(options)
+
+	msg.Reply <- &model.MoviesDTO{Total: total, Items: items}
+}
+
+func (d *Dal) getMovies(msg *pubsub.Message) {
+	options := msg.Payload.(lib.Options)
+
+	var total uint64
+	var items []*model.Movie
+
+	if options.Query == "" {
+		total, items = d.listMovies(options)
+	} else {
+		// total, items = d.searchMovies(options)
+	}
 
 	msg.Reply <- &model.MoviesDTO{Total: total, Items: items}
 }

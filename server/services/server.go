@@ -100,13 +100,13 @@ func (s *Server) getMovies(c *gin.Context) {
 
 	mlog.Info("server.getMovies.options: %+v", options)
 
-	// msg := &pubsub.Message{Payload: &options, Reply: make(chan interface{}, capacity)}
-	// s.bus.Pub(msg, "/get/movies/cover")
+	msg := &pubsub.Message{Payload: options, Reply: make(chan interface{}, capacity)}
+	s.bus.Pub(msg, "/get/movies")
 
-	// reply := <-msg.Reply
-	// dto := reply.(*model.MoviesDTO)
+	reply := <-msg.Reply
+	dto := reply.(*model.MoviesDTO)
 
 	// // mlog.Info("moviesDTO: %+v", dto)
 	// c.JSON(200, {dto})
-	c.JSON(200, options)
+	c.JSON(200, dto)
 }

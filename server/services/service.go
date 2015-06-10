@@ -14,7 +14,7 @@ func (s *Service) init() {
 	s.registry = make(map[string]MailboxHandler)
 }
 
-func (s *Service) register(bus *pubsub.PubSub, handler MailboxHandler, topic string) (mbox chan *pubsub.Mailbox) {
+func (s *Service) register(bus *pubsub.PubSub, topic string, handler MailboxHandler) (mbox chan *pubsub.Mailbox) {
 	mbox = bus.Sub(topic)
 	s.registry[topic] = handler
 	return mbox

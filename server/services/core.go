@@ -25,7 +25,7 @@ func NewCore(bus *pubsub.PubSub, settings *lib.Settings) *Core {
 func (c *Core) Start() {
 	mlog.Info("Starting service Core ...")
 
-	c.mailbox = c.register(c.bus, c.getConfig, "/get/config")
+	c.mailbox = c.register(c.bus, "/get/config", c.getConfig)
 	// c.mailbox = c.bus.Sub("/get/config")
 
 	go c.react()
