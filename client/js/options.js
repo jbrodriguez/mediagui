@@ -15,10 +15,10 @@ module.exports = {
 
 		return Bacon.update(
 			initialOptions,
-			[d.stream('setOptions')], doSetOptions
+			[d.stream('setOptions')], (_, newOptions) => newOptions
 		)
 
-		function doSetOptions(options) {
+		function doSetOptions(options, newOptions) {
 			return options
 		}
 	},

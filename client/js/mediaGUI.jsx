@@ -33,6 +33,14 @@ module.exports = React.createClass({
 		// console.log('somebody to love: ' + JSON.stringify(this.props, null, 4))
 		const settings = this.props.settings
 		const options = this.props.options
+		const urlQuery = {
+			query: options.query,
+			filterBy: options.filterBy,
+			sortBy: options.sortBy,
+			sortOrder: options.sortOrder,
+			limit: options.limit,
+			offset: options.offset
+		}
 
         var filterByNodes = options.filterByOptions.map(function(option){
             return <FilterWrapper key={option.id} option={option} />
@@ -54,7 +62,7 @@ module.exports = React.createClass({
 						</ul>
 						<ul className="col-xs-12 col-sm-10 center-xs end-sm">
 							<div className="header__menu">
-								<Link to="movies">Movies</Link>
+								<Link to="movies" query={urlQuery}>Movies</Link>
 
 								<select value={this.state.selectedFilter}>
 									{filterByNodes}

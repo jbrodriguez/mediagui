@@ -7,7 +7,18 @@ const Bacon       = require('baconjs'),
 const d = new Dispatcher()
 
 module.exports = {
-    toProperty: function(initialMovies) {
+
+    // "public" methods
+    getCover: function() {
+    	console.log('movies.getCover')
+    	d.push('getCover')
+    },
+
+    getMovies: function(options) {
+        d.push('getMovies', options)
+    },
+
+    toProperty: function(initialMovies, optionsS) {
     	console.log('movies-before')
         const gotMovies = d
         	.stream('getMovies')
@@ -19,23 +30,20 @@ module.exports = {
         	.flatMap(_ => Bacon.fromPromise(api.getCover()))
         	.log('cover')
 
+        optionsS.onValue((opt) => {
+        	if (!opt.firstRun) {
+	        	getMovies(opt)
+	        }
+        })
+
         return Bacon.update(
         	initialMovies,
         	[gotMovies], (_, newMovies) => newMovies,
-        	[gotCover], (_, newCover) => newCover 
+        	[gotCover], (_, newCover) => newCover
         )
         .log('movies')
-    },
-
-    // "public" methods
-    getCover: function() {
-    	console.log('movies.getCover')
-    	d.push('getCover')
-    },
-
-    getMovies: function(options) {
-        d.push('getMovies', options)
     }
+
 }
 
 // module.exports = {

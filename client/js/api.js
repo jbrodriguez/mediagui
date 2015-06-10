@@ -25,7 +25,7 @@ function getCover() {
 }
 
 function getMovies(options) {
-	return fetch(api + '/movies')
+	return fetch.ajax(api + '/movies')
 }
 
 module.exports = {

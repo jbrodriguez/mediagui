@@ -33,7 +33,7 @@ function run() {
 	// const	settingsP 	= settings.toProperty({mediaFolders:[], version:"0.4.0-7.fbb280b"}),
 	const	settingsP 	= settings.toProperty(config),
 			optionsP 	= options.toProperty(getInitialOptions()),
-		  	moviesP  	= movies.toProperty(movieList)
+		  	moviesP  	= movies.toProperty(movieList, optionsP)
 
 	const	appState 	= Bacon.combineTemplate({
 				settings: settingsP,
@@ -59,6 +59,7 @@ function run() {
 		console.log('handler: ', Handler)
 		console.log('routes: ' + state.routes)
 		console.log('len(routes)=' + state.routes.length)
+		console.log('query: ', JSON.stringify(state.query, 4, null))
 		if (state.routes.length > 1) {
 			console.log('state.routes[1].path = ' + state.routes[1].path)
 
@@ -134,14 +135,17 @@ function getInitialOptions() {
     var mode = 'regular'
 
 	const base = {
-        searchTerm: searchTerm,
+        query: searchTerm,
         filterByOptions: filterByOptions,
         filterBy: filterBy,
         sortByOptions: sortByOptions,
         sortBy: sortBy,
         sortOrderOptions: sortOrderOptions,
         sortOrder: sortOrder,
-        mode: mode
+        mode: mode,
+        limit: 50,
+        offset: 0,
+        firstRun: true
 	}
 
 	return base
