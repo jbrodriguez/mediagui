@@ -11,21 +11,21 @@ module.exports = React.createClass({
 
 		var items = movies.map(function(movie, i) {
 			return (
-				<div key={i}>
+				<article key={i} className="moviep">
 					<div className="col-xs-12">
 						<h2>{movie.title} ({movie.year})</h2>
 					</div>
 					<div className="col-xs-12">
-						<div className="row" style={styleo}>
-							<div className="col-xs-12 col-lg-2">
+						<div className="row moviep-images">
+							<div className="col-xs-12 col-sm-2 col-lg-2">
 								<img src={"/img/p" + movie.cover} />
 							</div>
-							<div className="col-xs-12 col-lg-10">
+							<div className="col-xs-12 col-sm-10 col-lg-10 moviep-images__backdrop">
 								<img src={"/img/b" + movie.backdrop} />
 							</div>
 						</div>
 					</div>
-				</div>				
+				</article>				
 			)
 		})
 
