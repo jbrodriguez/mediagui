@@ -34,6 +34,12 @@ $elegant-blue: #204862;
 
 $bright-orange: #C63D0F;
 
+$cheerful-blue: #008cba;
+$fiery-red: #f04124;
+$mellow-orange: #f08a24;
+$casual-green: #43ac6a;
+
+
 // Dimensions
 // $maxWidth: 1250px;
 // $pad: 1em;
@@ -45,12 +51,29 @@ $bright-orange: #C63D0F;
 // Colors
 //$bodyBackground: #FDF3E7;
 $bodyBackground: $light-gray;
-
 $primaryTextColor: #666;
 
 // $primaryAnchorColor: #333;
 $primaryAnchorColor: $elegant-blue;
 $primaryHeaderColor: $elegant-blue;
+
+$form-element-border: $cement-gray;
+
+// ELEMENTS
+$label-default-bg: $cheerful-blue;
+$label-alert-bg: $fiery-red;
+$label-warning-bg: $mellow-orange;
+$label-success-bg: $casual-green;
+$label-secondary-bg: $cement-gray;
+
+$button-default-color: white;
+$button-default-bg: $cheerful-blue;
+$button-primary-color: white;
+$button-primary-bg: $elegant-blue;
+
+
+$button-padding-vertical: 0.3em;
+$button-padding-horizontal: 1em;
 
 //$headerLegalColor: white;
 // $headerBackground: #DAD7CF;
@@ -64,9 +87,13 @@ $headerMenuAnchorColor: $elegant-blue;
 // $headerMenuBackground: #57626C;
 $headerMenuBackground: $cement-gray;
 
+// MAIN
 $pagination-hover-bg: $cement-gray;
-$pagination-active-bg: $elegant-blue;
+$pagination-active-bg: $cheerful-blue;
 $pagination-border-color: $white-gray;
+
+$article-border-color: $pagination-border-color;
+$director-color: $bright-orange;
 
 
 $footerColor: white;

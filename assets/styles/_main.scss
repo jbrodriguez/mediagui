@@ -1,3 +1,14 @@
+article {
+	font-size: 0.9em;
+	margin-bottom: 2em;
+	border-bottom: 1px solid $article-border-color;
+
+	.director {
+		color: $director-color;
+		font-weight: bold;
+	}
+}
+
 ul.pagination {
 	font-size: 0.9em;
 	padding: 0.5em 0 1em 0;

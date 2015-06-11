@@ -40,9 +40,19 @@ i {
 	margin: 0 1em;
 }
 
+.bottom-spacer {
+	margin-bottom: 0.25em;
+}
+
+.bottom-spacer-large {
+	margin-bottom: 1em;
+}
+
 input,
 select {
-	padding: 0.5em;
+	font-size: 0.9em;
+	padding: 0.25em;
+	border: 1px solid $form-element-border;
 }
 
 select {
@@ -68,4 +78,86 @@ select {
 		background-color: #dddddd;
 		cursor: default; 		
 	}
+}
+
+// LABELS
+.label {
+	font-weight: bold;
+	text-align: center;
+	text-decoration: none;
+	line-height: 1;
+	white-space: nowrap;
+	padding: 0.5em;
+	font-size: 0.75em;
+	background-color: $label-default-bg;
+	color: white;
+
+	&.alert {
+		background-color: #f04124;
+		color: white;
+	}
+
+	&.warning {
+		background-color: #f08a24;
+		color: white;
+	}
+
+	&.success {
+		background-color: #43ac6a;
+		color: white;
+	}
+
+	&.secondary {
+	    background-color: #e7e7e7;
+	    color: #333333;
+	}
+}
+
+// BUTTONS
+.button {
+	// padding: 0.1em 1em 0.3em 1em;
+	padding: 0.25em 2em;
+	background: $button-default-bg;
+	color: white;
+}
+
+.btn {
+//	display: inline-block;
+//	font-weight: @btn-font-weight;
+	cursor: pointer;
+	background-image: none; // Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
+	border: 1px solid transparent;
+	white-space: nowrap;
+	padding: $button-padding-vertical $button-padding-horizontal;
+	font-size: 0.75em;
+
+	&.disabled,
+	&[disabled],
+	fieldset[disabled] & {
+		cursor: not-allowed;
+		opacity: .65;
+		box-shadow: none;
+	}	
+}
+
+.btn-default {
+	@include button-variant($button-default-color, $button-default-bg);
+	// color: $button-color;
+	// background-color: $button-default-background;
+	// border-color: darken($button-default-background, 5%);
+
+	// &:focus,
+	// &.focus {
+	// 	background-color: darken($button-default-background, 5%);
+	// 	border-color: darken($button-default-background, 12%);
+	// }
+
+	// &:hover {
+	// 	background-color: darken($button-default-background, 5%);
+	// 	border-color: darken($button-default-background, 7%);
+	// }
+}
+
+.btn-primary {
+	@include button-variant($button-primary-color, $button-primary-bg);
 }

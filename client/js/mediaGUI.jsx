@@ -100,7 +100,7 @@ module.exports = React.createClass({
 										<select value={options.filterBy}>
 											{filterByNodes}
 										</select>
-										<input type="search" placeholder="Enter search string" data-ng-model="home.options.searchTerm" ng-model-options="{ debounce: 750 }" />
+										<input type="search" placeholder="Enter search string" />
 
 										<select value={options.sortBy} onChange={handleSortBy} className="spacer">
 											{sortByNodes}

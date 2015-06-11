@@ -2,6 +2,7 @@ const 	React 			= require('react'),
 		Link			= require('react-router').Link,
 		RouteHandler 	= require('react-router').RouteHandler,
 		Pager 			= require('react-paginate'),
+		moment 			= require('moment'),
 		optionsBO 		= require('./options.js')
 
 module.exports = React.createClass({
@@ -54,6 +55,43 @@ module.exports = React.createClass({
 							</div>
 						</div>
 					</div>
+					<div className="col-xs-12">
+						<div className="row between-xs">
+							<span className="col-xs-12 col-sm-6 director">{movie.director}</span>
+							<span className="col-xs-12 col-sm-6 end-sm">{movie.production_countries}</span>
+						</div>
+					</div>
+					<div className="col-xs-12">
+						<div className="row between-xs">
+							<span className="col-xs-12 col-sm-6 ">{movie.actors}</span>
+							<span className="col-xs-12 col-sm-6 end-sm">{movie.genres}</span>
+						</div>
+					</div>
+					<div className="col-xs-12 bottom-spacer">
+						<div className="row between-xs">
+							<div className="col-xs-12 col-sm-10">
+								<span className="label">{movie.resolution}</span>
+								<span className="label secondary spacer">{movie.location}</span>
+							</div>
+							<div className="col-xs-12 col-sm-2 end-sm">
+								<span className="label"><i className="icon-plus"></i>&nbsp;{moment(movie.added).format('MMM DD, YYYY H:mm')}</span>
+							</div>
+						</div>
+					</div>
+					<div className="col-xs-12">
+						<span>{movie.overview}</span>
+					</div>
+					<div className="col-xs-12 bottom-spacer-large">
+						<div className="row between-xs">
+							<div className="col-xs-12 col-sm-10 top-xs">
+								<input type="text"></input>
+								<button className="btn btn-default">Fix</button>
+							</div>
+							<div className="col-xs-12 col-sm-2 end-sm top-xs">
+								<span className="label"><i className="icon-watched"></i></span>
+							</div>
+						</div>
+					</div>										
 				</article>				
 			)
 		})

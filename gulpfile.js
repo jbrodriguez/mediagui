@@ -198,6 +198,7 @@ function watch() {
 	gulp.watch(config.watch.go, server)
 	gulp.watch(config.watch.styles, styles)
 	gulp.watch(config.watch.images, images)
+	gulp.watch(config.watch.fonts, fonts)
 
 	// start listening reload notifications
 	lrload.monitor(path.join(config.watch.app, 'bundle.js'), {displayNotification: true})

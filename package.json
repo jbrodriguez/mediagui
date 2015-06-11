@@ -22,6 +22,7 @@
     "gulp-util": "^3.0.4",
     "jquery": "^2.1.4",
     "livereactload": "^0.5.2",
+    "moment": "^2.10.3",
     "najax": "^0.1.5",
     "node-fetch": "^1.2.1",
     "ramda": "^0.14.0",
