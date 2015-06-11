@@ -10,7 +10,7 @@ $screen-lg-min: 75em !default;
 // $screen-md-max: ($screen-lg-min - 1) !default;
 
 $grid-columns: 12 !default;
-$grid-gutter-width: 1em !default;
+$grid-gutter-width: 0.5em !default;
 
 $container-max-width: 78em;
 
@@ -62,7 +62,7 @@ $headerLogoBackground: $bright-orange;
 $headerMenuAnchorColor: $elegant-blue;
 // $headerMenuBackground: #57626C;
 $headerMenuBackground: $cement-gray;
-$headerMenuAnchorActive: $elegant-blue;
+
 
 $footerColor: white;
 // $footerBackground: #7E8F7D;

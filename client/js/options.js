@@ -13,8 +13,9 @@ module.exports = {
 		d.push('setSortBy', sortBy)
 	},
 	
-	getOptions: function() {
-		d.push('setOptions')
+	setSortOrder: function(sortOrder) {
+		console.log('options.setSortOrder', sortOrder)
+		d.push('setSortOrder', sortOrder)
 	},
 
 	// Initializer
@@ -27,7 +28,7 @@ module.exports = {
 		return Bacon.update(
 			initialOptions,
 			[d.stream('setSortBy')], setSortBy,
-			[d.stream('setOptions')], (_, newOptions) => newOptions
+			[d.stream('setSortOrder')], setSortOrder
 		)
 		.log('options.baconUpdate')
 
@@ -35,8 +36,8 @@ module.exports = {
 			return R.merge(options, {sortBy: sortBy, firstRun: false})
 		}
 
-		function doSetOptions(options, newOptions) {
-			return options
+		function setSortOrder(options, sortOrder) {
+			return R.merge(options, {sortOrder: sortOrder, firstRun: false})
 		}
 	}
 }

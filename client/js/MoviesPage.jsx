@@ -1,13 +1,21 @@
 const 	React 			= require('react'),
 		Link			= require('react-router').Link,
-		RouteHandler 	= require('react-router').RouteHandler
+		RouteHandler 	= require('react-router').RouteHandler,
+		pager 			= require('react-paginate')
 
 module.exports = React.createClass({
 	render: function() {
 		const movies = this.props.movies.items
+		const options = this.props.options
 
-		const styles = {height: "17em"}
-		const styleo = {overflow: "hidden", maxHeight: "17em"}
+		var pagination;
+
+		if (movies.total > options.limit) {
+			pagination = 
+		}
+
+		// const styles = {height: "17em"}
+		// const styleo = {overflow: "hidden", maxHeight: "17em"}
 
 		var items = movies.map(function(movie, i) {
 			return (
@@ -20,7 +28,7 @@ module.exports = React.createClass({
 							<div className="col-xs-12 col-sm-2">
 								<img src={"/img/p" + movie.cover} />
 							</div>
-							<div className="col-xs-12 col-sm-10 moviep-images__backdrop">
+							<div className="col-xs-12 col-sm-10">
 								<img src={"/img/b" + movie.backdrop} />
 							</div>
 						</div>
@@ -31,7 +39,11 @@ module.exports = React.createClass({
 
 		return (
 			<section className="row">
+				{pagination}
+
 				{items}
+
+				{pagination}
 			</section>
 		)
 	}

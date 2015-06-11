@@ -1,14 +1,42 @@
-header,
+header {
+	margin: 0.5em 0;
+
+	li {
+		list-style: none;
+	}
+}
+
 .header__logo,
 .header__menu {
 	padding: .5em 0;
 }
 
-header {
-	li {
-		list-style: none;
+i {
+	color: $headerMenuAnchorColor;
+
+	&:hover {
+		color: $headerLogoBackground;
+		cursor: pointer;
 	}
+
+	&:disabled {
+		background-color: #dddddd;
+		cursor: default; 		
+	}		
 }
+
+// span.header__action {
+// 	color: $headerMenuAnchorColor;
+
+// 	&:hover {
+// 		cursor: hand;
+// 	}
+
+// 	&:disabled {
+// 		background-color: #dddddd;
+// 		cursor: default; 		
+// 	}	
+// }
 
 .header__logo {
 	background-color: $headerLogoBackground;
@@ -27,7 +55,7 @@ header {
 
 		&.active {
 			padding-bottom: 3px;
-			border-bottom: 3px solid $headerMenuAnchorActive;
+			border-bottom: 3px solid $headerMenuAnchorColor;
 		}
 	}	
 }

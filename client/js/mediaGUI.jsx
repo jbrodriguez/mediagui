@@ -60,9 +60,20 @@ module.exports = React.createClass({
 			optionsBO.setSortBy(sortBy)
         }
 
+        const handleSortOrder = function() {
+        	const sortOrder = options.sortOrder === 'asc' ? 'desc' : 'asc'
+
+        	console.log("mediaGUI.jsx.handleSortOrder:" + sortOrder)
+
+			// this.setState({selectedSort: sortBy})
+			optionsBO.setSortOrder(sortOrder)
+        }
+
+
         const chevron = cx({
-        	'icon-chevron-down': options.sortOrder == 'desc',
-        	'icon-chevron-up': options.sortOrder == 'asc'
+        	'icon-chevron-down': options.sortOrder === 'desc',
+        	'icon-chevron-up': options.sortOrder === 'asc',
+        	'header__action': true
         })
         // const sortStyle = {marginLeft: "1em"}
 
@@ -95,7 +106,7 @@ module.exports = React.createClass({
 											{sortByNodes}
 										</select>
 
-										<a href="#" data-ng-click="home.sortOrder()"><i className={chevron}></i></a>
+										<i onClick={handleSortOrder} className={chevron}></i>
 
 										<span className="spacer">|</span>
 
