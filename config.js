@@ -62,6 +62,18 @@ module.exports = {
 		dst: build + "app/"
 	},	
 
+	images: {
+		cache: "staging/img/",
+		src: assets + "images/*",
+		dst: build + "app/"
+	},
+
+	fonts: {
+		src: assets + "fonts/*",
+		dst: build + "app/fonts/"
+	},
+
+
 	watch: {
 		app: build,
 		index: client + "index.html",
@@ -69,15 +81,6 @@ module.exports = {
 		styles: assets + "styles/*.scss",
 		images: assets + "images/*"
 	},
-
-	images: {
-		cache: "staging/img/",
-		src: assets + "images/*",
-		dst: build + "app/"
-	},
-
-
-
 
 
 

@@ -37,7 +37,7 @@ gulp.task('styles', gulp.series(styles))
 
 gulp.task('dev', gulp.series(
 		clean,
-		gulp.parallel(client, server, styles, images),
+		gulp.parallel(client, server, styles, images, fonts),
 		link,
 		watch
 	)
@@ -173,6 +173,12 @@ function images() {
 		.src(config.images.src)
         .pipe(cache(imagemin({optimizationLevel: 3}), {fileCache: custom, name: ''}))
         .pipe(gulp.dest(config.images.dst))	
+}
+
+function fonts() {
+	return gulp
+		.src(config.fonts.src)
+		.pipe(gulp.dest(config.fonts.dst))
 }
 
 function link(done) {

@@ -44,12 +44,12 @@ select {
 	// line-height: normal;
 	// height: 2.3125rem;	
 
-	&.hover {
+	&:hover {
 		background-color: #f3f3f3;
 		border-color: #999999;		
 	}	
 
-	&.disabled {
+	&:disabled {
 		background-color: #dddddd;
 		cursor: default; 		
 	}

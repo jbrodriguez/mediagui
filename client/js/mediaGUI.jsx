@@ -60,7 +60,11 @@ module.exports = React.createClass({
 			optionsBO.setSortBy(sortBy)
         }
 
-        const sortStyle = {marginLeft: "1em"}
+        const chevron = cx({
+        	'icon-chevron-down': options.sortOrder == 'desc',
+        	'icon-chevron-up': options.sortOrder == 'asc'
+        })
+        // const sortStyle = {marginLeft: "1em"}
 
 								// <select value={this.state.selectedFilter}>
 								// <select value={this.state.selectedSort}>
@@ -91,14 +95,19 @@ module.exports = React.createClass({
 											{sortByNodes}
 										</select>
 
-										<a href="#" data-ng-click="home.sortOrder()" className="spacer"><i className="fa" data-ng-class="home.options.sortOrder === 'desc' ? 'fa-chevron-circle-down' : 'fa-chevron-circle-up'"></i></a>
+										<a href="#" data-ng-click="home.sortOrder()"><i className={chevron}></i></a>
+
+										<span className="spacer">|</span>
+
+										<a href="#">{"import".toUpperCase()}</a>
 									</div>
 								</div>
 								<div className="col-xs-12 col-sm-4">
 									<div className="header__menu">
-										<a href="#" className="spacer">{"settings".toUpperCase()}</a>
-										<a href="#" className="spacer">{"import".toUpperCase()}</a>
-										<a href="#" className="spacer">{"duplicate".toUpperCase()}</a>
+										<a href="#">{"settings".toUpperCase()}</a>
+										<span className="spacer">|</span>
+										<a href="#">{"duplicates".toUpperCase()}</a>
+										<a href="#" className="spacer">{"prune".toUpperCase()}</a>
 									</div>
 								</div>
 							</div>
