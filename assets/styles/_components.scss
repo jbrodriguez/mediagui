@@ -20,6 +20,21 @@
 // 	padding: $pad;
 // }
 
+// STANDARD TAG STYLING
+i {
+	color: $headerMenuAnchorColor;
+
+	&:hover {
+		color: $headerLogoBackground;
+		cursor: pointer;
+	}
+
+	&:disabled {
+		background-color: #dddddd;
+		cursor: default; 		
+	}		
+}
+
 // FORMS
 .spacer {
 	margin: 0 1em;

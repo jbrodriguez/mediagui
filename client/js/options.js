@@ -18,6 +18,11 @@ module.exports = {
 		d.push('setSortOrder', sortOrder)
 	},
 
+	setOffset: function(offset) {
+		console.log('options.setOffset', offset)
+		d.push('setOffset', offset)
+	},
+
 	// Initializer
 	toProperty: function(initialOptions) {
 		console.log('options-before', initialOptions)
@@ -28,7 +33,8 @@ module.exports = {
 		return Bacon.update(
 			initialOptions,
 			[d.stream('setSortBy')], setSortBy,
-			[d.stream('setSortOrder')], setSortOrder
+			[d.stream('setSortOrder')], setSortOrder,
+			[d.stream('setOffset')], setOffset
 		)
 		.log('options.baconUpdate')
 
@@ -39,6 +45,11 @@ module.exports = {
 		function setSortOrder(options, sortOrder) {
 			return R.merge(options, {sortOrder: sortOrder, firstRun: false})
 		}
+
+		function setOffset(options, offset) {
+			return R.merge(options, {offset: offset, firstRun: false})
+		}
+
 	}
 }
 

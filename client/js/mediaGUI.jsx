@@ -73,7 +73,7 @@ module.exports = React.createClass({
         const chevron = cx({
         	'icon-chevron-down': options.sortOrder === 'desc',
         	'icon-chevron-up': options.sortOrder === 'asc',
-        	'header__action': true
+        	// 'header__action': true
         })
         // const sortStyle = {marginLeft: "1em"}
 
@@ -92,7 +92,7 @@ module.exports = React.createClass({
 							</li>
 						</ul>
 						<ul className="col-xs-12 col-sm-10 center-xs">
-							<div className="row between-xs">
+							<li className="row between-xs">
 								<div className="col-xs-12 col-sm-8">
 									<div className="header__menu">
 										<Link to="movies" query={urlQuery} className="spacer">MOVIES</Link>
@@ -121,7 +121,7 @@ module.exports = React.createClass({
 										<a href="#" className="spacer">{"prune".toUpperCase()}</a>
 									</div>
 								</div>
-							</div>
+							</li>
 						</ul>
 					</nav>
 				</header>

@@ -24,6 +24,7 @@ $moviepage-lg-maxHeight: 17em;
 
 // Palette
 // $rose: #F26A9A;
+$white-gray: #f2f2f2;
 $light-gray: #F6F7F8;
 $cement-gray: #DBE1E5;
 $dark-gray: #9DA3A7;
@@ -62,6 +63,10 @@ $headerLogoBackground: $bright-orange;
 $headerMenuAnchorColor: $elegant-blue;
 // $headerMenuBackground: #57626C;
 $headerMenuBackground: $cement-gray;
+
+$pagination-hover-bg: $cement-gray;
+$pagination-active-bg: $elegant-blue;
+$pagination-border-color: $white-gray;
 
 
 $footerColor: white;

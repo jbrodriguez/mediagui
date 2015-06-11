@@ -1,9 +1,9 @@
 header {
 	margin: 0.5em 0;
 
-	li {
-		list-style: none;
-	}
+	// li {
+	// 	list-style: none;
+	// }
 }
 
 .header__logo,
@@ -11,18 +11,8 @@ header {
 	padding: .5em 0;
 }
 
-i {
-	color: $headerMenuAnchorColor;
-
-	&:hover {
-		color: $headerLogoBackground;
-		cursor: pointer;
-	}
-
-	&:disabled {
-		background-color: #dddddd;
-		cursor: default; 		
-	}		
+.fondoblanco {
+	background-color: $headerMenuBackground;
 }
 
 // span.header__action {
