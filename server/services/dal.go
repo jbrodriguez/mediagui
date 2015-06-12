@@ -95,7 +95,7 @@ func (d *Dal) getMovies(msg *pubsub.Message) {
 	if options.Query == "" {
 		total, items = d.listMovies(options)
 	} else {
-		// total, items = d.searchMovies(options)
+		total, items = d.searchMovies(options)
 	}
 
 	msg.Reply <- &model.MoviesDTO{Total: total, Items: items}
@@ -114,7 +114,7 @@ func (d *Dal) listMovies(options lib.Options) (total uint64, movies []*model.Mov
 
 	tx, err := d.db.Begin()
 	if err != nil {
-		mlog.Fatalf("Unable to begin transaction: %s", err)
+		mlog.Fatalf("listMovies:Unable to begin transaction: %s", err)
 	}
 
 	sql := fmt.Sprintf(`select rowid, title, original_title, file_title, year, runtime, tmdb_id, imdb_id, 
@@ -144,7 +144,6 @@ func (d *Dal) listMovies(options lib.Options) (total uint64, movies []*model.Mov
 		}
 	}
 
-	var count = 0
 	for rows.Next() {
 		movie := model.Movie{}
 		rows.Scan(
@@ -157,15 +156,89 @@ func (d *Dal) listMovies(options lib.Options) (total uint64, movies []*model.Mov
 			&movie.Awards, &movie.Imdb_Rating, &movie.Imdb_Votes,
 		)
 		items = append(items, &movie)
-		count++
 	}
 	rows.Close()
 
 	tx.Commit()
 
-	mlog.Info("Listed %d movies (total %d)", count, d.count)
+	mlog.Info("Listed %d movies (total %d)", len(items), d.count)
 
 	return d.count, items
+}
+
+func (d *Dal) searchMovies(options lib.Options) (total uint64, movies []*model.Movie) {
+	mlog.Info("searchMovies.options: %+v", options)
+
+	tx, err := d.db.Begin()
+	if err != nil {
+		mlog.Fatalf("searchMovies:Unable to begin transaction: %s", err)
+	}
+
+	term := options.Query + "*"
+	args := options.FilterBy
+
+	mlog.Info("this is: %s %s %s", term, d.searchArgs, args)
+
+	// if self.searchArgs != args {
+	// self.searchArgs = args
+
+	countQuery := fmt.Sprintf(`select count(*) from movie dt, %s vt 
+		where vt.%s match ? and dt.rowid = vt.docid;`,
+		"movie"+options.FilterBy, "movie"+options.FilterBy)
+
+	stmt, err := tx.Prepare(countQuery)
+	if err != nil {
+		mlog.Fatalf("searchMovies:Unable to prepare transaction: %s", err)
+	}
+	defer stmt.Close()
+
+	mlog.Info("searchMovies:CountQuery:%s", countQuery)
+
+	err = stmt.QueryRow(term).Scan(&d.searchCount)
+	if err != nil {
+		mlog.Fatalf("searchMovies:Unable to count rows: %s", err)
+	}
+
+	listQuery := fmt.Sprintf(`select dt.rowid, dt.title, dt.original_title, dt.year, dt.runtime, 
+			dt.tmdb_id, dt.imdb_id, dt.overview, dt.tagline, dt.resolution, 
+			dt.filetype, dt.location, dt.cover, dt.backdrop, dt.genres, dt.vote_average, 
+			dt.vote_count, dt.countries, dt.added, dt.modified, dt.last_watched, 
+			dt.all_watched, dt.count_watched, dt.score, dt.director, dt.writer, dt.actors, 
+			dt.awards, dt.imdb_rating, dt.imdb_votes
+			from movie dt, %s vt 
+			where vt.%s match ? and dt.rowid = vt.docid order by dt.%s %s limit ? offset ?`,
+		"movie"+options.FilterBy, "movie"+options.FilterBy, options.SortBy, options.SortOrder)
+
+	// mlog.Info("my main man: %s", sql)
+
+	stmt, err = tx.Prepare(listQuery)
+	if err != nil {
+		mlog.Fatalf("searchMovies:listQuery:Unable to prepare transaction: %s", err)
+	}
+	defer stmt.Close()
+
+	rows, err := stmt.Query(term, options.Limit, options.Offset)
+	if err != nil {
+		mlog.Fatalf("searchMovies:listQuery:Unable to begin transaction: %s", err)
+	}
+
+	items := make([]*model.Movie, 0)
+
+	for rows.Next() {
+		movie := model.Movie{}
+		rows.Scan(&movie.Id, &movie.Title, &movie.Original_Title, &movie.Year, &movie.Runtime, &movie.Tmdb_Id, &movie.Imdb_Id, &movie.Overview, &movie.Tagline, &movie.Resolution, &movie.FileType, &movie.Location, &movie.Cover, &movie.Backdrop, &movie.Genres, &movie.Vote_Average, &movie.Vote_Count, &movie.Production_Countries, &movie.Added, &movie.Modified, &movie.Last_Watched, &movie.All_Watched, &movie.Count_Watched, &movie.Score, &movie.Director, &movie.Writer, &movie.Actors, &movie.Awards, &movie.Imdb_Rating, &movie.Imdb_Votes)
+		// movie := &model.Movie{}
+		// rows.Scan(movie.Id, movie.Title, movie.Original_Title, movie.Year, movie.Runtime, movie.Tmdb_Id, movie.Imdb_Id, movie.Overview, movie.Tagline, movie.Resolution, movie.FileType, movie.Location, movie.Cover, movie.Backdrop)
+		// mlog.Info("title: (%s)", movie.Title)
+		items = append(items, &movie)
+	}
+	rows.Close()
+
+	tx.Commit()
+
+	mlog.Info("searchMovies:Listed %d movies (total %d)", len(items), d.searchCount)
+
+	return d.searchCount, items
 }
 
 func (d *Dal) prepare(sql string) *sql.Stmt {
