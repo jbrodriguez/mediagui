@@ -21,6 +21,18 @@ $container-lg: (73em + $grid-gutter-width) !default;
 $moviepage-sm-maxHeight: 10em;
 $moviepage-lg-maxHeight: 17em;
 
+// DatePicker Variables
+$border-color: #aeaeae;
+$background-color: #f0f0f0;
+$selected-color: #216ba5;
+$muted-color: #ccc;
+$text-color: #000;
+
+$border-radius: 4px;
+$item-size: 24px;
+$day-margin: 2px;
+$triangle-size: 8px;
+$datepicker__margin: 5px;
 
 // Palette
 // $rose: #F26A9A;

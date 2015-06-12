@@ -2,15 +2,40 @@ const 	React 			= require('react'),
 		Link			= require('react-router').Link,
 		RouteHandler 	= require('react-router').RouteHandler,
 		Pager 			= require('react-paginate'),
+		DatePicker 		= require('react-datepicker'),
 		moment 			= require('moment'),
 		optionsBO 		= require('./options.js')
 
+
+// const DatePickerWrapper = React.createClass({
+// 	// getInitialState: function() {
+// 	// 	return {
+// 	// 		date: moment()
+// 	// 	}
+// 	// },
+
+// 	render: function() {
+// 		<span>
+// 			<DatePicker
+// 				key="example1"
+// 				selected={movie.last_watched}
+// 				onChange={handleWatched}
+// 			/>
+
+// 		</span>
+// 	}
+// })
+
 module.exports = React.createClass({
+	getInitialState: function() {
+		return {
+			date: moment()
+		}
+	},
+
 	render: function() {
 		const movies = this.props.movies
 		const options = this.props.options
-
-		var pagination;
 
 		const handlePageClick = function(data) {
 			const selected = data.selected;
@@ -18,8 +43,11 @@ module.exports = React.createClass({
 			optionsBO.setOffset(offset)
 		}
 
-		console.log('where is the love: total('+movies.total+')>limit('+options.limit+')')
+		const handleWatched = function(data) {
+			return;
+		}
 
+		var pagination;
 		if (movies.total > options.limit) {
 			console.log('moviesPage.total('+movies.total+'>limit('+options.limit)
 			pagination = (
@@ -36,9 +64,7 @@ module.exports = React.createClass({
 			)
 		}
 
-		// const styles = {height: "17em"}
-		// const styleo = {overflow: "hidden", maxHeight: "17em"}
-
+		var that = this;
 		var items = movies.items.map(function(movie, i) {
 			var watched;
 
@@ -92,9 +118,14 @@ module.exports = React.createClass({
 					</div>
 					<div className="col-xs-12 bottom-spacer-large">
 						<div className="row between-xs">
-							<div className="col-xs-12 col-sm-10 top-xs">
+							<div className="col-xs-12 col-sm-10 top-xs date-picker">
 								<input type="text"></input>
 								<button className="btn btn-default">Fix</button>
+								<DatePicker
+									key="example1"
+									selected={moment()}
+									onChange={handleWatched}
+								/>
 							</div>
 							<div className="col-xs-12 col-sm-2 end-sm top-xs">
 								<span className="label"><i className="icon-watched"></i></span>
