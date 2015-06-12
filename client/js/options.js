@@ -8,6 +8,11 @@ const d = new Dispatcher()
 
 module.exports = {
 	// PUBLIC API
+	setFilterBy: function(filterBy) {
+		console.log('options.setFilterBy', filterBy)
+		d.push('setFilterBy', filterBy)
+	},
+
 	setSortBy: function(sortBy) {
 		console.log('options.setSortBy', sortBy)
 		d.push('setSortBy', sortBy)
@@ -42,12 +47,17 @@ module.exports = {
 
 		return Bacon.update(
 			initialOptions,
+			[d.stream('setFilterBy')], setFilterBy,
 			[d.stream('setSortBy')], setSortBy,
 			[d.stream('setSortOrder')], setSortOrder,
 			[d.stream('setOffset')], setOffset,
 			gotQueryTerm, setQueryTerm
 		)
 		.log('options.baconUpdate')
+
+		function setFilterBy(options, filterBy) {
+			return R.merge(options, {filterBy: filterBy, firstRun: false})
+		}
 
 		function setSortBy(options, sortBy) {
 			return R.merge(options, {sortBy: sortBy, firstRun: false})

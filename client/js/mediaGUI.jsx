@@ -51,6 +51,15 @@ module.exports = React.createClass({
             return <SortWrapper key={option.id} option={option} />
         })
 
+        const handleFilterBy = function() {
+			const filterBy = event.target.value
+
+        	console.log("mediaGUI.jsx.handleFilterBy:" + filterBy)
+
+			optionsBO.setFilterBy(filterBy)
+        }
+
+
         const handleSortBy = function() {
 			const sortBy = event.target.value
 
@@ -91,7 +100,7 @@ module.exports = React.createClass({
 
 		return (
 			// <div className={cx("container", "body")}>
-			<div className="container">
+			<div className="container body">
 				<header>
 					<nav className="row between-xs">
 						<ul className="col-xs-12 col-sm-2 center-xs">
@@ -105,7 +114,7 @@ module.exports = React.createClass({
 									<div className="header__menu">
 										<Link to="movies" query={urlQuery} className="spacer">MOVIES</Link>
 
-										<select value={options.filterBy}>
+										<select value={options.filterBy} onChange={handleFilterBy}>
 											{filterByNodes}
 										</select>
 										<input type="search" placeholder="Enter search string" onChange={handleQueryTerm} />
