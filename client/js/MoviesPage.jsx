@@ -44,10 +44,6 @@ module.exports = React.createClass({
 			optionsBO.setOffset(offset)
 		}
 
-		const handleWatched = function(data) {
-			return;
-		}
-
 		var pagination;
 		if (movies.total > options.limit) {
 			console.log('moviesPage.total('+movies.total+'>limit('+options.limit)

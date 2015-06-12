@@ -5,7 +5,7 @@ const 	React 			= require('react'),
 module.exports = React.createClass({
 	getInitialState: function() {
 		return {
-			date: moment(),
+			dateWatched: moment(),
 			tmdb_id: this.props.movie.tmdb_id,
 			rating: this.props.movie.rating
 		}
@@ -22,7 +22,10 @@ module.exports = React.createClass({
 			return
 		}
 
-		const setStateWatched = function(data) {
+		const setStateWatched = function(date) {
+			this.setState({
+				dateWatched: date
+			})
 			return
 		}
 
@@ -47,7 +50,7 @@ module.exports = React.createClass({
 		}
 
 		return (
-			<article key={key}>
+			<article>
 				<div className="col-xs-12">
 					<h2>{movie.title} ({movie.year})</h2>
 				</div>
@@ -94,9 +97,9 @@ module.exports = React.createClass({
 							<input type="text"></input>
 							<button className="btn btn-default">Fix</button>
 							<DatePicker
-								key="example1"
-								selected={this.state.date}
-								onChange={handleWatched}
+								key="{key}"
+								placeholderText="YYYY-MM-DD"
+								onChange={setStateWatched}
 							/>
 						</div>
 						<div className="col-xs-12 col-sm-2 end-sm top-xs">
