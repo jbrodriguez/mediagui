@@ -1,4 +1,5 @@
 header {
+	// background-color: $headerMenuBackground;	
 	margin: 0.5em 0;
 
 	// li {
@@ -33,7 +34,11 @@ header {
 }
 
 .header__menu {
-	background-color: $headerMenuBackground;
+	background-color: $headerMenuBackground;	
+}
+
+.header__menu-section {
+	// background-color: $headerMenuBackground;
 
 	a {
 		font-size: 0.9em;

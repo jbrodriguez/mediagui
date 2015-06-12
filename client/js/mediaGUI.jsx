@@ -108,34 +108,36 @@ module.exports = React.createClass({
 								<Link to="cover">mediaGUI</Link>
 							</li>
 						</ul>
-						<ul className="col-xs-12 col-sm-10 center-xs">
-							<li className="row between-xs">
-								<div className="col-xs-12 col-sm-8">
-									<div className="header__menu">
-										<Link to="movies" query={urlQuery} className="spacer">MOVIES</Link>
+						<ul className="col-xs-12 col-sm-10">
+							<li className="header__menu">
+								<div className="row between-xs">
+									<div className="col-xs-12 col-sm-8">
+										<div className="header__menu-section">
+											<Link to="movies" query={urlQuery} className="spacer">MOVIES</Link>
 
-										<select value={options.filterBy} onChange={handleFilterBy}>
-											{filterByNodes}
-										</select>
-										<input type="search" placeholder="Enter search string" onChange={handleQueryTerm} />
+											<select value={options.filterBy} onChange={handleFilterBy}>
+												{filterByNodes}
+											</select>
+											<input type="search" placeholder="Enter search string" onChange={handleQueryTerm} />
 
-										<select value={options.sortBy} onChange={handleSortBy} className="spacer">
-											{sortByNodes}
-										</select>
+											<select value={options.sortBy} onChange={handleSortBy} className="spacer">
+												{sortByNodes}
+											</select>
 
-										<i onClick={handleSortOrder} className={chevron}></i>
+											<i onClick={handleSortOrder} className={chevron}></i>
 
-										<span className="spacer">|</span>
+											<span className="spacer">|</span>
 
-										<a href="#">{"import".toUpperCase()}</a>
+											<a href="#">{"import".toUpperCase()}</a>
+										</div>
 									</div>
-								</div>
-								<div className="col-xs-12 col-sm-4">
-									<div className="header__menu">
-										<a href="#">{"settings".toUpperCase()}</a>
-										<span className="spacer">|</span>
-										<a href="#">{"duplicates".toUpperCase()}</a>
-										<a href="#" className="spacer">{"prune".toUpperCase()}</a>
+									<div className="col-xs-12 col-sm-4 end-xs">
+										<div className="header__menu-section">
+											<a href="#">{"settings".toUpperCase()}</a>
+											<span className="spacer">|</span>
+											<a href="#">{"duplicates".toUpperCase()}</a>
+											<a href="#" className="spacer">{"prune".toUpperCase()}</a>
+										</div>
 									</div>
 								</div>
 							</li>
@@ -147,13 +149,25 @@ module.exports = React.createClass({
 					<RouteHandler { ...this.props}/>
 				</main>
 
-				<footer className="row">
-				    <section className="legal row">
-				        <span className="copyright">Copyright &copy; 2015 &nbsp; <a href='http://jbrodriguez.io/'>Juan B. Rodriguez</a></span>
-				        <span className="version">mediaGUI v{settings.version}</span>
-				        <div className="logos">
-					        <span><a href="http://jbrodriguez.io/" title="jbrodriguez.io" target="_blank"><img src="app/logo-small.png" alt="Logo for Juan B. Rodriguez" /></a></span>
-				       </div>
+				<footer>
+				    <section className="row legal between-xs middle-xs">
+				    	<ul className="col-xs-12 col-sm-4">
+				    		<div>
+						        <span className="copyright spacer">Copyright &copy; 2015 &nbsp;</span>
+						        <a href='http://jbrodriguez.io/'>Juan B. Rodriguez</a>
+					       	</div>
+				    	</ul>
+				    	<ul className="col-xs-12 col-sm-4">
+				    		<div className="center-xs">
+						        <span className="version">mediaGUI &nbsp;</span>
+						        <span className="version">v{settings.version}</span>
+					        </div>
+				    	</ul>
+				    	<ul className="col-xs-12 col-sm-4 end-xs middle-xs">
+							<a className="end-xs middle-xs spacer" href="http://jbrodriguez.io/" title="jbrodriguez.io" target="_blank">
+								<img src="app/logo-small.png" alt="Logo for Juan B. Rodriguez" />
+							</a>
+				    	</ul>
 				    </section>				
 				</footer>
 			</div>

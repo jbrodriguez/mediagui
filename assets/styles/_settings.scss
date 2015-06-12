@@ -40,9 +40,10 @@ $white-gray: #f2f2f2;
 $light-gray: #F6F7F8;
 $cement-gray: #DBE1E5;
 $dark-gray: #9DA3A7;
+$darker-gray: #7C8893;
 
 $elegant-blue: #204862;
-// $blue-gray: #57626C;
+$gray-blue: #57626C;
 
 $bright-orange: #C63D0F;
 
@@ -83,10 +84,10 @@ $button-default-bg: $cheerful-blue;
 $button-primary-color: white;
 $button-primary-bg: $elegant-blue;
 
-
 $button-padding-vertical: 0.3em;
 $button-padding-horizontal: 1em;
 
+// HEADER
 //$headerLegalColor: white;
 // $headerBackground: #DAD7CF;
 // $headerBackground: #C63D0F;
@@ -107,14 +108,14 @@ $pagination-border-color: $white-gray;
 $article-border-color: $pagination-border-color;
 $director-color: $bright-orange;
 
-
-$footerColor: white;
+// FOOTER
+$footer-color: white;
 // $footerBackground: #7E8F7D;
-$footerBackground: transparent;
+$footer-bg: transparent;
 // $footerAnchor: #C63D0F;
-$footerAnchor: black;
+$footer-anchor-color: black;
 
 // $legalBackground: #7E8F7D;
-$legalBackground: #7C8893;
+$footer-legal-bg: $gray-blue;
 
 
