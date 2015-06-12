@@ -10,16 +10,19 @@ module.exports = {
 	// PUBLIC API
 	setFilterBy: function(filterBy) {
 		console.log('options.setFilterBy', filterBy)
+		storage.set('filterBy', filterBy)
 		d.push('setFilterBy', filterBy)
 	},
 
 	setSortBy: function(sortBy) {
 		console.log('options.setSortBy', sortBy)
+		storage.set('sortBy', sortBy)
 		d.push('setSortBy', sortBy)
 	},
 	
 	setSortOrder: function(sortOrder) {
 		console.log('options.setSortOrder', sortOrder)
+		storage.set('sortOrder', sortOrder)
 		d.push('setSortOrder', sortOrder)
 	},
 
