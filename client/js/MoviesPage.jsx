@@ -40,6 +40,14 @@ module.exports = React.createClass({
 		// const styleo = {overflow: "hidden", maxHeight: "17em"}
 
 		var items = movies.items.map(function(movie, i) {
+			var watched;
+
+			if (movie.last_watched != '') {
+				watched = (
+					<span className="label success spacer"><i className="icon-watched"></i>&nbsp;{moment(movie.last_watched).format('MMM DD, YYYY')}</span>
+				)
+			}
+
 			return (
 				<article key={i}>
 					<div className="col-xs-12">
@@ -69,11 +77,12 @@ module.exports = React.createClass({
 					</div>
 					<div className="col-xs-12 bottom-spacer">
 						<div className="row between-xs">
-							<div className="col-xs-12 col-sm-10">
+							<div className="col-xs-12 col-sm-9">
 								<span className="label">{movie.resolution}</span>
 								<span className="label secondary spacer">{movie.location}</span>
 							</div>
-							<div className="col-xs-12 col-sm-2 end-sm">
+							<div className="col-xs-12 col-sm-3 end-sm">
+								{watched}							
 								<span className="label"><i className="icon-plus"></i>&nbsp;{moment(movie.added).format('MMM DD, YYYY H:mm')}</span>
 							</div>
 						</div>
