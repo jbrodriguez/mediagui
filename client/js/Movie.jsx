@@ -26,7 +26,6 @@ module.exports = React.createClass({
 			this.setState({
 				dateWatched: date
 			})
-			return
 		}
 
 		const setStateRating = function(data) {
@@ -38,7 +37,6 @@ module.exports = React.createClass({
 		}
 
 		const saveWatched = function() {
-
 		}
 		
 		var watched;

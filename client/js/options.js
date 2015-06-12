@@ -23,9 +23,19 @@ module.exports = {
 		d.push('setOffset', offset)
 	},
 
+	setQueryTerm: function(term) {
+		console.log('options.setQueryTerm', term)
+		d.push('setQueryTerm', term)
+	},
+
 	// Initializer
 	toProperty: function(initialOptions) {
 		console.log('options-before', initialOptions)
+
+		const gotQueryTerm = d
+			.stream('setQueryTerm')
+			.debounce(750)
+
 		// const gotOptions = 
 		// 	.scan(initialOptions, (_, newOptions) => newOptions)
 		// 	.log('options')
@@ -34,7 +44,8 @@ module.exports = {
 			initialOptions,
 			[d.stream('setSortBy')], setSortBy,
 			[d.stream('setSortOrder')], setSortOrder,
-			[d.stream('setOffset')], setOffset
+			[d.stream('setOffset')], setOffset,
+			gotQueryTerm, setQueryTerm
 		)
 		.log('options.baconUpdate')
 
@@ -50,6 +61,9 @@ module.exports = {
 			return R.merge(options, {offset: offset, firstRun: false})
 		}
 
+		function setQueryTerm(options, term) {
+			return R.merge(options, {query: term, firstRun: false})
+		}
 	}
 }
 

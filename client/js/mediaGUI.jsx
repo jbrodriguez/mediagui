@@ -69,6 +69,14 @@ module.exports = React.createClass({
 			optionsBO.setSortOrder(sortOrder)
         }
 
+        const handleQueryTerm = function() {
+			const queryTerm = event.target.value
+
+        	console.log("mediaGUI.jsx.handleQueryTerm:" + queryTerm)
+
+			optionsBO.setQueryTerm(queryTerm)
+        }
+
 
         const chevron = cx({
         	'icon-chevron-down': options.sortOrder === 'desc',
@@ -100,7 +108,7 @@ module.exports = React.createClass({
 										<select value={options.filterBy}>
 											{filterByNodes}
 										</select>
-										<input type="search" placeholder="Enter search string" />
+										<input type="search" placeholder="Enter search string" onChange={handleQueryTerm} />
 
 										<select value={options.sortBy} onChange={handleSortBy} className="spacer">
 											{sortByNodes}
