@@ -31,7 +31,7 @@ func NewScraper(bus *pubsub.PubSub, settings *lib.Settings) *Scraper {
 func (s *Scraper) Start() {
 	mlog.Info("Starting service Scraper ...")
 
-	s.mailbox = s.register(s.bus, "/command/scrape/movie", s.scrapeMovie)
+	s.mailbox = s.register(s.bus, "/command/movie/scrape", s.scrapeMovie)
 
 	go s.react()
 }
