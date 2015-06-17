@@ -46,6 +46,7 @@ func (s *Server) Start() {
 		api.GET("/config", s.getConfig)
 		api.GET("/movies/cover", s.getMoviesCover)
 		api.GET("/movies", s.getMovies)
+		api.POST("/import", s.importMovies)
 	}
 
 	port := ":7623"
@@ -90,7 +91,7 @@ func (s *Server) getMoviesCover(c *gin.Context) {
 	// 	Items: movies,
 	// }
 
-	mlog.Info("moviesDTO: %+v", dto)
+	// mlog.Info("moviesDTO: %+v", dto)
 	c.JSON(200, dto)
 }
 
@@ -109,4 +110,8 @@ func (s *Server) getMovies(c *gin.Context) {
 	// // mlog.Info("moviesDTO: %+v", dto)
 	// c.JSON(200, {dto})
 	c.JSON(200, dto)
+}
+
+func (s *Server) importMovies(c *gin.Context) {
+	s.bus.Pub(nil, "/post/import")
 }

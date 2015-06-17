@@ -3,8 +3,10 @@ const	React 			= require('react'),
 		MediaGUI 		= require('./MediaGUI.jsx'),
 		MoviesCover 	= require('./MoviesCover.jsx'),
 		MoviesPage 		= require('./MoviesPage.jsx'),
+		Import 			= require('./Import.jsx'),
 		settings 		= require('./settings'),
 		movies 			= require('./movies'),
+		Dispatcher  	= require('./dispatcher'),		
 		api 			= require('./api'),
 		storage			= require('./storage'),
 		options 		= require('./options'),
@@ -12,6 +14,8 @@ const	React 			= require('react'),
 		Route 			= Router.Route,
 		DefaultRoute 	= Router.DefaultRoute,
 		Redirect 		= Router.Redirect
+
+const d = new Dispatcher()
 
 var config = {},
 	movieList = []
@@ -31,14 +35,16 @@ api
 function run() {
 
 	// const	settingsP 	= settings.toProperty({mediaFolders:[], version:"0.4.0-7.fbb280b"}),
-	const	settingsP 	= settings.toProperty(config),
+	const	navigationS	= d.stream('navigation'),
+			settingsP 	= settings.toProperty(config),
 			optionsP 	= options.toProperty(getInitialOptions()),
 		  	moviesP  	= movies.toProperty(movieList, optionsP)
 
 	const	appState 	= Bacon.combineTemplate({
 				settings: settingsP,
 				movies: moviesP,
-				options: optionsP
+				options: optionsP,
+				navigation: navigationS
 			})
 			.log('appState.value = ')
 
@@ -46,6 +52,7 @@ function run() {
 				<Route name="app" path="/" handler={MediaGUI}>
 					<Route name="cover" path="/movies/cover" handler={MoviesCover} />
 					<Route name="movies" path="/movies" handler={MoviesPage} />
+					<Route name="import" path="/import" handler={Import} />
 
 					<Redirect from="/" to="/movies/cover" />
 				</Route>
@@ -71,6 +78,10 @@ function run() {
 				case "/movies/cover":
 					movies.getCover()
 					break;
+				case "/import":
+					d.push('navigation')
+					break;
+
 			}
 
 
@@ -88,7 +99,7 @@ function run() {
 		})
 	})
 
-	Router.transitionTo
+	d.push('navigation')
 }
 
 

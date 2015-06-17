@@ -32,7 +32,7 @@ func (c *Core) Start() {
 	mlog.Info("Starting service Core ...")
 
 	c.mailbox = c.register(c.bus, "/get/config", c.getConfig)
-	c.registerAdditional(c.bus, "/get/import", c.importMovies, c.mailbox)
+	c.registerAdditional(c.bus, "/post/import", c.importMovies, c.mailbox)
 	c.registerAdditional(c.bus, "/event/movie/found", c.doMovieFound, c.mailbox)
 
 	// c.m = sc.NewMachine("idle")
@@ -56,7 +56,7 @@ func (c *Core) Stop() {
 
 func (c *Core) react() {
 	for mbox := range c.mailbox {
-		mlog.Info("Core:Topic: %s", mbox.Topic)
+		// mlog.Info("Core:Topic: %s", mbox.Topic)
 		c.dispatch(mbox.Topic, mbox.Content)
 	}
 }
@@ -67,7 +67,9 @@ func (c *Core) getConfig(msg *pubsub.Message) {
 }
 
 func (c *Core) importMovies(msg *pubsub.Message) {
-	c.bus.Pub(nil, "/post/movies/scan")
+	mlog.Info("Begin movie scanning ...")
+
+	c.bus.Pub(nil, "/command/movie/scan")
 	//	msg.Reply <- &c.settings.Config
 	// mlog.Info("Import finished")
 }
@@ -76,19 +78,20 @@ func (c *Core) doMovieFound(msg *pubsub.Message) {
 	movie := msg.Payload.(*model.Movie)
 
 	check := &pubsub.Message{Payload: movie, Reply: make(chan interface{}, 3)}
-	c.bus.Pub(check, "/cmd/movie/exists")
+	c.bus.Pub(check, "/command/movie/exists")
 
-	reply := <-msg.Reply
+	reply := <-check.Reply
 	exists := reply.(bool)
 
 	var text string
 	if exists {
-		text = fmt.Sprintf("SKIPPED: present in db [%s] (%s)", movie.Title, movie.Location)
-		mlog.Info(text)
+		text = fmt.Sprintf("SKIPPED: exists [%s] (%s)", movie.Title, movie.Location)
 	} else {
-		text = fmt.Sprintf("FOUND: [%s] (%s)", movie.Title, movie.Location)
+		text = fmt.Sprintf("NEW: [%s] (%s)", movie.Title, movie.Location)
 		// self.Bus.ScrapeMovie <- movie
 	}
+
+	mlog.Info(text)
 
 	status := &pubsub.Message{Payload: text}
 	c.bus.Pub(status, "import:progress")

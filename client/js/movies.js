@@ -19,6 +19,10 @@ module.exports = {
         d.push('getMovies', options)
     },
 
+    importMovies: function() {
+    	d.push('importMovies')
+    },
+
     toProperty: function(initialMovies, optionsS) {
     	console.log('movies-before')
         const gotMovies = d
@@ -32,6 +36,11 @@ module.exports = {
         	.flatMap(_ => Bacon.fromPromise(api.getCover()))
         	.log('cover')
 
+        const movieImported = d
+        	.stream('importMovies')
+        	.flatMap(_ => Bacon.fromPromise(api.importMovies()))
+        	.log('importMovies')
+
         optionsS.onValue((opt) => {
         	console.log('movies.optionsS.onValue', opt)
         	if (!opt.firstRun) {
@@ -42,7 +51,8 @@ module.exports = {
         return Bacon.update(
         	initialMovies,
         	[gotMovies], (_, newMovies) => newMovies,
-        	[gotCover], (_, newCover) => newCover
+        	[gotCover], (_, newCover) => newCover,
+        	[movieImported], (currentMovies, _) => currentMovies
         )
         .log('movies')
     }

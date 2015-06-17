@@ -52,8 +52,10 @@ func main() {
 	server := services.NewServer(bus, settings)
 	core := services.NewCore(bus, settings)
 	dal := services.NewDal(bus, settings)
+	scanner := services.NewScanner(bus, settings)
 
 	// socket.Start()
+	scanner.Start()
 	dal.Start()
 	server.Start()
 	core.Start()
@@ -68,6 +70,7 @@ func main() {
 		core.Stop()
 		server.Stop()
 		dal.Stop()
+		scanner.Stop()
 		// socket.Stop()
 
 		break

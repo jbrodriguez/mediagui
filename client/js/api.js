@@ -31,8 +31,16 @@ function getMovies(options) {
 	})
 }
 
+function importMovies() {
+	return fetch.ajax({
+		url: api + '/import',
+		method: 'POST'
+	})
+}
+
 module.exports = {
 	getConfig: getConfig,
 	getCover: getCover,
-	getMovies: getMovies
+	getMovies: getMovies,
+	importMovies: importMovies
 }

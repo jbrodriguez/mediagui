@@ -9,7 +9,7 @@ import (
 	"jbrodriguez/mediagui/server/lib"
 	"jbrodriguez/mediagui/server/model"
 	"path/filepath"
-	// "strings"
+	"strings"
 	// "time"
 )
 
@@ -55,6 +55,7 @@ func (d *Dal) Start() {
 
 	d.mailbox = d.register(d.bus, "/get/movies/cover", d.getCover)
 	d.registerAdditional(d.bus, "/get/movies", d.getMovies, d.mailbox)
+	d.registerAdditional(d.bus, "/command/movie/exists", d.checkExists, d.mailbox)
 
 	d.countRows = d.prepare("select count(*) from movie;")
 
@@ -69,7 +70,7 @@ func (d *Dal) Stop() {
 
 func (d *Dal) react() {
 	for mbox := range d.mailbox {
-		mlog.Info("DAL:Topic: %s", mbox.Topic)
+		// mlog.Info("DAL:Topic: %s", mbox.Topic)
 		d.dispatch(mbox.Topic, mbox.Content)
 	}
 }
@@ -239,6 +240,39 @@ func (d *Dal) searchMovies(options lib.Options) (total uint64, movies []*model.M
 	mlog.Info("searchMovies:Listed %d movies (total %d)", len(items), d.searchCount)
 
 	return d.searchCount, items
+}
+
+func (d *Dal) checkExists(msg *pubsub.Message) {
+	tx, err := d.db.Begin()
+	if err != nil {
+		mlog.Fatalf("at begin: %s", err)
+	}
+
+	stmt, err := tx.Prepare("select rowid from movie where upper(location) = ?")
+	if err != nil {
+		tx.Rollback()
+		mlog.Fatalf("at prepare: %s", err)
+	}
+	defer stmt.Close()
+
+	movie := msg.Payload.(*model.Movie)
+
+	var id int
+	err = stmt.QueryRow(strings.ToUpper(movie.Location)).Scan(&id)
+
+	// if err == sql.ErrNoRows {
+	// 	mlog.Fatalf("id = %d, err = %d", id, err)
+	// }
+
+	// mlog.Fatalf("gone and done")
+	if err != sql.ErrNoRows && err != nil {
+		tx.Rollback()
+		mlog.Fatalf("at queryrow: %s", err)
+	}
+
+	tx.Commit()
+
+	msg.Reply <- (id != 0)
 }
 
 func (d *Dal) prepare(sql string) *sql.Stmt {

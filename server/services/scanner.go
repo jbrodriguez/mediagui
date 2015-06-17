@@ -33,7 +33,7 @@ func NewScanner(bus *pubsub.PubSub, settings *lib.Settings) *Scanner {
 func (s *Scanner) Start() {
 	mlog.Info("Starting service Scanner ...")
 
-	s.mailbox = s.register(s.bus, "/post/movies/scan", s.scanMovies)
+	s.mailbox = s.register(s.bus, "/command/movie/scan", s.scanMovies)
 
 	re := []string{
 		`(?i)(?P<Resolution>.*?)/(?P<Name>.*?)\s\((?P<Year>\d\d\d\d)\)/(?:.*/)*bdmv/index.(?P<FileType>bdmv)$`,
@@ -61,7 +61,7 @@ func (s *Scanner) Stop() {
 
 func (s *Scanner) react() {
 	for mbox := range s.mailbox {
-		mlog.Info("Scanner:Topic: %s", mbox.Topic)
+		// mlog.Info("Scanner:Topic: %s", mbox.Topic)
 		s.dispatch(mbox.Topic, mbox.Content)
 	}
 }
@@ -120,7 +120,7 @@ func (s *Scanner) walk(folder string) error {
 			}
 
 			movie := &model.Movie{Title: rmap["Name"], File_Title: rmap["Name"], Year: rmap["Year"], Resolution: resolution, FileType: rmap["FileType"], Location: path}
-			mlog.Info("FOUND [%s] (%s)", movie.Title, movie.Location)
+			// mlog.Info("FOUND [%s] (%s)", movie.Title, movie.Location)
 
 			msg := &pubsub.Message{Payload: movie}
 			s.bus.Pub(msg, "/event/movie/found")

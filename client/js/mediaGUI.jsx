@@ -128,7 +128,7 @@ module.exports = React.createClass({
 
 											<span className="spacer">|</span>
 
-											<a href="#">{"import".toUpperCase()}</a>
+											<Link to="import">{"import".toUpperCase()}</Link>
 										</div>
 									</div>
 									<div className="col-xs-12 col-sm-4 end-xs">
