@@ -74,8 +74,7 @@ func (s *Scanner) scanMovies(msg *pubsub.Message) {
 
 	// ping := "ping -c1 %s > /dev/null && echo \"YES\" || echo \"NO\""
 
-	begin := &pubsub.Message{Payload: "Import process started"}
-	s.bus.Pub(begin, "import:begin")
+	lib.Notify(s.bus, "import:begin", "Import process started")
 
 	for _, folder := range folders {
 		err := s.walk(folder)
@@ -84,8 +83,7 @@ func (s *Scanner) scanMovies(msg *pubsub.Message) {
 		}
 	}
 
-	end := &pubsub.Message{Payload: "Import process finished."}
-	s.bus.Pub(end, "import:end")
+	lib.Notify(s.bus, "import:end", "Import process finished")
 }
 
 func (s *Scanner) walk(folder string) error {
