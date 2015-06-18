@@ -53,11 +53,16 @@ func (c *Connection) Writer() {
 				return
 			}
 
-			c.Ws.SetWriteDeadline(time.Now().Add(writeWait))
-			if err := c.Ws.WriteJSON(message); err != nil {
-				mlog.Error(err)
+			if err := c.write(websocket.TextMessage, message); err != nil {
+				mlog.Warning("Unable to write to websocket: %s", err.Error())
 				return
 			}
+
+			// c.Ws.SetWriteDeadline(time.Now().Add(writeWait))
+			// if err := c.Ws.WriteJSON(message); err != nil {
+			// 	mlog.Error(err)
+			// 	return
+			// }
 		case <-ticker.C:
 			if err := c.write(websocket.PingMessage, []byte{}); err != nil {
 				mlog.Info("error with ping: %s", err.Error())

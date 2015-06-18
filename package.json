@@ -9,6 +9,7 @@
     "browserify": "^10.2.1",
     "classnames": "^2.1.2",
     "del": "^1.2.0",
+    "emitter": "0.0.1",
     "gulp": "git://github.com/gulpjs/gulp.git#4.0",
     "gulp-autoprefixer": "^2.3.1",
     "gulp-bytediff": "^0.2.1",

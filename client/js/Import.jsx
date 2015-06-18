@@ -10,13 +10,13 @@ module.exports = React.createClass({
 			movies.importMovies()
 		}
 
-		// if tyepof this.props.messages != 'undefined' {
-		// 	const items = this.props.messages.map(function(message, i) {
-		// 		return (
-		// 			<p key={i} className="console__line">message</p>
-		// 		)
-		// 	})
-		// }
+		const items = this.props.messages.map(function(message, i) {
+			return (
+				<p key={i} className="col-xs-12 console__line">{message.payload}</p>
+			)
+		})
+
+		console.log('import.jsx.props.messages', this.props.messages);
 	
 		return (
 			<section className="row">
@@ -26,8 +26,9 @@ module.exports = React.createClass({
 				<div className="col-xs-12">
 					<div className="console">
 						<div className="row" data-ng-if="vm.showConsole">
-							<p className="col-xs-12 console__line" key="1">Never Surrender</p>
-							<p className="col-xs-12 console__line" key="2">Dont dream its over</p>
+							<div className="col-xs-12 console__lines" data-unb-scroll-bottom="vm.lines">
+								{items}
+							</div>
 						</div>						
 					</div>
 				</div>
@@ -36,6 +37,3 @@ module.exports = React.createClass({
 	}
 })
 
-							// <div className="col-xs-12 console__lines" data-unb-scroll-bottom="vm.lines">
-							// 	{items}
-							// </div>

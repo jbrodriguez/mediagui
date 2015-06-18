@@ -68,7 +68,7 @@ func (c *Core) getConfig(msg *pubsub.Message) {
 }
 
 func (c *Core) importMovies(msg *pubsub.Message) {
-	mlog.Info("Begin movie scanning ...")
+	// mlog.Info("Begin movie scanning ...")
 
 	c.bus.Pub(nil, "/command/movie/scan")
 	//	msg.Reply <- &c.settings.Config

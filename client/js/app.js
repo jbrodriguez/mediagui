@@ -6,7 +6,8 @@ const	React 			= require('react'),
 		Import 			= require('./Import.jsx'),
 		settings 		= require('./settings'),
 		movies 			= require('./movies'),
-		Dispatcher  	= require('./dispatcher'),		
+		wsmessages		= require('./wsmessages'),
+		Dispatcher  	= require('./dispatcher'),
 		api 			= require('./api'),
 		storage			= require('./storage'),
 		options 		= require('./options'),
@@ -34,16 +35,21 @@ api
 
 function run() {
 
+	const {socketS, sendFn} = api.getSocket()
+
 	// const	settingsP 	= settings.toProperty({mediaFolders:[], version:"0.4.0-7.fbb280b"}),
 	const	navigationS	= d.stream('navigation'),
 			settingsP 	= settings.toProperty(config),
 			optionsP 	= options.toProperty(getInitialOptions()),
-		  	moviesP  	= movies.toProperty(movieList, optionsP)
+		  	moviesP  	= movies.toProperty(movieList, optionsP),
+		  	messageP 	= wsmessages.toProperty([], socketS, sendFn)
+		  	// moviesP  	= movies.toProperty(movieList, optionsP, sendFn)
 
 	const	appState 	= Bacon.combineTemplate({
 				settings: settingsP,
 				movies: moviesP,
 				options: optionsP,
+				messages: messageP,
 				navigation: navigationS
 			})
 			.log('appState.value = ')

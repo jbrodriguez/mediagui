@@ -1,12 +1,53 @@
 // const Bacon       = require('baconjs'),
 //       R           = require('ramda'),
-const 	fetch 	= require('jquery')
+const 	fetch 		= require('jquery'),
+		// websocket 	= require('./websocket'),
+		Bacon 		= require('baconjs')
 
-const api = "http://localhost:7623/api/v1"
+
+const hostr	= "http://localhost:7623/api/v1"
+const hostw = "ws://localhost:7623/ws"
+
+function getSocket() {
+	console.log('trying to connect to socket')
+
+	const skt = new WebSocket(hostw)
+
+	console.log('after websocket host')
+
+	skt.onopen = function() {
+	    console.log("Connection opened")
+	}
+
+	skt.onclose = function() {
+	    console.log("Connection is closed...")
+	}
+
+	const stream = Bacon.fromEventTarget(skt, "message").map(function(event) {
+		console.log('event is: ', event)
+	    var dataString = event.data
+	    console.log("got:", JSON.parse(dataString))
+	    return JSON.parse(dataString)
+	})
+
+	const sendMsg = function(topic, msg) {
+		const message = {
+			topic: topic,
+			payload: JSON.stringify(msg)
+		}
+
+		skt.send(JSON.stringify(message))
+	}	
+
+	return {
+		socketS: stream,
+		sendFn: sendMsg
+	}
+}
 
 function getConfig() {
 	console.log('inside api.getConfig')
-	const sup = fetch.ajax(api + '/config')
+	const sup = fetch.ajax(hostr + '/config')
 		// .then(function(res) {
 	 //        return res.json();
 	 //    })
@@ -21,24 +62,25 @@ function getConfig() {
 
 function getCover() {
 	console.log('inside api.getCover')
-	return fetch.ajax(api + '/movies/cover')
+	return fetch.ajax(hostr + '/movies/cover')
 }
 
 function getMovies(options) {
 	return fetch.ajax({
-		url: api + '/movies',
+		url: hostr + '/movies',
 		data: options
 	})
 }
 
 function importMovies() {
 	return fetch.ajax({
-		url: api + '/import',
+		url: hostr + '/import',
 		method: 'POST'
 	})
 }
 
 module.exports = {
+	getSocket: getSocket,
 	getConfig: getConfig,
 	getCover: getCover,
 	getMovies: getMovies,

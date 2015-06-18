@@ -70,15 +70,20 @@ func (s *Socket) connect(wskt *websocket.Conn) {
 	s.hub.Register <- c
 
 	go c.Writer()
+
+	hello := &pubsub.Message{Payload: &model.WsMessage{Id: c.Id, Topic: "hello", Payload: ""}}
+	s.transmit(hello)
+
 	c.Reader()
 }
 
 func (s *Socket) transmit(msg *pubsub.Message) {
 	out, err := json.Marshal(msg.Payload)
 	if err != nil {
-		s.hub.Broadcast <- out
+		mlog.Warning("Error transmitting websocket message: %s", err.Error())
 	} else {
-		mlog.Warning("Error transmitting websocket message: %s", err)
+		mlog.Info("out is: %s", out)
+		s.hub.Broadcast <- out
 	}
 }
 
