@@ -49,14 +49,14 @@ func (h *Hub) Run() {
 		case c := <-h.Unregister:
 			if _, ok := h.connections[c]; ok {
 				delete(h.connections, c)
-				close(c.send)
+				close(c.Send)
 			}
 		case m := <-h.Broadcast:
 			for c := range h.connections {
 				select {
-				case c.send <- m:
+				case c.Send <- m:
 				default:
-					close(c.send)
+					close(c.Send)
 					delete(h.connections, c)
 				}
 			}

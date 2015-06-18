@@ -61,16 +61,16 @@ func (s *Socket) doNewConnection(msg *pubsub.Message) {
 
 func (s *Socket) connect(wskt *websocket.Conn) {
 	c := &ws.Connection{
-		id:   "alpha",
-		ws:   wskt,
-		send: make(chan []byte, 256),
-		hub:  s.hub,
+		Id:   "alpha",
+		Ws:   wskt,
+		Send: make(chan []byte, 256),
+		Hub:  s.hub,
 	}
 
 	s.hub.Register <- c
 
-	go c.writer()
-	c.reader()
+	go c.Writer()
+	c.Reader()
 }
 
 func (s *Socket) transmit(msg *pubsub.Message) {

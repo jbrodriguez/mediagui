@@ -31,30 +31,30 @@ type Connection struct {
 
 // write writes a message with the given message type and payload.
 func (c *Connection) write(mt int, payload []byte) error {
-	c.ws.SetWriteDeadline(time.Now().Add(writeWait))
-	return c.ws.WriteMessage(mt, payload)
+	c.Ws.SetWriteDeadline(time.Now().Add(writeWait))
+	return c.Ws.WriteMessage(mt, payload)
 }
 
-func (c *Connection) writer() {
+func (c *Connection) Writer() {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
 		ticker.Stop()
-		c.ws.Close()
+		c.Ws.Close()
 	}()
 
 	// mlog.Info("before write loop")
 
 	for {
 		select {
-		case message, ok := <-c.send:
+		case message, ok := <-c.Send:
 			if !ok {
 				c.write(websocket.CloseMessage, []byte{})
 				mlog.Warning("Closing socket ...")
 				return
 			}
 
-			c.ws.SetWriteDeadline(time.Now().Add(writeWait))
-			if err := c.ws.WriteJSON(message); err != nil {
+			c.Ws.SetWriteDeadline(time.Now().Add(writeWait))
+			if err := c.Ws.WriteJSON(message); err != nil {
 				mlog.Error(err)
 				return
 			}
@@ -68,33 +68,33 @@ func (c *Connection) writer() {
 
 }
 
-func (c *Connection) reader() {
+func (c *Connection) Reader() {
 	defer func() {
-		c.hub.Unregister <- c
-		c.ws.Close()
+		c.Hub.Unregister <- c
+		c.Ws.Close()
 	}()
 
-	c.ws.SetReadLimit(maxMessageSize)
-	c.ws.SetReadDeadline(time.Now().Add(pongWait))
-	c.ws.SetPongHandler(func(string) error {
-		c.ws.SetReadDeadline(time.Now().Add(pongWait))
+	c.Ws.SetReadLimit(maxMessageSize)
+	c.Ws.SetReadDeadline(time.Now().Add(pongWait))
+	c.Ws.SetPongHandler(func(string) error {
+		c.Ws.SetReadDeadline(time.Now().Add(pongWait))
 		return nil
 	})
 
 	// mlog.Info("before read loop")
 
 	for {
-		_, message, err := c.ws.ReadMessage()
+		_, message, err := c.Ws.ReadMessage()
 		if err != nil {
 			break
 		}
 
-		c.hub.FromWs <- message
+		c.Hub.FromWs <- message
 	}
 
 	// for {
 	// 	var msgIn dto.MessageIn
-	// 	err := c.ws.ReadJSON(&msgIn)
+	// 	err := c.Ws.ReadJSON(&msgIn)
 	// 	if err != nil {
 	// 		mlog.Info("error reading socket: %s", err.Error())
 	// 		break
