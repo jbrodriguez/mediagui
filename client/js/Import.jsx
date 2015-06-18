@@ -10,23 +10,24 @@ module.exports = React.createClass({
 			movies.importMovies()
 		}
 
-		const items = this.props.messages.map(function(message, i) {
-			return (
-				<p key={i} className="console__line">message</p>
-			)
-		})
+		// if tyepof this.props.messages != 'undefined' {
+		// 	const items = this.props.messages.map(function(message, i) {
+		// 		return (
+		// 			<p key={i} className="console__line">message</p>
+		// 		)
+		// 	})
+		// }
 	
 		return (
 			<section className="row">
-				<div className="col-xs-12">
-					<button className="btn btn-default" onClick={handleImportMovies}>import</button>
+				<div className="col-xs-12 bottom-spacer-half">
+					<button className="btn btn-default" onClick={handleImportMovies}>Import</button>
 				</div>
 				<div className="col-xs-12">
-					<div>
-						<div className="row console" data-ng-if="vm.showConsole">
-							<div className="col-xs-12 console__lines" data-unb-scroll-bottom="vm.lines">
-								<p ng-repeat="line in vm.lines track by $index" class="console__line">{{line}}</p>
-							</div>
+					<div className="console">
+						<div className="row" data-ng-if="vm.showConsole">
+							<p className="col-xs-12 console__line" key="1">Never Surrender</p>
+							<p className="col-xs-12 console__line" key="2">Dont dream its over</p>
 						</div>						
 					</div>
 				</div>
@@ -35,3 +36,6 @@ module.exports = React.createClass({
 	}
 })
 
+							// <div className="col-xs-12 console__lines" data-unb-scroll-bottom="vm.lines">
+							// 	{items}
+							// </div>
