@@ -1,7 +1,6 @@
 // const Bacon       = require('baconjs'),
 //       R           = require('ramda'),
-// const 	fetch 		= require('jquery'),
-const 	fetch 		= require('node-fetch'),
+const 	fetch 		= require('jquery').ajax,
 		// websocket 	= require('./websocket'),
 		Bacon 		= require('baconjs')
 
@@ -49,37 +48,24 @@ function getConfig() {
 	console.log('inside api.getConfig')
 
 	return fetch(hostr + '/config')
-		.then(function(res) {
-			return res.json()
-		})
 }
 
 function getCover() {
 	console.log('inside api.getCover')
 
 	return fetch(hostr + '/movies/cover')
-		.then(function(res) {
-			return res.json()
-		})
 }
 
 function getMovies(options) {
 	return fetch(hostr + '/movies', {
-			body: options
-		})
-		.then(function(res) {
-			return res.json()
-		})
+		data: options
+	})
 }
 
 function importMovies() {
 	return fetch(hostr + '/import', {
-			method: 'POST'
-		})
-		.then(function(res) {
-			return res.json()
-		})
-
+		method: 'POST'
+	})
 }
 
 module.exports = {

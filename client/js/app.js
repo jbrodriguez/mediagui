@@ -26,6 +26,101 @@ api
 
 function run(config) {
 	console.log(config)
+
+ 	const {socketS, sendFn} = api.getSocket()
+
+	const	navigationS	= d.stream('navigation'),
+			settingsP 	= settings.toProperty(config),
+			optionsP 	= options.toProperty(getInitialOptions()),
+		  	moviesP  	= movies.toProperty([], optionsP),
+		  	messageP 	= wsmessages.toProperty([], socketS, sendFn)
+
+	const	appState 	= Bacon.combineTemplate({
+				settings: settingsP,
+				movies: moviesP,
+				options: optionsP,
+				messages: messageP,
+				navigation: navigationS
+			})
+			.log('appState.value = ')
+
+	const	routes 		= (
+				<Route name="app" path="/" handler={MediaGUI}>
+					<Route name="cover" path="/movies/cover" handler={MoviesCover} />
+					<Route name="movies" path="/movies" handler={MoviesPage} />
+					<Route name="import" path="/import" handler={Import} />
+
+					<Redirect from="/" to="/movies/cover" />
+				</Route>
+			)
+
+	var Handler = {}
+
+	const router = Router.create({
+		routes: routes,
+		location: Router.HistoryLocation
+	})
+
+	if (config.mediaFolders.length == 0) {
+		console.log("should have piaid me")
+		router.transitionTo("import")
+	}
+
+	router.run( function(ProxyHandler, state) {
+		Handler = ProxyHandler
+
+		console.log('router.run.state: ', state)
+
+
+		if (state.routes.length > 1) {
+			var minus1 = state.routes.length - 1
+			console.log('state.routes['+minus1+'].path = ' + state.routes[state.routes.length - 1].path)
+
+			switch (state.routes[minus1].path) {
+				case "/movies":
+					movies.getMovies(state.query)
+					break;
+				case "/movies/cover":
+					movies.getCover()
+					break;
+				case "/import":
+					d.push('navigation')
+					break;
+			}
+		}
+	})
+	
+	// Router.run(routes, Router.HistoryLocation, function(ProxyHandler, state) {
+	// 	Handler = ProxyHandler
+
+	// 	console.log('router.run.state: ', state)
+
+	// 	if (state.routes.length > 1) {
+	// 		var minus1 = state.routes.length - 1
+	// 		console.log('state.routes['+minus1+'].path = ' + state.routes[state.routes.length - 1].path)
+
+	// 		switch (state.routes[minus1].path) {
+	// 			case "/movies":
+	// 				movies.getMovies(state.query)
+	// 				break;
+	// 			case "/movies/cover":
+	// 				movies.getCover()
+	// 				break;
+	// 			case "/import":
+	// 				d.push('navigation')
+	// 				break;
+	// 		}
+	// 	}
+	// })
+
+	appState.onValue((state) => {
+		console.log('dentro de onValue: ', state)
+		React.render(<Handler { ...state} />, document.body, function() {
+			console.log('marrano')
+		})
+	})
+
+	d.push('navigation')	
 }
 
 

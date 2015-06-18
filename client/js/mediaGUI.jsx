@@ -33,6 +33,9 @@ module.exports = React.createClass({
 	render: function() {
 		// console.log('somebody to love: ' + JSON.stringify(this.props, null, 4))
 		const settings = this.props.settings
+
+
+
 		const options = this.props.options
 		const urlQuery = {
 			query: options.query,
