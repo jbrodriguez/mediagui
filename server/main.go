@@ -48,16 +48,18 @@ func main() {
 
 	bus := pubsub.New(623)
 
+	dal := services.NewDal(bus, settings)
 	socket := services.NewSocket(bus, settings)
 	server := services.NewServer(bus, settings)
-	core := services.NewCore(bus, settings)
-	dal := services.NewDal(bus, settings)
 	scanner := services.NewScanner(bus, settings)
+	scraper := services.NewScraper(bus, settings)
+	core := services.NewCore(bus, settings)
 
-	socket.Start()
-	scanner.Start()
 	dal.Start()
+	socket.Start()
 	server.Start()
+	scanner.Start()
+	scraper.Start()
 	core.Start()
 
 	mlog.Info("Press Ctrl+C to stop ...")
@@ -68,10 +70,11 @@ func main() {
 		mlog.Info("Received an interrupt, shutting the app down ...")
 
 		core.Stop()
-		server.Stop()
-		dal.Stop()
+		scraper.Stop()
 		scanner.Stop()
+		server.Stop()
 		socket.Stop()
+		dal.Stop()
 
 		break
 	}
