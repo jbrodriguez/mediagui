@@ -2,15 +2,20 @@ package services
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
 	"github.com/jbrodriguez/mlog"
 	"github.com/jbrodriguez/pubsub"
 	"jbrodriguez/mediagui/server/lib"
 	"jbrodriguez/mediagui/server/model"
+	"net/http"
 	"path/filepath"
 )
 
-const apiVersion = "api/v1"
-const capacity = 3
+const (
+	apiVersion = "api/v1"
+	capacity   = 3
+	bufferSize = 8192
+)
 
 type Server struct {
 	bus      *pubsub.PubSub
@@ -38,6 +43,7 @@ func (s *Server) Start() {
 	s.router = gin.Default()
 
 	s.router.GET("/", s.index)
+	s.router.GET("/ws", s.handleSocket)
 	s.router.Static("/app", filepath.Join(s.settings.WebDir, "app"))
 	s.router.Static("/img", filepath.Join(s.settings.WebDir, "img"))
 
@@ -60,6 +66,20 @@ func (s *Server) Stop() {
 
 func (s *Server) index(c *gin.Context) {
 	c.File(filepath.Join(s.settings.WebDir, "index.html"))
+}
+
+func (s *Server) handleSocket(c *gin.Context) {
+	ws, err := websocket.Upgrade(c.Writer, c.Request, nil, bufferSize, bufferSize)
+	if _, ok := err.(websocket.HandshakeError); ok {
+		http.Error(c.Writer, "Not a websocket handshake", 400)
+		return
+	} else if err != nil {
+		mlog.Error(err)
+		return
+	}
+
+	msg := &pubsub.Message{Payload: ws}
+	s.bus.Pub(msg, "socket:connections:new")
 }
 
 func (s *Server) getConfig(c *gin.Context) {

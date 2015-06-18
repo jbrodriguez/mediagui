@@ -48,13 +48,13 @@ func main() {
 
 	bus := pubsub.New(623)
 
-	// socket := services.NewSocket(bus, &settings)
+	socket := services.NewSocket(bus, settings)
 	server := services.NewServer(bus, settings)
 	core := services.NewCore(bus, settings)
 	dal := services.NewDal(bus, settings)
 	scanner := services.NewScanner(bus, settings)
 
-	// socket.Start()
+	socket.Start()
 	scanner.Start()
 	dal.Start()
 	server.Start()
@@ -71,7 +71,7 @@ func main() {
 		server.Stop()
 		dal.Stop()
 		scanner.Stop()
-		// socket.Stop()
+		socket.Stop()
 
 		break
 	}
