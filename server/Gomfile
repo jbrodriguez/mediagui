@@ -4,4 +4,5 @@ gom 'github.com/jbrodriguez/mlog', :commit => 'aba49db95e5770b3299d4a98279ba9008
 gom	'github.com/jbrodriguez/pubsub', :commit => 'adb0f108803dfb17dc292f377492a3de391fa077'
 gom 'github.com/gin-gonic/gin', :commit => 'e899d8a99eac4cfeadbeef09017b304d2b918b85'
 gom 'github.com/mattn/go-sqlite3', :commit => '542ae647f8601bafd96233961b150cae198e0295'
-gom 'bitbucket.org/jdpalmer/statecraft', :commit => 'b1425ed31d0a4b543a0719ea46972e00fffc1704'
+gom 'github.com/jbrodriguez/go-tmdb', :commit => '059ff26af069ef71c91274fb60c35e0043f20ec3'
+gom 'github.com/gorilla/websocket', :commit => 'a3ec486e6a7a41858210b0fc5d7b5df593b3c4a3'

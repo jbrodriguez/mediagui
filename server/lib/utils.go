@@ -1,6 +1,11 @@
 package lib
 
 import (
+	"encoding/json"
+	"github.com/jbrodriguez/mlog"
+	"github.com/jbrodriguez/pubsub"
+	"jbrodriguez/mediagui/server/model"
+	"net/http"
 	"os"
 )
 
@@ -17,4 +22,23 @@ func Exists(path string) (bool, error) {
 	}
 
 	return false, err
+}
+
+func RestGet(url string, reply interface{}) error {
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	// body, err := ioutil.ReadAll(resp.Body)
+	err = json.NewDecoder(resp.Body).Decode(reply)
+
+	return err
+}
+
+func Notify(bus *pubsub.PubSub, topic, text string) {
+	mlog.Info(text)
+	payload := &model.WsMessage{Topic: topic, Payload: text}
+	bus.Pub(&pubsub.Message{Payload: payload}, "socket:connections:broadcast")
 }

@@ -34,6 +34,7 @@ func (c *Core) Start() {
 	c.mailbox = c.register(c.bus, "/get/config", c.getConfig)
 	c.registerAdditional(c.bus, "/post/import", c.importMovies, c.mailbox)
 	c.registerAdditional(c.bus, "/event/movie/found", c.doMovieFound, c.mailbox)
+	c.registerAdditional(c.bus, "/event/movie/scraped", c.doMovieScraped, c.mailbox)
 
 	// c.m = sc.NewMachine("idle")
 	// c.m.Rule("import", "idle", "scanning")
@@ -88,11 +89,17 @@ func (c *Core) doMovieFound(msg *pubsub.Message) {
 		text = fmt.Sprintf("SKIPPED: exists [%s] (%s)", movie.Title, movie.Location)
 	} else {
 		text = fmt.Sprintf("NEW: [%s] (%s)", movie.Title, movie.Location)
-		// self.Bus.ScrapeMovie <- movie
 	}
 
-	mlog.Info(text)
+	lib.Notify(c.bus, "import:progress", text)
 
-	status := &pubsub.Message{Payload: text}
-	c.bus.Pub(status, "import:progress")
+	if !exists {
+		// c.bus.Pub(msg, "/command/movie/scrape")
+	}
+}
+
+func (c *Core) doMovieScraped(msg *pubsub.Message) {
+	dto := msg.Payload.(*model.ScrapeDTO)
+
+	mlog.Info("ScrapeDTO: %+v", dto)
 }
