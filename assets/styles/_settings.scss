@@ -45,14 +45,21 @@ $darker-gray: #7C8893;
 $elegant-blue: #204862;
 $gray-blue: #57626C;
 $charcoal-blue: #343642;
+$cheerful-blue: #008cba;
 
 $bright-orange: #C63D0F;
-
-$cheerful-blue: #008cba;
-$fiery-red: #f04124;
 $mellow-orange: #f08a24;
+
+$lighter1-red: #F26A9A;
+$mellow-red: #FF3B59;
+$fiery-red: #f04124;
+$bright-red: #D01524;
+$acre-red: #C73429;
+$dark-red: #B21524;
+
 $casual-green: #43ac6a;
 
+$pale-yellow: #FEF5C4;
 
 // Dimensions
 // $maxWidth: 1250px;
@@ -71,9 +78,10 @@ $primaryTextColor: #666;
 $primaryAnchorColor: $elegant-blue;
 $primaryHeaderColor: $elegant-blue;
 
-$form-element-border: $cement-gray;
 
 // ELEMENTS
+$padding-default: 0.5em;
+
 $label-default-bg: $cheerful-blue;
 $label-alert-bg: $fiery-red;
 $label-warning-bg: $mellow-orange;
@@ -88,12 +96,20 @@ $button-primary-bg: $elegant-blue;
 $button-padding-vertical: 0.3em;
 $button-padding-horizontal: 1em;
 
+$state-warning-bg: $pale-yellow;
+
+$form-element-border: $cement-gray;
+$form-addon-bg: $cement-gray;
+$form-element-padding-vertical: 0.3em;
+$form-element-padding-horizontal: 0.6em;
+
+
 // HEADER
 //$headerLegalColor: white;
 // $headerBackground: #DAD7CF;
 // $headerBackground: #C63D0F;
 $headerLogoAnchorColor: white;
-$headerLogoBackground: $bright-orange;
+$headerLogoBackground: $acre-red;
 //$headerLogoBackground: #609FA2;
 // $headerLogoBackground: #F26A9A;
 
@@ -114,13 +130,12 @@ $console-color: white;
 $console-bg: $charcoal-blue;
 
 // FOOTER
-$footer-color: white;
-// $footerBackground: #7E8F7D;
-$footer-bg: transparent;
-// $footerAnchor: #C63D0F;
-$footer-anchor-color: black;
+$footer-color: $headerLogoBackground;
+$footer-bg: $headerMenuBackground;
+//$footer-bg: transparent;
+$footer-anchor-color: $gray-blue;
 
 // $legalBackground: #7E8F7D;
-$footer-legal-bg: $gray-blue;
+// $footer-legal-bg: $gray-blue;
 
 

@@ -147,3 +147,14 @@
 		border-color: darken($background, 7%);
 	}	
 }
+
+@mixin bg-variant($color) {
+	background-color: $color;
+	border: 1px solid darken($color, 10%);
+	padding: 0.5em;
+
+	&:hover,
+	&:focus {
+		background-color: darken($color, 10%);
+	}
+}

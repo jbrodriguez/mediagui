@@ -20,22 +20,7 @@
 // 	padding: $pad;
 // }
 
-// STANDARD TAG STYLING
-i {
-	color: $headerMenuAnchorColor;
-
-	&:hover {
-		color: $headerLogoBackground;
-		cursor: pointer;
-	}
-
-	&:disabled {
-		background-color: #dddddd;
-		cursor: default; 		
-	}		
-}
-
-// FORMS
+// HELPERS
 .spacer {
 	margin: 0 1em;
 }
@@ -50,6 +35,25 @@ i {
 
 .bottom-spacer-large {
 	margin-bottom: 1em;
+}
+
+.bg-warning {
+	@include bg-variant($state-warning-bg);
+}
+
+// STANDARD TAG STYLING
+i {
+	color: $headerMenuAnchorColor;
+
+	&:hover {
+		color: $headerLogoBackground;
+		cursor: pointer;
+	}
+
+	&:disabled {
+		background-color: #dddddd;
+		cursor: default; 		
+	}		
 }
 
 input,
@@ -97,6 +101,65 @@ select {
 		cursor: default; 		
 	}
 }
+
+// FORMS
+form {
+}
+
+fieldset {
+    margin: 0;
+    padding: 0.35em 0 0.75em;
+    border: 0;
+}
+
+legend {
+//    display: block;
+    width: 100%;
+    padding: $padding-default 0;
+    margin-bottom: $padding-default;
+    // color: #333;
+    border-bottom: 1px solid $form-element-border;
+}	
+
+.addon {
+	display: flex;
+	// margin-bottom: 1.5em;
+}
+
+.addon-field {
+	flex: 1;
+
+	&:not(:first-child) {
+		border-left: 0;
+	}
+
+	&:not(:last-child) {
+		border-right: 0;
+	}	
+}
+
+.addon-item {
+	background-color: $form-addon-bg;
+  // background-color: rgba(147, 128, 108, 0.1);
+  // color: #666666;
+  // font: inherit;
+  // font-weight: normal;
+}
+
+.addon-field,
+.addon-item {
+  border: 1px solid darken($form-addon-bg, 10%);
+  padding: $form-element-padding-vertical $form-element-padding-horizontal;
+}
+// .addon-field:first-child,
+// .addon-item:first-child {
+//   border-radius: 2px 0 0 2px;
+// }
+// .addon-field:last-child,
+// .addon-item:last-child {
+//   border-radius: 0 2px 2px 0;
+// }
+
 
 // LABELS
 .label {
@@ -178,4 +241,33 @@ select {
 
 .btn-primary {
 	@include button-variant($button-primary-color, $button-primary-bg);
+}
+
+// TABLES
+table {
+	background: white;
+	border: 1px solid $form-element-border;
+	table-layout: fixed;
+	width: 100%;
+}
+
+thead,
+tr,
+th,
+td {
+	padding: $padding-default;
+	font-size: 0.9em;
+}
+
+tr,
+th {
+	text-align: left;
+}
+
+tr:nth-of-type(even) {
+	background-color: $white-gray;
+}
+
+th {
+	background-color: $cement-gray;
 }

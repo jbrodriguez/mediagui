@@ -91,8 +91,8 @@ module.exports = React.createClass({
 				</div>
 				<div className="col-xs-12 bottom-spacer-large">
 					<div className="row between-xs">
-						<div className="col-xs-12 col-sm-10 top-xs date-picker">
-							<input type="text"></input>
+						<div className="col-xs-12 col-sm-10 addon">
+							<input className="addon-field" type="text"></input>
 							<button className="btn btn-default">Fix</button>
 							<DatePicker
 								key="{key}"

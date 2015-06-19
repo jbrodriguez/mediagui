@@ -3,6 +3,7 @@ const	React 			= require('react'),
 		MediaGUI 		= require('./MediaGUI.jsx'),
 		MoviesCover 	= require('./MoviesCover.jsx'),
 		MoviesPage 		= require('./MoviesPage.jsx'),
+		SettingsPage	= require('./SettingsPage.jsx'),
 		Import 			= require('./Import.jsx'),
 		settings 		= require('./settings'),
 		movies 			= require('./movies'),
@@ -48,6 +49,7 @@ function run(config) {
 				<Route name="app" path="/" handler={MediaGUI}>
 					<Route name="cover" path="/movies/cover" handler={MoviesCover} />
 					<Route name="movies" path="/movies" handler={MoviesPage} />
+					<Route name="settings" path="/settings" handler={SettingsPage} />
 					<Route name="import" path="/import" handler={Import} />
 
 					<Redirect from="/" to="/movies/cover" />
@@ -63,7 +65,7 @@ function run(config) {
 
 	if (config.mediaFolders.length == 0) {
 		console.log("should have piaid me")
-		router.transitionTo("import")
+		router.transitionTo("settings")
 	}
 
 	router.run( function(ProxyHandler, state) {
@@ -84,6 +86,7 @@ function run(config) {
 					movies.getCover()
 					break;
 				case "/import":
+				case "/settings":
 					d.push('navigation')
 					break;
 			}

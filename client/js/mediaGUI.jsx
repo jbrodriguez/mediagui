@@ -136,7 +136,7 @@ module.exports = React.createClass({
 									</div>
 									<div className="col-xs-12 col-sm-4 end-xs">
 										<div className="header__menu-section">
-											<a href="#">{"settings".toUpperCase()}</a>
+											<Link to="settings">{"settings".toUpperCase()}</Link>
 											<span className="spacer">|</span>
 											<a href="#">{"duplicates".toUpperCase()}</a>
 											<a href="#" className="spacer">{"prune".toUpperCase()}</a>
@@ -156,7 +156,7 @@ module.exports = React.createClass({
 				    <section className="row legal between-xs middle-xs">
 				    	<ul className="col-xs-12 col-sm-4">
 				    		<div>
-						        <span className="copyright spacer">Copyright &copy; 2015 &nbsp;</span>
+						        <span className="copyright spacer">Copyright &copy; 2015</span>
 						        <a href='http://jbrodriguez.io/'>Juan B. Rodriguez</a>
 					       	</div>
 				    	</ul>

@@ -1,5 +1,6 @@
 footer {
-	background-color: $footer-legal-bg;
+	color: $footer-color;
+	background-color: $footer-bg;
 	padding: 0.5em 0;
 
 	margin: 0.5em 0;
@@ -15,10 +16,10 @@ footer {
 		color: $footer-anchor-color;
 	}
 
-	.copyright,
-	.version {
-		color: white;
-	}
+	// .copyright,
+	// .version {
+	// 	color: white;
+	// }
 }
 
 // footer {
