@@ -45,7 +45,15 @@ module.exports = React.createClass({
 						</div>
 						<div className="row bottom-spacer-large">
 							<div className="col-xs-12">
-								{folders}
+								<table>
+								<thead>
+									<th width="50">#</th>
+									<th>Folder</th>
+								</thead>
+								<tbody>
+									{folders}
+								</tbody>
+								</table>
 							</div>
 						</div>
 					</fieldset>
