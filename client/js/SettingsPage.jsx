@@ -16,6 +16,15 @@ module.exports = React.createClass({
 				</div>				
 			)
 		}
+
+		const folders = settings.mediaFolders.map(function(folder, i) {
+			return (
+				<tr key={i}>
+					<td><i class="fa fa-times"></i></td>
+					<td>{folder}</td>
+				</tr>
+			)
+		})
 	
 		return (
 			<section className="row">
@@ -36,22 +45,7 @@ module.exports = React.createClass({
 						</div>
 						<div className="row bottom-spacer-large">
 							<div className="col-xs-12">
-								<table>
-								<thead>
-									<th width="50">#</th>
-									<th>Folder</th>
-								</thead>
-								<tbody>
-									<tr data-ng-repeat="folder in vm.options.config.mediaFolders">
-									<td><i class="fa fa-times"></i></td>
-									<td>/Volumes/hal-films</td>
-									</tr>
-									<tr data-ng-repeat="folder in vm.options.config.mediaFolders">
-									<td><i class="fa fa-times"></i></td>
-									<td>/Volumes/hal-films</td>
-									</tr>		
-								</tbody>
-								</table>
+								{folders}
 							</div>
 						</div>
 					</fieldset>
