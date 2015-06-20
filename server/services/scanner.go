@@ -34,6 +34,7 @@ func (s *Scanner) Start() {
 	mlog.Info("Starting service Scanner ...")
 
 	s.mailbox = s.register(s.bus, "/command/movie/scan", s.scanMovies)
+	s.registerAdditional(s.bus, "/event/config/changed", s.configChanged, s.mailbox)
 
 	re := []string{
 		`(?i)(?P<Resolution>.*?)/(?P<Name>.*?)\s\((?P<Year>\d\d\d\d)\)/(?:.*/)*bdmv/index.(?P<FileType>bdmv)$`,
@@ -131,4 +132,8 @@ func (s *Scanner) walk(folder string) error {
 	})
 
 	return err
+}
+
+func (s *Scanner) configChanged(msg *pubsub.Message) {
+	s.settings = msg.Payload.(*lib.Settings)
 }

@@ -8,7 +8,7 @@ type ScrapeDTO struct {
 	Forced        bool
 }
 
-type WsMessage struct {
+type Packet struct {
 	Id      string `json:"-"`
 	Topic   string `json:"topic"`
 	Payload string `json:"payload"`

@@ -12,7 +12,7 @@ module.exports = {
 		d.push('getConfig')
 	},
 
-	addFolder: function(folder) {
+	addMediaFolder: function(folder) {
 		d.push('addFolder', folder)
 	},
 
@@ -25,8 +25,8 @@ module.exports = {
 
 		const addedFolder = d
 			.stream('addFolder')
-			.flatMap( folder => Bacon.fromPromise( api.addFolder(folder) ) )
-			.log('settings-middle')
+			.flatMap( folder => Bacon.fromPromise( api.addMediaFolder(folder) ) )
+			.log('settings-addFolder')
 
 
 		return Bacon.update(

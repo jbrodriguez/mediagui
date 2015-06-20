@@ -8,11 +8,7 @@ const hostr	= "http://" + document.location.host + "/api/v1"
 const hostw = "ws://" + document.location.host + "/ws"
 
 function getSocket() {
-	console.log('trying to connect to socket')
-
 	const skt = new WebSocket(hostw)
-
-	console.log('after websocket host')
 
 	skt.onopen = function() {
 	    console.log("Connection opened")
@@ -23,9 +19,9 @@ function getSocket() {
 	}
 
 	const stream = Bacon.fromEventTarget(skt, "message").map(function(event) {
-		console.log('event is: ', event)
+		// console.log('event is: ', event)
 	    var dataString = event.data
-	    console.log("got:", JSON.parse(dataString))
+	    // console.log("got:", JSON.parse(dataString))
 	    return JSON.parse(dataString)
 	})
 
@@ -68,10 +64,19 @@ function importMovies() {
 	})
 }
 
+function addMediaFolder(folder) {
+	console.log('api.addMediaFolder')
+	return fetch(hostr + '/config/folder', {
+		method: 'PUT',
+		data: {payload: folder}
+	})
+}
+
 module.exports = {
 	getSocket: getSocket,
 	getConfig: getConfig,
 	getCover: getCover,
 	getMovies: getMovies,
-	importMovies: importMovies
+	importMovies: importMovies,
+	addMediaFolder: addMediaFolder
 }

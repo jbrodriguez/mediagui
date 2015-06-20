@@ -53,6 +53,7 @@ func (s *Server) Start() {
 		api.GET("/movies/cover", s.getMoviesCover)
 		api.GET("/movies", s.getMovies)
 		api.POST("/import", s.importMovies)
+		api.PUT("/config/folder", s.addMediaFolder)
 	}
 
 	port := ":7623"
@@ -134,4 +135,16 @@ func (s *Server) getMovies(c *gin.Context) {
 
 func (s *Server) importMovies(c *gin.Context) {
 	s.bus.Pub(nil, "/post/import")
+}
+
+func (s *Server) addMediaFolder(c *gin.Context) {
+	var pkt model.Packet
+	c.Bind(&pkt)
+
+	msg := &pubsub.Message{Payload: pkt.Payload, Reply: make(chan interface{}, capacity)}
+	s.bus.Pub(msg, "/put/config/folder")
+
+	reply := <-msg.Reply
+	resp := reply.(*lib.Config)
+	c.JSON(200, &resp)
 }

@@ -33,6 +33,8 @@ func (c *Core) Start() {
 
 	c.mailbox = c.register(c.bus, "/get/config", c.getConfig)
 	c.registerAdditional(c.bus, "/post/import", c.importMovies, c.mailbox)
+	c.registerAdditional(c.bus, "/put/config/folder", c.addMediaFolder, c.mailbox)
+
 	c.registerAdditional(c.bus, "/event/movie/found", c.doMovieFound, c.mailbox)
 	c.registerAdditional(c.bus, "/event/movie/scraped", c.doMovieScraped, c.mailbox)
 
@@ -73,6 +75,18 @@ func (c *Core) importMovies(msg *pubsub.Message) {
 	c.bus.Pub(nil, "/command/movie/scan")
 	//	msg.Reply <- &c.settings.Config
 	// mlog.Info("Import finished")
+}
+
+func (c *Core) addMediaFolder(msg *pubsub.Message) {
+	folder := msg.Payload.(string)
+
+	c.settings.MediaFolders = append(c.settings.MediaFolders, folder)
+
+	cfg := &pubsub.Message{Payload: c.settings}
+	c.bus.Pub(cfg, "/event/config/changed")
+
+	msg.Reply <- &c.settings.Config
+	// mlog.Info("Sent config")
 }
 
 func (c *Core) doMovieFound(msg *pubsub.Message) {

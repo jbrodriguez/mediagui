@@ -71,7 +71,7 @@ func (s *Socket) connect(wskt *websocket.Conn) {
 
 	go c.Writer()
 
-	hello := &pubsub.Message{Payload: &model.WsMessage{Id: c.Id, Topic: "hello", Payload: ""}}
+	hello := &pubsub.Message{Payload: &model.Packet{Id: c.Id, Topic: "hello", Payload: ""}}
 	s.transmit(hello)
 
 	c.Reader()
@@ -90,7 +90,7 @@ func (s *Socket) transmit(msg *pubsub.Message) {
 // Receive messages from websocket and dispatch them accordingly
 func (s *Socket) receive() {
 	for msg := range s.hub.FromWs {
-		var wsMsg model.WsMessage
+		var wsMsg model.Packet
 
 		err := json.Unmarshal(msg, &wsMsg)
 		if err != nil {

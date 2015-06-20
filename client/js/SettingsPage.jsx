@@ -1,9 +1,27 @@
-const 	React 	= require('react')
+const 	React 	= require('react'),
+		settingsBO = require('./settings')
 
 module.exports = React.createClass({
 	// componentWillMount: function() {
 	// 	movies.getCover()
 	// },
+	addFolder: function(e) {
+		if (e.key !== "Enter") {
+			return
+		}
+
+		e.preventDefault()
+
+		console.log("settingsPage.addFolder")
+		settingsBO.addMediaFolder(e.target.value)
+	},
+
+	getInitialState: function() {
+		return {
+			folder: ""
+		}
+	},
+
 	render: function() {
 		var noFolders;
 
@@ -25,6 +43,7 @@ module.exports = React.createClass({
 				</tr>
 			)
 		})
+
 	
 		return (
 			<section className="row">
@@ -39,7 +58,7 @@ module.exports = React.createClass({
 						<div className="row bottom-spacer-large">
 							<div className="col-xs-12 addon">
 								<span className="addon-item">Folder</span>
-								<input className="addon-field" type="text"></input>
+								<input className="addon-field" type="text" onKeyDown={this.addFolder}></input>
 								<button className="btn btn-default">Add</button>
 							</div>
 						</div>

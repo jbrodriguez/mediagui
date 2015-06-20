@@ -39,6 +39,6 @@ func RestGet(url string, reply interface{}) error {
 
 func Notify(bus *pubsub.PubSub, topic, text string) {
 	mlog.Info(text)
-	payload := &model.WsMessage{Topic: topic, Payload: text}
+	payload := &model.Packet{Topic: topic, Payload: text}
 	bus.Pub(&pubsub.Message{Payload: payload}, "socket:connections:broadcast")
 }

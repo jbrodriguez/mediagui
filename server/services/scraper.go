@@ -46,6 +46,7 @@ func (s *Scraper) Start() {
 
 	s.mailbox = s.register(s.bus, "/command/movie/scrape", s.scrapeMovie)
 	s.registerAdditional(s.bus, "/command/movie/rescrape", s.reScrapeMovie, s.mailbox)
+	s.registerAdditional(s.bus, "/event/config/changed", s.configChanged, s.mailbox)
 
 	s.pool = lib.NewPool(12, 4000)
 
@@ -227,4 +228,8 @@ func _scrape(tmdb *tmdb.Tmdb, id uint64, movie *model.Movie) error {
 	movie.Imdb_Votes = imdb_vote
 
 	return nil
+}
+
+func (s *Scraper) configChanged(msg *pubsub.Message) {
+	s.settings = msg.Payload.(*lib.Settings)
 }
