@@ -28,25 +28,33 @@ const 	React 			= require('react'),
 // })
 
 module.exports = React.createClass({
-	// getInitialState: function() {
-	// 	return {
-	// 		date: moment()
-	// 	}
+	// componentWillUpdate: function() {
+	// 	console.log('this.selected', this.selected)
+	// 	console.log('selected', this.state.selected)
+	// 	this.forced = 0
+	// 	if (this.selected) {
+	// 		this.forced = this.selected
+	// 	}		
 	// },
+	handlePageClick: function(data) {
+		this.selected = data.selected;
+		const offset = Math.ceil(this.selected * this.props.options.limit);
+		optionsBO.setOffset(offset)		
+	},
+
+	componentDidUpdate: function() {
+		window.scrollTo(0, 0)
+		console.log('didUdpate')
+	},	
 
 	render: function() {
 		const movies = this.props.movies
 		const options = this.props.options
 
-		const handlePageClick = function(data) {
-			const selected = data.selected;
-			const offset = Math.ceil(selected * options.limit);
-			optionsBO.setOffset(offset)
-		}
-
 		var pagination;
 		if (movies.total > options.limit) {
-			console.log('moviesPage.total('+movies.total+'>limit('+options.limit)
+			console.log('moviesPage.total('+movies.total+')>limit('+options.limit+'); selected='+this.selected)
+
 			pagination = (
 		        <Pager previousLabel={<i className="icon-chevron-left"></i>}
 		                       nextLabel={<i className="icon-chevron-right"></i>}
@@ -54,14 +62,14 @@ module.exports = React.createClass({
 		                       pageNum={Math.ceil(movies.total / options.limit)}
 		                       marginPagesDisplayed={3}
 		                       pageRangeDisplayed={5}
-		                       clickCallback={handlePageClick}
+		                       forceSelected={this.selected}
+		                       clickCallback={this.handlePageClick}
 		                       containerClassName={"pagination col-xs-12"}
 		                       subContainerClassName={"pages"}
 		                       activeClass={"active"} />				
 			)
 		}
 
-		var that = this;
 		var items = movies.items.map(function(movie, i) {
 			// var watched;
 

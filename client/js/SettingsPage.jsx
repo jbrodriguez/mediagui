@@ -38,7 +38,7 @@ module.exports = React.createClass({
 		const folders = settings.mediaFolders.map(function(folder, i) {
 			return (
 				<tr key={i}>
-					<td><i class="fa fa-times"></i></td>
+					<td><i className="fa fa-times"></i></td>
 					<td>{folder}</td>
 				</tr>
 			)
