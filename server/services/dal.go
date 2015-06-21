@@ -28,8 +28,8 @@ type Dal struct {
 	searchCount uint64
 	searchArgs  string
 
-	countRows  *sql.Stmt
-	storeMovie *sql.Stmt
+	countRows *sql.Stmt
+	// storeMovie *sql.Stmt
 
 	// listMovies      *sql.Stmt
 	// listByRuntime   *sql.Stmt
@@ -56,6 +56,7 @@ func (d *Dal) Start() {
 	d.mailbox = d.register(d.bus, "/get/movies/cover", d.getCover)
 	d.registerAdditional(d.bus, "/get/movies", d.getMovies, d.mailbox)
 	d.registerAdditional(d.bus, "/command/movie/exists", d.checkExists, d.mailbox)
+	d.registerAdditional(d.bus, "/command/movie/store", d.storeMovie, d.mailbox)
 	d.registerAdditional(d.bus, "/put/movies/score", d.setScore, d.mailbox)
 	d.registerAdditional(d.bus, "/put/movies/watched", d.setWatched, d.mailbox)
 
@@ -277,10 +278,52 @@ func (d *Dal) checkExists(msg *pubsub.Message) {
 	msg.Reply <- (id != 0)
 }
 
-func (d *Dal) setScore(msg *pubsub.Message) {
-	dto := msg.Payload.(*model.Movie)
+func (d *Dal) storeMovie(msg *pubsub.Message) {
+	movie := msg.Payload.(*model.Movie)
 
-	mlog.Info("STARTED UPDATING MOVIE SCORE [%d] %s (%d)", dto.Id, dto.Title, dto.Score)
+	d.count = 0
+
+	mlog.Info("STARTED SAVING %s", movie.Title)
+
+	tx, err := d.db.Begin()
+	if err != nil {
+		mlog.Fatalf("at begin: %s", err)
+	}
+
+	stmt, err := tx.Prepare(`insert into movie(title, original_title, file_title, 
+								year, runtime, tmdb_id, imdb_id, overview, tagline, 
+								resolution, filetype, location, cover, backdrop, genres, 
+								vote_average, vote_count, countries, added, modified, 
+								last_watched, all_watched, count_watched, score, director, 
+								writer, actors, awards, imdb_rating, imdb_votes) 
+								values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
+									?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+	if err != nil {
+		tx.Rollback()
+		mlog.Fatalf("at prepare: %s", err)
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(movie.Title, movie.Original_Title, movie.File_Title, movie.Year,
+		movie.Runtime, movie.Tmdb_Id, movie.Imdb_Id, movie.Overview, movie.Tagline,
+		movie.Resolution, movie.FileType, movie.Location, movie.Cover, movie.Backdrop,
+		movie.Genres, movie.Vote_Average, movie.Vote_Count, movie.Production_Countries,
+		movie.Added, movie.Modified, movie.Last_Watched, movie.All_Watched, movie.Count_Watched,
+		movie.Score, movie.Director, movie.Writer, movie.Actors, movie.Awards, movie.Imdb_Rating,
+		movie.Imdb_Votes)
+	if err != nil {
+		tx.Rollback()
+		mlog.Fatalf("at exec: %s", err)
+	}
+
+	tx.Commit()
+	mlog.Info("FINISHED SAVING %s [%d]", movie.Title, movie.Id)
+}
+
+func (d *Dal) setScore(msg *pubsub.Message) {
+	movie := msg.Payload.(*model.Movie)
+
+	mlog.Info("STARTED UPDATING MOVIE SCORE [%d] %s (%d)", movie.Id, movie.Title, movie.Score)
 
 	tx, err := d.db.Begin()
 	if err != nil {
@@ -299,16 +342,16 @@ func (d *Dal) setScore(msg *pubsub.Message) {
 
 	now := time.Now().UTC().Format(time.RFC3339)
 
-	_, err = stmt.Exec(dto.Score, now, dto.Id)
+	_, err = stmt.Exec(movie.Score, now, movie.Id)
 	if err != nil {
 		tx.Rollback()
 		mlog.Fatalf("at exec: %s", err)
 	}
 
 	tx.Commit()
-	mlog.Info("FINISHED UPDATING MOVIE SCORE [%d] %s", dto.Id, dto.Title)
+	mlog.Info("FINISHED UPDATING MOVIE SCORE [%d] %s", movie.Id, movie.Title)
 
-	msg.Reply <- dto
+	msg.Reply <- movie
 }
 
 func (d *Dal) setWatched(msg *pubsub.Message) {

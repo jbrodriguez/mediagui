@@ -117,5 +117,11 @@ func (c *Core) doMovieFound(msg *pubsub.Message) {
 func (c *Core) doMovieScraped(msg *pubsub.Message) {
 	dto := msg.Payload.(*dto.Scrape)
 
+	store := &pubsub.Message{Payload: dto.Movie, Reply: make(chan interface{}, 3)}
+	c.bus.Pub(store, "/command/movie/store")
+
+	cache := &pubsub.Message{Payload: dto, Reply: make(chan interface{}, 3)}
+	c.bus.Pub(cache, "/command/movie/cache")
+
 	mlog.Info("ScrapeDTO: %+v", dto)
 }

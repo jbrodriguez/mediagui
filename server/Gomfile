@@ -6,3 +6,4 @@ gom 'github.com/gin-gonic/gin', :commit => 'e899d8a99eac4cfeadbeef09017b304d2b91
 gom 'github.com/mattn/go-sqlite3', :commit => '542ae647f8601bafd96233961b150cae198e0295'
 gom 'github.com/jbrodriguez/go-tmdb', :commit => '059ff26af069ef71c91274fb60c35e0043f20ec3'
 gom 'github.com/gorilla/websocket', :commit => 'a3ec486e6a7a41858210b0fc5d7b5df593b3c4a3'
+gom 'github.com/nfnt/resize', :commit => 'dc93e1b98c579d90ee2fa15c1fd6dac34f6e7899'

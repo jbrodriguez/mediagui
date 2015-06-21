@@ -1,7 +1,6 @@
 package services
 
 import (
-	// sc "bitbucket.org/jdpalmer/statecraft"
 	"github.com/jbrodriguez/go-tmdb"
 	"github.com/jbrodriguez/mlog"
 	"github.com/jbrodriguez/pubsub"
@@ -23,11 +22,8 @@ type Scraper struct {
 	settings *lib.Settings
 	pool     *lib.Pool
 	tmdb     *tmdb.Tmdb
-	// socket   *Socket
 
 	mailbox chan *pubsub.Mailbox
-
-	// m *sc.Machine
 }
 
 func NewScraper(bus *pubsub.PubSub, settings *lib.Settings) *Scraper {
@@ -72,9 +68,9 @@ func (s *Scraper) scrapeMovie(msg *pubsub.Message) {
 		s.bus,
 		s.tmdb,
 		&dto.Scrape{
-			BasePath: s.settings.WebDir,
-			Movie:    movie,
-			Forced:   false,
+			// BasePath: s.settings.WebDir,
+			Movie:  movie,
+			Forced: false,
 		},
 	}
 
@@ -132,9 +128,9 @@ func (s *Scraper) reScrapeMovie(msg *pubsub.Message) {
 		s.bus,
 		s.tmdb,
 		&dto.Scrape{
-			BasePath: s.settings.WebDir,
-			Movie:    movie,
-			Forced:   true,
+			// BasePath: s.settings.WebDir,
+			Movie:  movie,
+			Forced: true,
 		},
 	}
 
