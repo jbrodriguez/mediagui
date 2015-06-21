@@ -8,6 +8,7 @@ import (
 	// "io/ioutil"
 	"errors"
 	"fmt"
+	"jbrodriguez/mediagui/server/dto"
 	"jbrodriguez/mediagui/server/lib"
 	"jbrodriguez/mediagui/server/model"
 	"strconv"
@@ -70,7 +71,7 @@ func (s *Scraper) scrapeMovie(msg *pubsub.Message) {
 	scrape := &Scrape{
 		s.bus,
 		s.tmdb,
-		&model.ScrapeDTO{
+		&dto.Scrape{
 			BasePath: s.settings.WebDir,
 			Movie:    movie,
 			Forced:   false,
@@ -83,40 +84,42 @@ func (s *Scraper) scrapeMovie(msg *pubsub.Message) {
 type Scrape struct {
 	bus  *pubsub.PubSub
 	tmdb *tmdb.Tmdb
-	dto  *model.ScrapeDTO
+	dto  *dto.Scrape
 }
 
 func (s *Scrape) Execute() {
-	lib.Notify(s.bus, "import:progress", fmt.Sprintf("SCRAPE REQUESTED [%s]", s.dto.Movie.Title))
+	movie := s.dto.Movie.(*model.Movie)
+
+	lib.Notify(s.bus, "import:progress", fmt.Sprintf("SCRAPE REQUESTED [%s]", movie.Title))
 
 	now := time.Now().UTC().Format(time.RFC3339)
-	s.dto.Movie.Added = now
-	s.dto.Movie.Modified = now
+	movie.Added = now
+	movie.Modified = now
 
-	s.dto.Movie.Score = 0
+	movie.Score = 0
 
-	lib.Notify(s.bus, "import:progress", fmt.Sprintf("STARTED TMDB [%s]", s.dto.Movie.Title))
-	movies, err := s.tmdb.SearchMovie(s.dto.Movie.Title)
+	lib.Notify(s.bus, "import:progress", fmt.Sprintf("STARTED TMDB [%s]", movie.Title))
+	movies, err := s.tmdb.SearchMovie(movie.Title)
 	if err != nil {
 		mlog.Error(err)
 		return
 	}
 
 	if movies.Total_Results == 0 {
-		lib.Notify(s.bus, "import:progress", fmt.Sprintf("TMDB: NO MATCH FOUND [%s]", s.dto.Movie.Title))
+		lib.Notify(s.bus, "import:progress", fmt.Sprintf("TMDB: NO MATCH FOUND [%s]", movie.Title))
 		return
 	} else if movies.Total_Results > 1 {
-		lib.Notify(s.bus, "import:progress", fmt.Sprintf("TMDB: MORE THAN ONE [%s]", s.dto.Movie.Title))
+		lib.Notify(s.bus, "import:progress", fmt.Sprintf("TMDB: MORE THAN ONE [%s]", movie.Title))
 	}
 
 	id := movies.Results[0].Id
 
-	_scrape(s.tmdb, id, s.dto.Movie)
+	_scrape(s.tmdb, id, movie)
 
 	s.dto.BaseUrl = s.tmdb.BaseUrl
 	s.dto.SecureBaseUrl = s.tmdb.SecureBaseUrl
 
-	lib.Notify(s.bus, "import:progress", fmt.Sprintf("SCRAPE COMPLETED [%s]", s.dto.Movie.Title))
+	lib.Notify(s.bus, "import:progress", fmt.Sprintf("SCRAPE COMPLETED [%s]", movie.Title))
 
 	msg := &pubsub.Message{Payload: s.dto}
 	s.bus.Pub(msg, "/event/movie/scraped")
@@ -128,7 +131,7 @@ func (s *Scraper) reScrapeMovie(msg *pubsub.Message) {
 	reScrape := &ReScrape{
 		s.bus,
 		s.tmdb,
-		&model.ScrapeDTO{
+		&dto.Scrape{
 			BasePath: s.settings.WebDir,
 			Movie:    movie,
 			Forced:   true,
@@ -141,18 +144,20 @@ func (s *Scraper) reScrapeMovie(msg *pubsub.Message) {
 type ReScrape struct {
 	bus  *pubsub.PubSub
 	tmdb *tmdb.Tmdb
-	dto  *model.ScrapeDTO
+	dto  *dto.Scrape
 }
 
 func (s *ReScrape) Execute() {
-	lib.Notify(s.bus, "import:progress", fmt.Sprintf("RESCRAPE REQUESTED [%s]", s.dto.Movie.Title))
+	movie := s.dto.Movie.(*model.Movie)
+
+	lib.Notify(s.bus, "import:progress", fmt.Sprintf("RESCRAPE REQUESTED [%s]", movie.Title))
 
 	now := time.Now().UTC().Format(time.RFC3339)
-	s.dto.Movie.Modified = now
+	movie.Modified = now
 
-	id := s.dto.Movie.Tmdb_Id
+	id := movie.Tmdb_Id
 
-	err := _scrape(s.tmdb, id, s.dto.Movie)
+	err := _scrape(s.tmdb, id, movie)
 	if err != nil {
 		lib.Notify(s.bus, "import:progress", err.Error())
 		return
@@ -161,7 +166,7 @@ func (s *ReScrape) Execute() {
 	s.dto.BaseUrl = s.tmdb.BaseUrl
 	s.dto.SecureBaseUrl = s.tmdb.SecureBaseUrl
 
-	lib.Notify(s.bus, "import:progress", fmt.Sprintf("RESCRAPE COMPLETED [%s]", s.dto.Movie.Title))
+	lib.Notify(s.bus, "import:progress", fmt.Sprintf("RESCRAPE COMPLETED [%s]", movie.Title))
 
 	msg := &pubsub.Message{Payload: s.dto}
 	s.bus.Pub(msg, "/event/movie/rescraped")
@@ -169,7 +174,7 @@ func (s *ReScrape) Execute() {
 
 func _scrape(tmdb *tmdb.Tmdb, id uint64, movie *model.Movie) error {
 	// log.Printf("before getmovie [%d] %s", id, media.Movie.Title)
-	// mlog.Info("[%s] before getmovie [%s]", s.dto.Movie.Title)
+	// mlog.Info("[%s] before getmovie [%s]", movie.Title)
 	gmr, err := tmdb.GetMovie(id)
 	if err != nil {
 		return errors.New(fmt.Sprintf("FAILED GETTING MOVIE [%s]", movie.Title))

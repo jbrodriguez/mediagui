@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"github.com/jbrodriguez/mlog"
 	"github.com/jbrodriguez/pubsub"
-	"jbrodriguez/mediagui/server/model"
+	"jbrodriguez/mediagui/server/dto"
 	"net/http"
 	"os"
 )
@@ -39,6 +39,7 @@ func RestGet(url string, reply interface{}) error {
 
 func Notify(bus *pubsub.PubSub, topic, text string) {
 	mlog.Info(text)
-	payload := &model.Packet{Topic: topic, Payload: text}
+	payload := &dto.Packet{Topic: topic, Payload: text}
+	// payload := &dto.Packet{Topic: topic, Payload: text}
 	bus.Pub(&pubsub.Message{Payload: payload}, "socket:connections:broadcast")
 }

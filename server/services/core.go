@@ -6,6 +6,7 @@ import (
 	"github.com/jbrodriguez/pubsub"
 	// "io/ioutil"
 	"fmt"
+	"jbrodriguez/mediagui/server/dto"
 	"jbrodriguez/mediagui/server/lib"
 	"jbrodriguez/mediagui/server/model"
 )
@@ -114,7 +115,7 @@ func (c *Core) doMovieFound(msg *pubsub.Message) {
 }
 
 func (c *Core) doMovieScraped(msg *pubsub.Message) {
-	dto := msg.Payload.(*model.ScrapeDTO)
+	dto := msg.Payload.(*dto.Scrape)
 
 	mlog.Info("ScrapeDTO: %+v", dto)
 }

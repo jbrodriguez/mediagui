@@ -5,6 +5,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/jbrodriguez/mlog"
 	"github.com/jbrodriguez/pubsub"
+	"jbrodriguez/mediagui/server/dto"
 	"jbrodriguez/mediagui/server/lib"
 	"jbrodriguez/mediagui/server/model"
 	"net/http"
@@ -138,7 +139,7 @@ func (s *Server) importMovies(c *gin.Context) {
 }
 
 func (s *Server) addMediaFolder(c *gin.Context) {
-	var pkt model.Packet
+	var pkt dto.Packet
 	if err := c.BindJSON(&pkt); err != nil {
 		mlog.Warning("Unable to obtain folder: %s", err.Error())
 	}
