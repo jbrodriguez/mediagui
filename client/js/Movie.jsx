@@ -36,13 +36,16 @@ module.exports = React.createClass({
 			return
 		}
 
+				// <span className="label success spacer"><i className="icon-watched"></i>&nbsp;{moment.utc(movie.last_watched).local().format('MMM DD, YYYY')}</span>
+
+
 		const saveWatched = function() {
 		}
 		
 		var watched;
 		if (movie.last_watched != '') {
 			watched = (
-				<span className="label success spacer"><i className="icon-watched"></i>&nbsp;{moment.utc(movie.last_watched).local().format('MMM DD, YYYY')}</span>
+				<span className="label success spacer"><i className="icon-watched"></i>&nbsp;{moment(movie.last_watched).format('MMM DD, YYYY')}</span>
 			)
 		}
 
