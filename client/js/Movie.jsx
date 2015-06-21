@@ -1,5 +1,6 @@
 const 	React 			= require('react'),
 		DatePicker 		= require('react-datepicker'),
+		IconRating 		= require('react-icon-rating'),
 		moment 			= require('moment')
 
 module.exports = React.createClass({
@@ -40,10 +41,16 @@ module.exports = React.createClass({
 		}
 		
 		var watched;
-
 		if (movie.last_watched != '') {
 			watched = (
 				<span className="label success spacer"><i className="icon-watched"></i>&nbsp;{moment(movie.last_watched).format('MMM DD, YYYY')}</span>
+			)
+		}
+
+		var score;
+		if (movie.score != 0) {
+			score = (
+				<span className="label success rspacer">{movie.score}</span>
 			)
 		}
 
@@ -86,22 +93,28 @@ module.exports = React.createClass({
 						</div>
 					</div>
 				</div>
-				<div className="col-xs-12">
+				<div className="col-xs-12 bottom-spacer">
 					<span>{movie.overview}</span>
 				</div>
 				<div className="col-xs-12 bottom-spacer-large">
 					<div className="row between-xs">
-						<div className="col-xs-12 col-sm-10 addon">
-							<input className="addon-field" type="text"></input>
+						<div className="col-xs-12 col-sm-2 addon">
+							<input className="addon-field" type="text" defaultValue={movie.tmdb_id}></input>
 							<button className="btn btn-default">Fix</button>
+						</div>
+						<div className="col-xs-12 col-sm-10 addon end-sm">
+							{score}
+							<IconRating
+								className="rspacer"
+								max="10"
+								currentRating={movie.score}
+								toggledClassName="icon-star-filled"
+								untoggledClassName="icon-star-empty" />
 							<DatePicker
 								key="{key}"
 								placeholderText="YYYY-MM-DD"
-								onChange={setStateWatched}
-							/>
-						</div>
-						<div className="col-xs-12 col-sm-2 end-sm top-xs">
-							<span className="label"><i className="icon-watched"></i></span>
+								onChange={setStateWatched} />
+							<button className="btn btn-default">Save</button>
 						</div>
 					</div>
 				</div>										

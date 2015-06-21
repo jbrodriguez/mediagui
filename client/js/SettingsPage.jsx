@@ -1,5 +1,4 @@
 const 	React 		= require('react'),
-		IconRating 	= require('react-icon-rating'),
 		settingsBO 	= require('./settings')
 
 module.exports = React.createClass({
