@@ -23,10 +23,9 @@ module.exports = React.createClass({
 	},
 
 	render: function() {
-		var noFolders;
-
 		const settings = this.props.settings
 
+		var noFolders;
 		if (settings.mediaFolders.length === 0) {
 			noFolders = (
 				<div className="col-xs-12 bottom-spacer-half">
