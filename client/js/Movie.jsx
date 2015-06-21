@@ -59,6 +59,8 @@ module.exports = React.createClass({
 			)
 		}
 
+		console.log('movie.score: id('+movie.id+')-score('+movie.score+')')
+
 		return (
 			<article>
 				<div className="col-xs-12">

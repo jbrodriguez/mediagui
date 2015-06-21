@@ -86,7 +86,7 @@ module.exports = React.createClass({
 			// }
 
 			return (
-				<Movie movie={movie} key={i} />
+				<Movie movie={movie} key={movie.title} />
 
 				// <article key={i}>
 				// 	<div className="col-xs-12">
