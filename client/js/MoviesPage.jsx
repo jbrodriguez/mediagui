@@ -37,13 +37,19 @@ module.exports = React.createClass({
 	// 	}		
 	// },
 	handlePageClick: function(data) {
-		this.selected = data.selected;
+		this.shouldScroll = true
+		this.selected = data.selected
 		const offset = Math.ceil(this.selected * this.props.options.limit);
 		optionsBO.setOffset(offset)		
 	},
 
 	componentDidUpdate: function() {
-		window.scrollTo(0, 0)
+		if (this.shouldScroll) {
+			window.scrollTo(0, 0)
+		}
+
+		this.shouldScroll = false
+
 		console.log('didUdpate')
 	},	
 

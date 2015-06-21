@@ -56,6 +56,7 @@ func (d *Dal) Start() {
 	d.mailbox = d.register(d.bus, "/get/movies/cover", d.getCover)
 	d.registerAdditional(d.bus, "/get/movies", d.getMovies, d.mailbox)
 	d.registerAdditional(d.bus, "/command/movie/exists", d.checkExists, d.mailbox)
+	d.registerAdditional(d.bus, "/put/movies/score", d.setScore, d.mailbox)
 
 	d.countRows = d.prepare("select count(*) from movie;")
 
@@ -273,6 +274,35 @@ func (d *Dal) checkExists(msg *pubsub.Message) {
 	tx.Commit()
 
 	msg.Reply <- (id != 0)
+}
+
+func (d *Dal) setScore(msg *pubsub.Message) {
+	dto := msg.Payload.(*model.Movie)
+
+	mlog.Info("STARTED UPDATING MOVIE SCORE [%d] %s (%d)", dto.Id, dto.Title, dto.Score)
+
+	tx, err := d.db.Begin()
+	if err != nil {
+		mlog.Fatalf("at begin: %s", err)
+	}
+
+	stmt, err := tx.Prepare("update movie set score = ? where rowid = ?")
+	if err != nil {
+		tx.Rollback()
+		mlog.Fatalf("at prepare: %s", err)
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(dto.Score, dto.Id)
+	if err != nil {
+		tx.Rollback()
+		mlog.Fatalf("at exec: %s", err)
+	}
+
+	tx.Commit()
+	mlog.Info("FINISHED UPDATING MOVIE SCORE [%d] %s", dto.Id, dto.Title)
+
+	msg.Reply <- dto
 }
 
 func (d *Dal) prepare(sql string) *sql.Stmt {

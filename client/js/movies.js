@@ -23,6 +23,12 @@ module.exports = {
     	d.push('importMovies')
     },
 
+    setMovieScore: function(movie, score) {
+    	movie.score = score
+    	console.log("movies.setMovieScore: ", JSON.stringify(movie))
+    	d.push('setScore', movie)
+    },
+
     toProperty: function(initialMovies, optionsS) {
     	console.log('movies-before')
         const gotMovies = d
@@ -41,6 +47,10 @@ module.exports = {
         	.flatMap(_ => Bacon.fromPromise(api.importMovies()))
         	.log('importMovies')
 
+        const movieScoreChanged = d
+        	.stream('setScore')
+        	.flatMap( (movie) => Bacon.fromPromise( api.setMovieScore(movie) ))
+
         optionsS.onValue((opt) => {
         	console.log('movies.optionsS.onValue', opt)
         	if (!opt.firstRun) {
@@ -52,11 +62,24 @@ module.exports = {
         	initialMovies,
         	[gotMovies], (_, newMovies) => newMovies,
         	[gotCover], (_, newCover) => newCover,
-        	[movieImported], (currentMovies, _) => currentMovies
+        	[movieImported], (currentMovies, _) => currentMovies,
+        	movieScoreChanged, doMovieScoreChanged
         )
         .log('movies')
+
+        function doMovieScoreChanged(movies, changedMovie) {
+        	var id = changedMovie.id,
+        		score = changedMovie.score
+
+        	const items = R.map(updateItem(id, it => R.merge(it, {score})), movies.items)
+        	return R.merge(movies, {items})
+        }
     }
 
+}
+
+function updateItem(itemId, fn) {
+	return (it) => it.id === itemId ? fn(it) : it
 }
 
 // module.exports = {

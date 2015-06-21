@@ -10,6 +10,7 @@ import (
 	"jbrodriguez/mediagui/server/model"
 	"net/http"
 	"path/filepath"
+	"strconv"
 )
 
 const (
@@ -53,8 +54,11 @@ func (s *Server) Start() {
 		api.GET("/config", s.getConfig)
 		api.GET("/movies/cover", s.getMoviesCover)
 		api.GET("/movies", s.getMovies)
+
 		api.POST("/import", s.importMovies)
+
 		api.PUT("/config/folder", s.addMediaFolder)
+		api.PUT("/movies/:id/score", s.setMovieScore)
 	}
 
 	port := ":7623"
@@ -149,5 +153,21 @@ func (s *Server) addMediaFolder(c *gin.Context) {
 
 	reply := <-msg.Reply
 	resp := reply.(*lib.Config)
+	c.JSON(200, &resp)
+}
+
+func (s *Server) setMovieScore(c *gin.Context) {
+	var movie model.Movie
+	if err := c.BindJSON(&movie); err != nil {
+		mlog.Warning("Unable to obtain score: %s", err.Error())
+	}
+
+	movie.Id, _ = strconv.ParseUint(c.Param("id"), 0, 64)
+
+	msg := &pubsub.Message{Payload: &movie, Reply: make(chan interface{}, capacity)}
+	s.bus.Pub(msg, "/put/movies/score")
+
+	reply := <-msg.Reply
+	resp := reply.(*model.Movie)
 	c.JSON(200, &resp)
 }

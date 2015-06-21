@@ -1,9 +1,14 @@
 const 	React 			= require('react'),
 		DatePicker 		= require('react-datepicker'),
 		IconRating 		= require('react-icon-rating'),
-		moment 			= require('moment')
+		moment 			= require('moment'),
+		moviesBO 		= require('./movies')
 
 module.exports = React.createClass({
+	setScore: function(score) {
+		moviesBO.setMovieScore(this.props.movie, score)
+	},
+
 	getInitialState: function() {
 		return {
 			dateWatched: moment(),
@@ -109,7 +114,8 @@ module.exports = React.createClass({
 								max="10"
 								currentRating={movie.score}
 								toggledClassName="icon-star-filled"
-								untoggledClassName="icon-star-empty" />
+								untoggledClassName="icon-star-empty"
+								onChange={this.setScore} />
 							<DatePicker
 								key="{key}"
 								placeholderText="YYYY-MM-DD"

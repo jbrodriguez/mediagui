@@ -71,11 +71,20 @@ function addMediaFolder(folder) {
 	})
 }
 
+function setMovieScore(movie) {
+	console.log("api.setMovieScore: (" + JSON.stringify(movie) + ")")
+	return fetch(hostr + '/movies/' + movie.id + '/score', {
+		method: 'PUT',
+		data: JSON.stringify(movie)
+	})
+}
+
 module.exports = {
 	getSocket: getSocket,
 	getConfig: getConfig,
 	getCover: getCover,
 	getMovies: getMovies,
 	importMovies: importMovies,
-	addMediaFolder: addMediaFolder
+	addMediaFolder: addMediaFolder,
+	setMovieScore: setMovieScore
 }
