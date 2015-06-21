@@ -114,7 +114,6 @@ module.exports = React.createClass({
 								key="{key}"
 								placeholderText="YYYY-MM-DD"
 								onChange={setStateWatched} />
-							<button className="btn btn-default">Save</button>
 						</div>
 					</div>
 				</div>										
