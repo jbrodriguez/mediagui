@@ -1,5 +1,6 @@
-const 	React 	= require('react'),
-		settingsBO = require('./settings')
+const 	React 		= require('react'),
+		IconRating 	= require('react-icon-rating'),
+		settingsBO 	= require('./settings')
 
 module.exports = React.createClass({
 	// componentWillMount: function() {
@@ -12,7 +13,7 @@ module.exports = React.createClass({
 
 		e.preventDefault()
 
-		console.log("settingsPage.addFolder")
+		console.log("settingsPage.addFolder: ", e.target.value)
 		settingsBO.addMediaFolder(e.target.value)
 	},
 
@@ -34,11 +35,11 @@ module.exports = React.createClass({
 			)
 		}
 
-		const folders = settings.mediaFolders.map(function(folder, i) {
+		const folders = settings.mediaFolders.map(function(item, i) {
 			return (
 				<tr key={i}>
-					<td><i className="fa fa-times"></i></td>
-					<td>{folder}</td>
+					<td><i className="icon-prune"></i></td>
+					<td>{item}</td>
 				</tr>
 			)
 		})

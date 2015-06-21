@@ -13,6 +13,7 @@ module.exports = {
 	},
 
 	addMediaFolder: function(folder) {
+		console.log("settingsBO.addMediaFolder: ", folder)
 		d.push('addFolder', folder)
 	},
 
@@ -36,8 +37,8 @@ module.exports = {
 		)
 		.log('settings-final:')
 
-		function doAddFolder(config, newFolder) {
-			return R.merge(config, {mediaFolders: config.mediaFolders.concat([newFolder])})
+		function doAddFolder(_, newConfig) {
+			return newConfig
 		}
 
 	}

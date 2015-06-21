@@ -27,6 +27,7 @@
     "ramda": "^0.14.0",
     "react": "^0.13.3",
     "react-datepicker": "^0.8.0",
+    "react-icon-rating": "^0.2.0",
     "react-paginate": "^0.1.31",
     "react-router": "^0.13.3",
     "run-sequence": "^1.1.0",

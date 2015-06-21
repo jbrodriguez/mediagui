@@ -79,6 +79,7 @@ func (c *Core) importMovies(msg *pubsub.Message) {
 
 func (c *Core) addMediaFolder(msg *pubsub.Message) {
 	folder := msg.Payload.(string)
+	mlog.Info("addMediaFolder: %s", folder)
 
 	c.settings.MediaFolders = append(c.settings.MediaFolders, folder)
 

@@ -139,7 +139,9 @@ func (s *Server) importMovies(c *gin.Context) {
 
 func (s *Server) addMediaFolder(c *gin.Context) {
 	var pkt model.Packet
-	c.Bind(&pkt)
+	if err := c.BindJSON(&pkt); err != nil {
+		mlog.Warning("Unable to obtain folder: %s", err.Error())
+	}
 
 	msg := &pubsub.Message{Payload: pkt.Payload, Reply: make(chan interface{}, capacity)}
 	s.bus.Pub(msg, "/put/config/folder")

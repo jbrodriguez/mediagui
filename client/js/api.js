@@ -65,10 +65,9 @@ function importMovies() {
 }
 
 function addMediaFolder(folder) {
-	console.log('api.addMediaFolder')
 	return fetch(hostr + '/config/folder', {
 		method: 'PUT',
-		data: {payload: folder}
+		data: JSON.stringify({topic: "", payload: folder})
 	})
 }
 
