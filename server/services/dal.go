@@ -10,7 +10,7 @@ import (
 	"jbrodriguez/mediagui/server/model"
 	"path/filepath"
 	"strings"
-	// "time"
+	"time"
 )
 
 type Dal struct {
@@ -57,6 +57,7 @@ func (d *Dal) Start() {
 	d.registerAdditional(d.bus, "/get/movies", d.getMovies, d.mailbox)
 	d.registerAdditional(d.bus, "/command/movie/exists", d.checkExists, d.mailbox)
 	d.registerAdditional(d.bus, "/put/movies/score", d.setScore, d.mailbox)
+	d.registerAdditional(d.bus, "/put/movies/watched", d.setWatched, d.mailbox)
 
 	d.countRows = d.prepare("select count(*) from movie;")
 
@@ -286,14 +287,19 @@ func (d *Dal) setScore(msg *pubsub.Message) {
 		mlog.Fatalf("at begin: %s", err)
 	}
 
-	stmt, err := tx.Prepare("update movie set score = ? where rowid = ?")
+	stmt, err := tx.Prepare(`update movie set 
+								score = ?,
+								modified = ? 
+								where rowid = ?`)
 	if err != nil {
 		tx.Rollback()
 		mlog.Fatalf("at prepare: %s", err)
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(dto.Score, dto.Id)
+	now := time.Now().UTC().Format(time.RFC3339)
+
+	_, err = stmt.Exec(dto.Score, now, dto.Id)
 	if err != nil {
 		tx.Rollback()
 		mlog.Fatalf("at exec: %s", err)
@@ -301,6 +307,57 @@ func (d *Dal) setScore(msg *pubsub.Message) {
 
 	tx.Commit()
 	mlog.Info("FINISHED UPDATING MOVIE SCORE [%d] %s", dto.Id, dto.Title)
+
+	msg.Reply <- dto
+}
+
+func (d *Dal) setWatched(msg *pubsub.Message) {
+	dto := msg.Payload.(*model.Movie)
+
+	mlog.Info("STARTED UPDATING MOVIE WATCHED DATE [%d] %s (%s)", dto.Id, dto.Title, dto.Last_Watched)
+
+	tx, err := d.db.Begin()
+	if err != nil {
+		mlog.Fatalf("at begin: %s", err)
+	}
+
+	stmt, err := tx.Prepare(`update movie set 
+								last_watched = ?, 
+								all_watched = ?, 
+								count_watched = ?, 
+								modified = ? 
+								where rowid = ?`)
+	if err != nil {
+		tx.Rollback()
+		mlog.Fatalf("at prepare: %s", err)
+	}
+	defer stmt.Close()
+
+	now := time.Now().UTC().Format(time.RFC3339)
+
+	var all_watched string
+	count_watched := dto.Count_Watched
+	if !strings.Contains(dto.All_Watched, dto.Last_Watched) {
+		count_watched++
+		if dto.All_Watched == "" {
+			all_watched = dto.Last_Watched
+		} else {
+			all_watched += "|" + dto.Last_Watched
+		}
+	}
+
+	_, err = stmt.Exec(dto.Last_Watched, all_watched, count_watched, now, dto.Id)
+	if err != nil {
+		tx.Rollback()
+		mlog.Fatalf("at exec: %s", err)
+	}
+
+	tx.Commit()
+	mlog.Info("FINISHED UPDATING MOVIE WATCHED DATE [%d] %s", dto.Id, dto.Title)
+
+	dto.All_Watched = all_watched
+	dto.Count_Watched = count_watched
+	dto.Modified = now
 
 	msg.Reply <- dto
 }

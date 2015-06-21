@@ -1,7 +1,8 @@
-const Bacon       = require('baconjs'),
-      R           = require('ramda'),
-      Dispatcher  = require('./dispatcher'),
-      api         = require('./api')
+const Bacon       	= require('baconjs'),
+      R           	= require('ramda'),
+      Dispatcher  	= require('./dispatcher'),
+	  moment 		= require('moment'),
+      api         	= require('./api')
 
 
 const d = new Dispatcher()
@@ -25,8 +26,14 @@ module.exports = {
 
     setMovieScore: function(movie, score) {
     	movie.score = score
-    	console.log("movies.setMovieScore: ", JSON.stringify(movie))
+    	// console.log("movies.setMovieScore: ", JSON.stringify(movie))
     	d.push('setScore', movie)
+    },
+
+    setMovieWatched: function(movie, watched) {
+    	movie.last_watched = moment.utc(watched).format()
+    	// console.log("movies.setMovieWatched: ", JSON.stringify(movie))
+    	d.push('setWatched', movie)
     },
 
     toProperty: function(initialMovies, optionsS) {
@@ -51,6 +58,10 @@ module.exports = {
         	.stream('setScore')
         	.flatMap( (movie) => Bacon.fromPromise( api.setMovieScore(movie) ))
 
+        const movieWatchedChanged = d
+        	.stream('setWatched')
+        	.flatMap( (movie) => Bacon.fromPromise( api.setMovieWatched(movie) ))
+
         optionsS.onValue((opt) => {
         	console.log('movies.optionsS.onValue', opt)
         	if (!opt.firstRun) {
@@ -63,17 +74,31 @@ module.exports = {
         	[gotMovies], (_, newMovies) => newMovies,
         	[gotCover], (_, newCover) => newCover,
         	[movieImported], (currentMovies, _) => currentMovies,
-        	movieScoreChanged, doMovieScoreChanged
+        	movieScoreChanged, doMovieScoreChanged,
+        	movieWatchedChanged, doMovieWatchedChanged
         )
-        .log('movies')
 
         function doMovieScoreChanged(movies, changedMovie) {
+        	var id = changedMovie.id,
+        		changed = {
+	        		last_watched: changedMovie.last_watched,
+	        		all_watched: changedMovie.all_watched,
+	        		count_watched: changedMovie.count_watched,
+	        		modified: changedMovie.modified
+	        	}
+
+        	const items = R.map(updateItem(id, it => R.merge(it, changed)), movies.items)
+        	return R.merge(movies, {items})
+        }
+
+        function doMovieWatchedChanged(movies, changedMovie) {
         	var id = changedMovie.id,
         		score = changedMovie.score
 
         	const items = R.map(updateItem(id, it => R.merge(it, {score})), movies.items)
         	return R.merge(movies, {items})
         }
+
     }
 
 }

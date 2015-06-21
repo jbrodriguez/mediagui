@@ -76,7 +76,7 @@ module.exports = React.createClass({
 			)
 		}
 
-		var items = movies.items.map(function(movie, i) {
+		var items = movies.items.map(function(movie) {
 			// var watched;
 
 			// if (movie.last_watched != '') {

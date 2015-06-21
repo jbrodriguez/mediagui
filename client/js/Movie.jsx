@@ -9,6 +9,10 @@ module.exports = React.createClass({
 		moviesBO.setMovieScore(this.props.movie, score)
 	},
 
+	setWatched: function(watched) {
+		moviesBO.setMovieWatched(this.props.movie, watched)
+	},
+
 	getInitialState: function() {
 		return {
 			dateWatched: moment(),
@@ -28,16 +32,6 @@ module.exports = React.createClass({
 			return
 		}
 
-		const setStateWatched = function(date) {
-			this.setState({
-				dateWatched: date
-			})
-		}
-
-		const setStateRating = function(data) {
-			return
-		}
-
 		const fixTmdbId = function() {
 			return
 		}
@@ -48,7 +42,7 @@ module.exports = React.createClass({
 		var watched;
 		if (movie.last_watched != '') {
 			watched = (
-				<span className="label success spacer"><i className="icon-watched"></i>&nbsp;{moment(movie.last_watched).format('MMM DD, YYYY')}</span>
+				<span className="label success spacer"><i className="icon-watched"></i>&nbsp;{moment.utc(movie.last_watched).local().format('MMM DD, YYYY')}</span>
 			)
 		}
 
@@ -59,7 +53,7 @@ module.exports = React.createClass({
 			)
 		}
 
-		console.log('movie.score: id('+movie.id+')-score('+movie.score+')')
+		// console.log('movie.score: id('+movie.id+')-score('+movie.score+')')
 
 		return (
 			<article>
@@ -121,7 +115,7 @@ module.exports = React.createClass({
 							<DatePicker
 								key="{key}"
 								placeholderText="YYYY-MM-DD"
-								onChange={setStateWatched} />
+								onChange={this.setWatched} />
 						</div>
 					</div>
 				</div>										

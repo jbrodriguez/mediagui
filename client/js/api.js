@@ -72,8 +72,16 @@ function addMediaFolder(folder) {
 }
 
 function setMovieScore(movie) {
-	console.log("api.setMovieScore: (" + JSON.stringify(movie) + ")")
+	// console.log("api.setMovieScore: (" + JSON.stringify(movie) + ")")
 	return fetch(hostr + '/movies/' + movie.id + '/score', {
+		method: 'PUT',
+		data: JSON.stringify(movie)
+	})
+}
+
+function setMovieWatched(movie) {
+	// console.log("api.setMovie: (" + JSON.stringify(movie) + ")")
+	return fetch(hostr + '/movies/' + movie.id + '/watched', {
 		method: 'PUT',
 		data: JSON.stringify(movie)
 	})
@@ -86,5 +94,6 @@ module.exports = {
 	getMovies: getMovies,
 	importMovies: importMovies,
 	addMediaFolder: addMediaFolder,
-	setMovieScore: setMovieScore
+	setMovieScore: setMovieScore,
+	setMovieWatched: setMovieWatched
 }
