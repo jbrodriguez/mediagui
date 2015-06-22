@@ -12,7 +12,7 @@ module.exports = React.createClass({
 
 		e.preventDefault()
 
-		console.log("settingsPage.addFolder: ", e.target.value)
+		// console.log("settingsPage.addFolder: ", e.target.value)
 		settingsBO.addMediaFolder(e.target.value)
 	},
 

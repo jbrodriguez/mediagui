@@ -8,26 +8,26 @@ const d = new Dispatcher()
 module.exports = {
 	// Public API
 	getConfig: function() {
-		console.log('getting config')
+		// console.log('getting config')
 		d.push('getConfig')
 	},
 
 	addMediaFolder: function(folder) {
-		console.log("settingsBO.addMediaFolder: ", folder)
+		// console.log("settingsBO.addMediaFolder: ", folder)
 		d.push('addFolder', folder)
 	},
 
 	toProperty: function(initialConfig) {
-		console.log('settings-before')
+		// console.log('settings-before')
 		const gotConfig = d
 			.stream('getConfig')
 			.flatMap( name => Bacon.fromPromise( api.getConfig() ) )
-			.log('settings-middle')
+			// .log('settings-middle')
 
 		const addedFolder = d
 			.stream('addFolder')
 			.flatMap( folder => Bacon.fromPromise( api.addMediaFolder(folder) ) )
-			.log('settings-addFolder')
+			// .log('settings-addFolder')
 
 
 		return Bacon.update(
@@ -35,7 +35,7 @@ module.exports = {
 			gotConfig, (_, newConfig) => newConfig,
 			addedFolder, doAddFolder
 		)
-		.log('settings-final:')
+		// .log('settings-final:')
 
 		function doAddFolder(_, newConfig) {
 			return newConfig

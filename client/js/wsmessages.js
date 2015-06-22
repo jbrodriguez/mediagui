@@ -12,9 +12,9 @@ module.exports = {
 	},
 
     toProperty: function(initialMessages, socketS, sendFn) {
-    	console.log('socketS-before')
+    	// console.log('socketS-before')
         const gotMessage = socketS
-        	.log('socketS')
+        	// .log('socketS')
 
         const sentMessage = d
         	.stream('sendMessage')

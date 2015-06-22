@@ -18,10 +18,10 @@ var SortWrapper = React.createClass({
 })
 
 module.exports = React.createClass({
-	componentWillMount: function() {
-		console.log('reminiscing')
-		console.log(Array.isArray(this.props.children)); // => true
-	},
+	// componentWillMount: function() {
+	// 	console.log('reminiscing')
+	// 	console.log(Array.isArray(this.props.children)); // => true
+	// },
 
 	// getInitialState: function() {
 	// 	return {
@@ -57,7 +57,7 @@ module.exports = React.createClass({
         const handleFilterBy = function() {
 			const filterBy = event.target.value
 
-        	console.log("mediaGUI.jsx.handleFilterBy:" + filterBy)
+        	// console.log("mediaGUI.jsx.handleFilterBy:" + filterBy)
 
 			optionsBO.setFilterBy(filterBy)
         }
@@ -66,7 +66,7 @@ module.exports = React.createClass({
         const handleSortBy = function() {
 			const sortBy = event.target.value
 
-        	console.log("mediaGUI.jsx.handleSortBy:" + sortBy)
+        	// console.log("mediaGUI.jsx.handleSortBy:" + sortBy)
 
 			// this.setState({selectedSort: sortBy})
 			optionsBO.setSortBy(sortBy)
@@ -75,7 +75,7 @@ module.exports = React.createClass({
         const handleSortOrder = function() {
         	const sortOrder = options.sortOrder === 'asc' ? 'desc' : 'asc'
 
-        	console.log("mediaGUI.jsx.handleSortOrder:" + sortOrder)
+        	// console.log("mediaGUI.jsx.handleSortOrder:" + sortOrder)
 
 			// this.setState({selectedSort: sortBy})
 			optionsBO.setSortOrder(sortOrder)
@@ -84,7 +84,7 @@ module.exports = React.createClass({
         const handleQueryTerm = function() {
 			const queryTerm = event.target.value
 
-        	console.log("mediaGUI.jsx.handleQueryTerm:" + queryTerm)
+        	// console.log("mediaGUI.jsx.handleQueryTerm:" + queryTerm)
 
 			optionsBO.setQueryTerm(queryTerm)
         }

@@ -10,7 +10,7 @@ module.exports = React.createClass({
 
 		const movies = this.props.movies.items
 
-		console.log('movies: ' + movies)
+		// console.log('movies: ' + movies)
 
 		if (typeof movies != 'undefined') {
 			var items = movies.map(function(movie, i) {

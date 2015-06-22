@@ -26,7 +26,7 @@ api
 	})
 
 function run(config) {
-	console.log(config)
+	// console.log(config)
 
  	const {socketS, sendFn} = api.getSocket()
 
@@ -43,7 +43,7 @@ function run(config) {
 				messages: messageP,
 				navigation: navigationS
 			})
-			.log('appState.value = ')
+			// .log('appState.value = ')
 
 	const	routes 		= (
 				<Route name="app" path="/" handler={MediaGUI}>
@@ -64,19 +64,18 @@ function run(config) {
 	})
 
 	if (config.mediaFolders.length == 0) {
-		console.log("should have piaid me")
+		// console.log("should have piaid me")
 		router.transitionTo("settings")
 	}
 
 	router.run( function(ProxyHandler, state) {
 		Handler = ProxyHandler
 
-		console.log('router.run.state: ', state)
-
+		// console.log('router.run.state: ', state)
 
 		if (state.routes.length > 1) {
 			var minus1 = state.routes.length - 1
-			console.log('state.routes['+minus1+'].path = ' + state.routes[state.routes.length - 1].path)
+			// console.log('state.routes['+minus1+'].path = ' + state.routes[state.routes.length - 1].path)
 
 			switch (state.routes[minus1].path) {
 				case "/movies":
@@ -92,148 +91,17 @@ function run(config) {
 			}
 		}
 	})
-	
-	// Router.run(routes, Router.HistoryLocation, function(ProxyHandler, state) {
-	// 	Handler = ProxyHandler
-
-	// 	console.log('router.run.state: ', state)
-
-	// 	if (state.routes.length > 1) {
-	// 		var minus1 = state.routes.length - 1
-	// 		console.log('state.routes['+minus1+'].path = ' + state.routes[state.routes.length - 1].path)
-
-	// 		switch (state.routes[minus1].path) {
-	// 			case "/movies":
-	// 				movies.getMovies(state.query)
-	// 				break;
-	// 			case "/movies/cover":
-	// 				movies.getCover()
-	// 				break;
-	// 			case "/import":
-	// 				d.push('navigation')
-	// 				break;
-	// 		}
-	// 	}
-	// })
 
 	appState.onValue((state) => {
-		console.log('dentro de onValue: ', state)
-		React.render(<Handler { ...state} />, document.body, function() {
-			console.log('marrano')
-		})
+		// console.log('dentro de onValue: ', state)
+		Reach.render(<Handler { ...state}/>, document.body)
+		// React.render(<Handler { ...state} />, document.body, function() {
+		// 	console.log('marrano')
+		// })
 	})
 
 	d.push('navigation')	
 }
-
-
-
-// var config = {},
-// 	movieList = []
-
-// api
-// .getConfig()
-// .then(function(result) {
-// 	config = result
-// 	console.log('obtained getConfig result: ' + config)
-// 	return api.getCover()
-// })
-// .then(function(result) {
-// 	movieList = result
-// 	run()
-// })
-
-// function run() {
-
-// 	const {socketS, sendFn} = api.getSocket()
-
-// 	// const	settingsP 	= settings.toProperty({mediaFolders:[], version:"0.4.0-7.fbb280b"}),
-// 	const	navigationS	= d.stream('navigation'),
-// 			settingsP 	= settings.toProperty(config),
-// 			optionsP 	= options.toProperty(getInitialOptions()),
-// 		  	moviesP  	= movies.toProperty(movieList, optionsP),
-// 		  	messageP 	= wsmessages.toProperty([], socketS, sendFn)
-// 		  	// moviesP  	= movies.toProperty(movieList, optionsP, sendFn)
-
-// 	const	appState 	= Bacon.combineTemplate({
-// 				settings: settingsP,
-// 				movies: moviesP,
-// 				options: optionsP,
-// 				messages: messageP,
-// 				navigation: navigationS
-// 			})
-// 			.log('appState.value = ')
-
-// 	const	routes 		= (
-// 				<Route name="app" path="/" handler={MediaGUI}>
-// 					<Route name="cover" path="/movies/cover" handler={MoviesCover} />
-// 					<Route name="movies" path="/movies" handler={MoviesPage} />
-// 					<Route name="import" path="/import" handler={Import} />
-
-// 					<Redirect from="/" to="/movies/cover" />
-// 				</Route>
-// 			)
-
-// 	var Handler = {}
-	
-// 	Router.run(routes, Router.HistoryLocation, function(ProxyHandler, state) {
-// 		Handler = ProxyHandler
-
-// 		console.log('handler: ', Handler)
-// 		console.log('routes: ' + state.routes)
-// 		console.log('len(routes)=' + state.routes.length)
-// 		console.log('query: ', JSON.stringify(state.query, 4, null))
-// 		if (state.routes.length > 1) {
-// 			var minus1 = state.routes.length - 1
-// 			console.log('state.routes['+minus1+'].path = ' + state.routes[state.routes.length - 1].path)
-
-// 			switch (state.routes[minus1].path) {
-// 				case "/movies":
-// 					movies.getMovies(state.query)
-// 					break;
-// 				case "/movies/cover":
-// 					movies.getCover()
-// 					break;
-// 				case "/import":
-// 					d.push('navigation')
-// 					break;
-
-// 			}
-
-
-// 		}
-
-// 		// React.render(<Handler { ...state} />, document.body, function() {
-// 		// 	console.log('marrano')
-// 		// })
-// 	})
-
-// 	appState.onValue((state) => {
-// 		console.log('dentro de onValue: ', state)
-// 		React.render(<Handler { ...state} />, document.body, function() {
-// 			console.log('marrano')
-// 		})
-// 	})
-
-// 	d.push('navigation')
-// }
-
-
-
-
-
-
-
-
-
-
-// appState.onValue(function(state) {
-// 	console.log('inventando: ', state)
-// 	React.render(<mediaGUI {...state} />, document.getElementById('app'))
-// })
-
-// movies.getCover()
-// settings.getConfig()
 
 function getInitialOptions() {
 	var searchTerm = ''
@@ -278,9 +146,3 @@ function getInitialOptions() {
 
 	return base
 }
-
-
-
-// window.onload = function() {
-//   React.render(<MediaGui />, document.getElementById('app'))
-// }

@@ -53,13 +53,13 @@ function getSocket() {
 }
 
 function getConfig() {
-	console.log('inside api.getConfig')
+	// console.log('inside api.getConfig')
 
 	return fetch(hostr + '/config')
 }
 
 function getCover() {
-	console.log('inside api.getCover')
+	// console.log('inside api.getCover')
 
 	return fetch(hostr + '/movies/cover')
 }

@@ -9,36 +9,36 @@ const d = new Dispatcher()
 module.exports = {
 	// PUBLIC API
 	setFilterBy: function(filterBy) {
-		console.log('options.setFilterBy', filterBy)
+		// console.log('options.setFilterBy', filterBy)
 		storage.set('filterBy', filterBy)
 		d.push('setFilterBy', filterBy)
 	},
 
 	setSortBy: function(sortBy) {
-		console.log('options.setSortBy', sortBy)
+		// console.log('options.setSortBy', sortBy)
 		storage.set('sortBy', sortBy)
 		d.push('setSortBy', sortBy)
 	},
 	
 	setSortOrder: function(sortOrder) {
-		console.log('options.setSortOrder', sortOrder)
+		// console.log('options.setSortOrder', sortOrder)
 		storage.set('sortOrder', sortOrder)
 		d.push('setSortOrder', sortOrder)
 	},
 
 	setOffset: function(offset) {
-		console.log('options.setOffset', offset)
+		// console.log('options.setOffset', offset)
 		d.push('setOffset', offset)
 	},
 
 	setQueryTerm: function(term) {
-		console.log('options.setQueryTerm', term)
+		// console.log('options.setQueryTerm', term)
 		d.push('setQueryTerm', term)
 	},
 
 	// Initializer
 	toProperty: function(initialOptions) {
-		console.log('options-before', initialOptions)
+		// console.log('options-before', initialOptions)
 
 		const gotQueryTerm = d
 			.stream('setQueryTerm')
@@ -56,7 +56,7 @@ module.exports = {
 			[d.stream('setOffset')], setOffset,
 			gotQueryTerm, setQueryTerm
 		)
-		.log('options.baconUpdate')
+		// .log('options.baconUpdate')
 
 		function setFilterBy(options, filterBy) {
 			return R.merge(options, {filterBy: filterBy, firstRun: false})
