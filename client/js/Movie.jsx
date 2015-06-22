@@ -19,7 +19,14 @@ module.exports = React.createClass({
 
 	fixMovie: function() {
 		if (this.tmdb_id) {
+			this.setState({ loading: true })
 			moviesBO.fixMovie(this.props.movie, this.tmdb_id)
+		}
+	},
+
+	getInitialState: function() {
+		return {
+			loading: false
 		}
 	},
 
@@ -57,6 +64,19 @@ module.exports = React.createClass({
 				<span className="label success rspacer">{movie.score}</span>
 			)
 		}
+
+		var loading;
+		if (this.state.loading) {
+			loading = (
+				<div className="loading middle-xs">
+					<div className="loading-bar"></div>
+					<div className="loading-bar"></div>
+					<div className="loading-bar"></div>
+					<div className="loading-bar"></div>
+				</div>
+			)
+		}
+
 
 		// console.log('movie.score: id('+movie.id+')-score('+movie.score+')')
 
@@ -104,11 +124,12 @@ module.exports = React.createClass({
 				</div>
 				<div className="col-xs-12 bottom-spacer-large">
 					<div className="row between-xs">
-						<div className="col-xs-12 col-sm-2 addon">
+						<div className="col-xs-12 col-sm-3 addon">
 							<input className="addon-field" type="text" defaultValue={movie.tmdb_id} onChange={this.setTmdbId}></input>
-							<button className="btn btn-default" onClick={this.fixMovie}>Fix</button>
+							<button className="btn btn-default rspacer" onClick={this.fixMovie}>Fix</button>
+							{loading}
 						</div>
-						<div className="col-xs-12 col-sm-10 addon end-sm">
+						<div className="col-xs-12 col-sm-9 addon end-sm">
 							{score}
 							<IconRating
 								className="rspacer"

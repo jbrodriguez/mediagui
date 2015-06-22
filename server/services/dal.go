@@ -59,6 +59,7 @@ func (d *Dal) Start() {
 	d.registerAdditional(d.bus, "/command/movie/store", d.storeMovie, d.mailbox)
 	d.registerAdditional(d.bus, "/put/movies/score", d.setScore, d.mailbox)
 	d.registerAdditional(d.bus, "/put/movies/watched", d.setWatched, d.mailbox)
+	d.registerAdditional(d.bus, "/put/movies/fix", d.fixMovie, d.mailbox)
 
 	d.countRows = d.prepare("select count(*) from movie;")
 
@@ -411,4 +412,8 @@ func (d *Dal) prepare(sql string) *sql.Stmt {
 		mlog.Fatalf("prepare sql: %s (%s)", err, sql)
 	}
 	return stmt
+}
+
+func (d *Dal) fixMovie(msg *pubsub.Message) {
+
 }

@@ -39,7 +39,7 @@ module.exports = {
     fixMovie: function(movie, tmdb_id) {
     	movie.tmdb_id = tmdb_id
     	d.push('fixMovie', movie)
-    }
+    },
 
     toProperty: function(initialMovies, optionsS) {
     	console.log('movies-before')
@@ -86,7 +86,7 @@ module.exports = {
         	[movieImported], (currentMovies, _) => currentMovies,
         	movieScoreChanged, doMovieScoreChanged,
         	movieWatchedChanged, doMovieWatchedChanged,
-        	movieFixed, doMovieFixed,
+        	movieFixed, doMovieFixed
         )
 
         function doMovieScoreChanged(movies, changedMovie) {
