@@ -13,6 +13,31 @@ article {
 	}
 }
 
+.backOver {
+	position: relative;
+}
+
+.backOver-wrap {
+	width: 100%;
+	position: absolute;
+	top: 1em;
+	// bottom: 0;
+	left: 0;
+	// right: 0;
+	// padding: 0.4rem 1.6rem 0.4rem 1.6rem;
+	padding: 0 1em;
+}
+
+.backOver-wrap span {
+	font-size: 1.25em;
+	color: white;
+	background-color: rgba(0, 0, 0, 0.4);
+	padding: 0.25em 1em;
+	// padding: 5px 15px 5px 15px;
+	// display: inline-block;
+	// margin-right: 1em;
+}
+
 // .date-picker > div {
 // 	display: inline-block;
 // }

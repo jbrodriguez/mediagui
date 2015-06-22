@@ -24,6 +24,21 @@ module.exports = React.createClass({
 		}
 	},
 
+    hourMinute: function(minutes) {
+        var hour = Math.floor(minutes / 60);
+        var minute = Math.floor(minutes % 60);
+
+        var time = '';
+        if (hour > 0) time += (hour + ":");
+        if (minute >= 0) {
+            if (minute <= 9) time += "0"+minute;
+            else time += minute;
+        }
+        if (hour <= 0) time += "m";
+
+        return time;
+    },
+
 	getInitialState: function() {
 		return {
 			loading: false
@@ -90,8 +105,16 @@ module.exports = React.createClass({
 						<div className="col-xs-12 col-sm-2">
 							<img src={"/img/p" + movie.cover} />
 						</div>
-						<div className="col-xs-12 col-sm-10">
+						<div className="col-xs-12 col-sm-10 backOver">
 							<img src={"/img/b" + movie.backdrop} />
+							<div className="row between-xs backOver-wrap">
+								<div className="col-xs-6">
+									<span>{this.hourMinute(movie.runtime)}</span>
+								</div>
+								<div className="col-xs-6 end-xs">
+									<span>{movie.imdb_rating}</span>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
