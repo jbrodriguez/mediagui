@@ -57,9 +57,9 @@ func (d *Dal) Start() {
 	d.registerAdditional(d.bus, "/get/movies", d.getMovies, d.mailbox)
 	d.registerAdditional(d.bus, "/command/movie/exists", d.checkExists, d.mailbox)
 	d.registerAdditional(d.bus, "/command/movie/store", d.storeMovie, d.mailbox)
+	d.registerAdditional(d.bus, "/command/movie/update", d.updateMovie, d.mailbox)
 	d.registerAdditional(d.bus, "/put/movies/score", d.setScore, d.mailbox)
 	d.registerAdditional(d.bus, "/put/movies/watched", d.setWatched, d.mailbox)
-	d.registerAdditional(d.bus, "/put/movies/fix", d.fixMovie, d.mailbox)
 
 	d.countRows = d.prepare("select count(*) from movie;")
 
@@ -106,14 +106,6 @@ func (d *Dal) getMovies(msg *pubsub.Message) {
 	msg.Reply <- &model.MoviesDTO{Total: total, Items: items}
 }
 
-// type Options struct {
-// 	SearchTerm string `json:"searchTerm"`
-// 	Current    uint64 `json:"current"`
-// 	Limit      uint64 `json:"limit"`
-// 	SortBy     string `json:"sortBy"`
-// 	SortOrder  string `json:"sortOrder"`
-// 	FilterBy   string `json:"filterBy"`
-// }
 func (d *Dal) listMovies(options lib.Options) (total uint64, movies []*model.Movie) {
 	mlog.Info("listMovies.options: %+v", options)
 
@@ -321,6 +313,57 @@ func (d *Dal) storeMovie(msg *pubsub.Message) {
 	mlog.Info("FINISHED SAVING %s [%d]", movie.Title, movie.Id)
 }
 
+func (d *Dal) updateMovie(msg *pubsub.Message) {
+	movie := msg.Payload.(*model.Movie)
+
+	mlog.Info("STARTED UPDATING [%d] %s", movie.Id, movie.Title)
+
+	tx, err := d.db.Begin()
+	if err != nil {
+		mlog.Fatalf("at begin: %s", err)
+	}
+
+	stmt, err := tx.Prepare(`update movie set title = ?, 
+								original_title = ?, 
+								year = ?, 
+								runtime = ?, 
+								tmdb_id = ?, 
+								imdb_id = ?, 
+								overview = ?, 
+								tagline = ?, 
+								cover = ?, 
+								backdrop = ?, 
+								genres = ?, 
+								vote_average = ?, 
+								vote_count = ?, 
+								countries = ?, 
+								modified = ?, 
+								director = ?, 
+								writer = ?, 
+								actors = ?, 
+								awards = ?, 
+								imdb_rating = ?, 
+								imdb_votes = ? 
+								where rowid = ?`)
+	if err != nil {
+		tx.Rollback()
+		mlog.Fatalf("at prepare: %s", err)
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(movie.Title, movie.Original_Title, movie.Year, movie.Runtime, movie.Tmdb_Id, movie.Imdb_Id, movie.Overview, movie.Tagline, movie.Cover, movie.Backdrop, movie.Genres, movie.Vote_Average, movie.Vote_Count, movie.Production_Countries, movie.Modified, movie.Director, movie.Writer, movie.Actors, movie.Awards, movie.Imdb_Rating, movie.Imdb_Votes, movie.Id)
+	if err != nil {
+		tx.Rollback()
+		mlog.Fatalf("at exec: %s", err)
+	}
+
+	tx.Commit()
+	mlog.Info("FINISHED UPDATING [%d] %s", movie.Id, movie.Title)
+
+	updated := &pubsub.Message{}
+	d.bus.Pub(updated, "/event/movie/updated")
+}
+
 func (d *Dal) setScore(msg *pubsub.Message) {
 	movie := msg.Payload.(*model.Movie)
 
@@ -412,8 +455,4 @@ func (d *Dal) prepare(sql string) *sql.Stmt {
 		mlog.Fatalf("prepare sql: %s (%s)", err, sql)
 	}
 	return stmt
-}
-
-func (d *Dal) fixMovie(msg *pubsub.Message) {
-
 }

@@ -9,6 +9,7 @@ import (
 	"jbrodriguez/mediagui/server/dto"
 	"jbrodriguez/mediagui/server/lib"
 	"jbrodriguez/mediagui/server/model"
+	"sync"
 )
 
 type Core struct {
@@ -20,7 +21,7 @@ type Core struct {
 
 	mailbox chan *pubsub.Mailbox
 
-	// m *sc.Machine
+	fix sync.WaitGroup
 }
 
 func NewCore(bus *pubsub.PubSub, settings *lib.Settings) *Core {
@@ -35,9 +36,13 @@ func (c *Core) Start() {
 	c.mailbox = c.register(c.bus, "/get/config", c.getConfig)
 	c.registerAdditional(c.bus, "/post/import", c.importMovies, c.mailbox)
 	c.registerAdditional(c.bus, "/put/config/folder", c.addMediaFolder, c.mailbox)
+	c.registerAdditional(c.bus, "/put/movies/fix", c.fixMovie, c.mailbox)
 
 	c.registerAdditional(c.bus, "/event/movie/found", c.doMovieFound, c.mailbox)
 	c.registerAdditional(c.bus, "/event/movie/scraped", c.doMovieScraped, c.mailbox)
+	c.registerAdditional(c.bus, "/event/movie/rescraped", c.doMovieReScraped, c.mailbox)
+	c.registerAdditional(c.bus, "/event/movie/updated", c.doMovieUpdated, c.mailbox)
+	c.registerAdditional(c.bus, "/event/movie/cached/forced", c.doMovieCachedForced, c.mailbox)
 
 	// c.m = sc.NewMachine("idle")
 	// c.m.Rule("import", "idle", "scanning")
@@ -124,4 +129,46 @@ func (c *Core) doMovieScraped(msg *pubsub.Message) {
 	c.bus.Pub(cache, "/command/movie/cache")
 
 	mlog.Info("ScrapeDTO: %+v", dto)
+}
+
+func (c *Core) fixMovie(msg *pubsub.Message) {
+	movie := msg.Payload.(*model.Movie)
+
+	// 3 operations, rescrape, update and cache
+	c.fix.Add(3)
+
+	// rescrape
+	scrape := &pubsub.Message{Payload: movie, Reply: make(chan interface{}, 3)}
+	c.bus.Pub(scrape, "/command/movie/rescrape")
+
+	go c.waitFixMovie(msg.Reply, movie)
+}
+
+func (c *Core) waitFixMovie(ch chan interface{}, movie *model.Movie) {
+	c.fix.Wait()
+	ch <- movie
+}
+
+func (c *Core) doMovieReScraped(msg *pubsub.Message) {
+	dto := msg.Payload.(*dto.Scrape)
+
+	c.fix.Done()
+
+	// update movie
+	store := &pubsub.Message{Payload: dto.Movie, Reply: make(chan interface{}, 3)}
+	c.bus.Pub(store, "/command/movie/update")
+
+	// cache movie
+	cache := &pubsub.Message{Payload: dto, Reply: make(chan interface{}, 3)}
+	c.bus.Pub(cache, "/command/movie/cache")
+
+	// mlog.Info("ScrapeDTO: %+v", dto)
+}
+
+func (c *Core) doMovieUpdated(msg *pubsub.Message) {
+	c.fix.Done()
+}
+
+func (c *Core) doMovieCachedForced(msg *pubsub.Message) {
+	c.fix.Done()
 }

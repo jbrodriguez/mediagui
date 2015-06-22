@@ -53,6 +53,7 @@ func main() {
 	server := services.NewServer(bus, settings)
 	scanner := services.NewScanner(bus, settings)
 	scraper := services.NewScraper(bus, settings)
+	cache := services.NewCache(bus, settings)
 	core := services.NewCore(bus, settings)
 
 	dal.Start()
@@ -60,6 +61,7 @@ func main() {
 	server.Start()
 	scanner.Start()
 	scraper.Start()
+	cache.Start()
 	core.Start()
 
 	mlog.Info("Press Ctrl+C to stop ...")
@@ -70,6 +72,7 @@ func main() {
 		mlog.Info("Received an interrupt, shutting the app down ...")
 
 		core.Stop()
+		cache.Stop()
 		scraper.Stop()
 		scanner.Stop()
 		server.Stop()

@@ -146,7 +146,7 @@ type ReScrape struct {
 func (s *ReScrape) Execute() {
 	movie := s.dto.Movie.(*model.Movie)
 
-	lib.Notify(s.bus, "import:progress", fmt.Sprintf("RESCRAPE REQUESTED [%s]", movie.Title))
+	lib.Notify(s.bus, "import:progress", fmt.Sprintf("RESCRAPE REQUESTED [%d] %s", movie.Id, movie.Title))
 
 	now := time.Now().UTC().Format(time.RFC3339)
 	movie.Modified = now
@@ -156,13 +156,17 @@ func (s *ReScrape) Execute() {
 	err := _scrape(s.tmdb, id, movie)
 	if err != nil {
 		lib.Notify(s.bus, "import:progress", err.Error())
+
+		msg := &pubsub.Message{Payload: s.dto}
+		s.bus.Pub(msg, "/event/movie/rescraped")
+
 		return
 	}
 
 	s.dto.BaseUrl = s.tmdb.BaseUrl
 	s.dto.SecureBaseUrl = s.tmdb.SecureBaseUrl
 
-	lib.Notify(s.bus, "import:progress", fmt.Sprintf("RESCRAPE COMPLETED [%s]", movie.Title))
+	lib.Notify(s.bus, "import:progress", fmt.Sprintf("RESCRAPE COMPLETED [%d] %s", movie.Id, movie.Title))
 
 	msg := &pubsub.Message{Payload: s.dto}
 	s.bus.Pub(msg, "/event/movie/rescraped")
@@ -186,6 +190,7 @@ func _scrape(tmdb *tmdb.Tmdb, id uint64, movie *model.Movie) error {
 	movie.Cover = gmr.Poster_Path
 	movie.Backdrop = gmr.Backdrop_Path
 
+	movie.Genres = ""
 	for i := 0; i < len(gmr.Genres); i++ {
 		attr := &gmr.Genres[i]
 		if movie.Genres == "" {
@@ -198,6 +203,7 @@ func _scrape(tmdb *tmdb.Tmdb, id uint64, movie *model.Movie) error {
 	movie.Vote_Average = gmr.Vote_Average
 	movie.Vote_Count = gmr.Vote_Count
 
+	movie.Production_Countries = ""
 	for i := 0; i < len(gmr.Production_Countries); i++ {
 		attr := &gmr.Production_Countries[i]
 		if movie.Production_Countries == "" {

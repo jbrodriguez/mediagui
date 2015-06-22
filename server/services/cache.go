@@ -23,6 +23,12 @@ type Cache struct {
 	mailbox chan *pubsub.Mailbox
 }
 
+func NewCache(bus *pubsub.PubSub, settings *lib.Settings) *Cache {
+	cache := &Cache{bus: bus, settings: settings}
+	cache.init()
+	return cache
+}
+
 func (c *Cache) Start() {
 	mlog.Info("Starting service Cache ...")
 
@@ -47,6 +53,8 @@ func (c *Cache) react() {
 func (c *Cache) cacheMovie(msg *pubsub.Message) {
 	dto := msg.Payload.(*dto.Scrape)
 	movie := dto.Movie.(*model.Movie)
+
+	mlog.Info("trying to cache movie: [%d] %s", movie.Id, movie.Title)
 
 	caching := &Caching{
 		bus:      c.bus,
@@ -96,7 +104,7 @@ func (c *Caching) Execute() {
 		}
 	}
 
-	backdropPath := filepath.Join(c.path, "img", "b", c.cover)
+	backdropPath := filepath.Join(c.path, "img", "b", c.backdrop)
 	if _, err := os.Stat(backdropPath); err == nil && !c.forced {
 		lib.Notify(c.bus, "import:progress", fmt.Sprintf("BACKDROP DOWNLOAD SKIPPED [%d] %s (%s)", c.id, c.title, c.cover))
 	} else {
@@ -106,4 +114,12 @@ func (c *Caching) Execute() {
 			lib.Notify(c.bus, "import:progress", fmt.Sprintf("UNABLE TO DOWNLOAD BACKDROP [%d] %s (%s)", c.id, c.title, c.cover))
 		}
 	}
+
+	event := "/event/movie/cached"
+	if c.forced {
+		event += "/forced"
+	}
+
+	cached := &pubsub.Message{}
+	c.bus.Pub(cached, event)
 }

@@ -20,7 +20,7 @@ module.exports = React.createClass({
 	fixMovie: function() {
 		if (this.tmdb_id) {
 			this.setState({ loading: true })
-			moviesBO.fixMovie(this.props.movie, this.tmdb_id)
+			moviesBO.fixMovie(this.props.movie, parseInt(this.tmdb_id))
 		}
 	},
 
