@@ -68,16 +68,16 @@ func (s *Scanner) react() {
 }
 
 func (s *Scanner) scanMovies(msg *pubsub.Message) {
-	folders := []string{
-		"/Volumes/hal-films",
-		"/Volumes/wopr-films",
-	}
+	// folders := []string{
+	// 	"/Volumes/hal-films",
+	// 	"/Volumes/wopr-films",
+	// }
 
 	// ping := "ping -c1 %s > /dev/null && echo \"YES\" || echo \"NO\""
 
 	lib.Notify(s.bus, "import:begin", "Import process started")
 
-	for _, folder := range folders {
+	for _, folder := range s.settings.MediaFolders {
 		err := s.walk(folder)
 		if err != nil {
 			mlog.Warning("Unable to scan folder (%s): %s", folder, err)

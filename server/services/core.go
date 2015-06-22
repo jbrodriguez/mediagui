@@ -88,6 +88,7 @@ func (c *Core) addMediaFolder(msg *pubsub.Message) {
 	mlog.Info("addMediaFolder: %s", folder)
 
 	c.settings.MediaFolders = append(c.settings.MediaFolders, folder)
+	c.settings.Save()
 
 	cfg := &pubsub.Message{Payload: c.settings}
 	c.bus.Pub(cfg, "/event/config/changed")
@@ -115,7 +116,7 @@ func (c *Core) doMovieFound(msg *pubsub.Message) {
 	lib.Notify(c.bus, "import:progress", text)
 
 	if !exists {
-		// c.bus.Pub(msg, "/command/movie/scrape")
+		c.bus.Pub(msg, "/command/movie/scrape")
 	}
 }
 

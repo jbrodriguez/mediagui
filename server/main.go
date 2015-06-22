@@ -45,6 +45,7 @@ func main() {
 	}
 
 	mlog.Info("mediagui v%s starting ...", Version)
+	mlog.Info("using config file located at %s", settings.Location)
 
 	bus := pubsub.New(623)
 

@@ -2,7 +2,10 @@ package lib
 
 import (
 	"errors"
+	"fmt"
 	"github.com/namsral/flag"
+	"io"
+	"os"
 	"path/filepath"
 	"strings"
 )
@@ -18,6 +21,8 @@ type Settings struct {
 	DataDir string
 	WebDir  string
 	LogDir  string
+
+	Location string
 }
 
 func searchConfig(locations []string) string {
@@ -47,6 +52,8 @@ func NewSettings(version, home string, locations []string) (*Settings, error) {
 	flag.Set("config", location)
 	flag.Parse()
 
+	// fmt.Printf("mediaFolders: %s\n", mediaFolders)
+
 	s := &Settings{}
 	if mediaFolders == "" {
 		s.MediaFolders = make([]string, 0)
@@ -57,5 +64,44 @@ func NewSettings(version, home string, locations []string) (*Settings, error) {
 	s.DataDir = dataDir
 	s.WebDir = webDir
 	s.LogDir = logDir
+	s.Location = location
+
 	return s, nil
+}
+
+func (s *Settings) Save() error {
+	file, err := os.Create(s.Location)
+	defer file.Close()
+
+	if err != nil {
+		return err
+	}
+
+	if err = writeLine(file, "datadir", s.DataDir); err != nil {
+		return err
+	}
+
+	if err = writeLine(file, "webdir", s.WebDir); err != nil {
+		return err
+	}
+
+	if err = writeLine(file, "logdir", s.LogDir); err != nil {
+		return err
+	}
+
+	mediaFolders := strings.Join(s.MediaFolders, "|")
+	if err = writeLine(file, "mediafolders", mediaFolders); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func writeLine(file *os.File, key, value string) error {
+	_, err := io.WriteString(file, fmt.Sprintf("%s=%s\n", key, value))
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

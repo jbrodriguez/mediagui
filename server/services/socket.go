@@ -82,7 +82,6 @@ func (s *Socket) transmit(msg *pubsub.Message) {
 	if err != nil {
 		mlog.Warning("Error transmitting websocket message: %s", err.Error())
 	} else {
-		mlog.Info("out is: %s", out)
 		s.hub.Broadcast <- out
 	}
 }
