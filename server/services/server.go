@@ -60,6 +60,7 @@ func (s *Server) Start() {
 		api.PUT("/config/folder", s.addMediaFolder)
 		api.PUT("/movies/:id/score", s.setMovieScore)
 		api.PUT("/movies/:id/watched", s.setMovieWatched)
+		api.PUT("/movies/:id/fix", s.fixMovie)
 	}
 
 	port := ":7623"
@@ -183,6 +184,22 @@ func (s *Server) setMovieWatched(c *gin.Context) {
 
 	msg := &pubsub.Message{Payload: &movie, Reply: make(chan interface{}, capacity)}
 	s.bus.Pub(msg, "/put/movies/watched")
+
+	reply := <-msg.Reply
+	resp := reply.(*model.Movie)
+	c.JSON(200, &resp)
+}
+
+func (s *Server) fixMovie(c *gin.Context) {
+	var movie model.Movie
+	if err := c.BindJSON(&movie); err != nil {
+		mlog.Warning("Unable to obtain score: %s", err.Error())
+	}
+
+	movie.Id, _ = strconv.ParseUint(c.Param("id"), 0, 64)
+
+	msg := &pubsub.Message{Payload: &movie, Reply: make(chan interface{}, capacity)}
+	s.bus.Pub(msg, "/put/movies/fix")
 
 	reply := <-msg.Reply
 	resp := reply.(*model.Movie)

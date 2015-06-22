@@ -36,6 +36,11 @@ module.exports = {
     	d.push('setWatched', movie)
     },
 
+    fixMovie: function(movie, tmdb_id) {
+    	movie.tmdb_id = tmdb_id
+    	d.push('fixMovie', movie)
+    }
+
     toProperty: function(initialMovies, optionsS) {
     	console.log('movies-before')
         const gotMovies = d
@@ -62,6 +67,11 @@ module.exports = {
         	.stream('setWatched')
         	.flatMap( (movie) => Bacon.fromPromise( api.setMovieWatched(movie) ))
 
+        const movieFixed = d
+        	.stream('fixMovie')
+        	.flatMap( (movie) => Bacon.fromPromise( api.fixMovie(movie) ))
+
+
         optionsS.onValue((opt) => {
         	console.log('movies.optionsS.onValue', opt)
         	if (!opt.firstRun) {
@@ -75,7 +85,8 @@ module.exports = {
         	[gotCover], (_, newCover) => newCover,
         	[movieImported], (currentMovies, _) => currentMovies,
         	movieScoreChanged, doMovieScoreChanged,
-        	movieWatchedChanged, doMovieWatchedChanged
+        	movieWatchedChanged, doMovieWatchedChanged,
+        	movieFixed, doMovieFixed,
         )
 
         function doMovieScoreChanged(movies, changedMovie) {
@@ -99,6 +110,12 @@ module.exports = {
         	return R.merge(movies, {items})
         }
 
+        function doMovieFixed(movies, changedMovie) {
+        	var id = changedMovie.id
+
+        	const items = R.map(updateItem(id, it => R.merge(it, changedMovie)), movies.items)
+        	return R.merge(movies, {items})
+        }
     }
 
 }

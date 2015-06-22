@@ -13,11 +13,13 @@ module.exports = React.createClass({
 		moviesBO.setMovieWatched(this.props.movie, watched)
 	},
 
-	getInitialState: function() {
-		return {
-			dateWatched: moment(),
-			tmdb_id: this.props.movie.tmdb_id,
-			rating: this.props.movie.rating
+	setTmdbId: function(e) {
+		this.tmdb_id = e.target.value
+	},
+
+	fixMovie: function() {
+		if (this.tmdb_id) {
+			moviesBO.fixMovie(this.props.movie, this.tmdb_id)
 		}
 	},
 
@@ -103,8 +105,8 @@ module.exports = React.createClass({
 				<div className="col-xs-12 bottom-spacer-large">
 					<div className="row between-xs">
 						<div className="col-xs-12 col-sm-2 addon">
-							<input className="addon-field" type="text" defaultValue={movie.tmdb_id}></input>
-							<button className="btn btn-default">Fix</button>
+							<input className="addon-field" type="text" defaultValue={movie.tmdb_id} onChange={this.setTmdbId}></input>
+							<button className="btn btn-default" onClick={this.fixMovie}>Fix</button>
 						</div>
 						<div className="col-xs-12 col-sm-10 addon end-sm">
 							{score}

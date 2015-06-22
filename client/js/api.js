@@ -7,6 +7,18 @@ const 	fetch 		= require('jquery').ajax,
 const hostr	= "http://" + document.location.host + "/api/v1"
 const hostw = "ws://" + document.location.host + "/ws"
 
+module.exports = {
+	getSocket: getSocket,
+	getConfig: getConfig,
+	getCover: getCover,
+	getMovies: getMovies,
+	importMovies: importMovies,
+	addMediaFolder: addMediaFolder,
+	setMovieScore: setMovieScore,
+	setMovieWatched: setMovieWatched,
+	fixMovie: fixMovie
+}
+
 function getSocket() {
 	const skt = new WebSocket(hostw)
 
@@ -87,13 +99,9 @@ function setMovieWatched(movie) {
 	})
 }
 
-module.exports = {
-	getSocket: getSocket,
-	getConfig: getConfig,
-	getCover: getCover,
-	getMovies: getMovies,
-	importMovies: importMovies,
-	addMediaFolder: addMediaFolder,
-	setMovieScore: setMovieScore,
-	setMovieWatched: setMovieWatched
+function fixMovie(movie) {
+	return fetch(hostr + '/movies/' + movie.id + '/fix', {
+		method: 'PUT',
+		data: JSON.stringify(movie)
+	})	
 }

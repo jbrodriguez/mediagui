@@ -26,7 +26,7 @@ type Cache struct {
 func (c *Cache) Start() {
 	mlog.Info("Starting service Cache ...")
 
-	c.mailbox = c.register(c.bus, "/command/movie/scrape", c.cacheMovie)
+	c.mailbox = c.register(c.bus, "/command/movie/cache", c.cacheMovie)
 
 	c.pool = lib.NewPool(4, 2000)
 
