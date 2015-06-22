@@ -26,7 +26,7 @@ api
 	})
 
 function run(config) {
-	// console.log(config)
+	console.log(config)
 
  	const {socketS, sendFn} = api.getSocket()
 
@@ -67,6 +67,9 @@ function run(config) {
 		// console.log("should have piaid me")
 		router.transitionTo("settings")
 	}
+	// } else {
+	// 	router.transitionTo("cover")
+	// }
 
 	router.run( function(ProxyHandler, state) {
 		Handler = ProxyHandler
@@ -94,7 +97,7 @@ function run(config) {
 
 	appState.onValue((state) => {
 		// console.log('dentro de onValue: ', state)
-		Reach.render(<Handler { ...state}/>, document.body)
+		React.render(<Handler { ...state}/>, document.body)
 		// React.render(<Handler { ...state} />, document.body, function() {
 		// 	console.log('marrano')
 		// })

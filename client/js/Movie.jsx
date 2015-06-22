@@ -135,7 +135,7 @@ module.exports = React.createClass({
 								className="rspacer"
 								max="10"
 								currentRating={movie.score}
-								toggledClassName="icon-star-filled"
+								toggledClassName="icon-star-full"
 								untoggledClassName="icon-star-empty"
 								onChange={this.setScore} />
 							<DatePicker

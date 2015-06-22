@@ -51,12 +51,13 @@ module.exports = {
 
         const gotCover = d
         	.stream('getCover')
-        	.flatMap(_ => Bacon.fromPromise(api.getCover()))
-        	// .log('cover')
+        	// .log()
+        	.flatMap( _ => Bacon.fromPromise( api.getCover() ))
+        	.log('cover')
 
         const movieImported = d
         	.stream('importMovies')
-        	.flatMap(_ => Bacon.fromPromise(api.importMovies()))
+        	.flatMap( (_) => Bacon.fromPromise(api.importMovies()))
         	// .log('importMovies')
 
         const movieScoreChanged = d
@@ -81,9 +82,9 @@ module.exports = {
 
         return Bacon.update(
         	initialMovies,
-        	[gotMovies], (_, newMovies) => newMovies,
-        	[gotCover], (_, newCover) => newCover,
-        	[movieImported], (currentMovies, _) => currentMovies,
+        	gotMovies, (_, newMovies) => newMovies,
+        	gotCover, (_, coverMovies) => coverMovies,
+        	movieImported, (currentMovies, _) => currentMovies,
         	movieScoreChanged, doMovieScoreChanged,
         	movieWatchedChanged, doMovieWatchedChanged,
         	movieFixed, doMovieFixed

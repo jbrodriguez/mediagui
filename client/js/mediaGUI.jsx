@@ -18,24 +18,29 @@ var SortWrapper = React.createClass({
 })
 
 module.exports = React.createClass({
-	// componentWillMount: function() {
-	// 	console.log('reminiscing')
-	// 	console.log(Array.isArray(this.props.children)); // => true
-	// },
+    handleFilterBy: function() {
+		const filterBy = event.target.value
+		optionsBO.setFilterBy(filterBy)
+    },
 
-	// getInitialState: function() {
-	// 	return {
-	// 		selectedFilter: this.props.options.filterBy,
-	// 		selectedSort: this.props.options.sortBy
-	// 	}
-	// },
+    handleSortBy: function() {
+		const sortBy = event.target.value
+		optionsBO.setSortBy(sortBy)
+    },
+
+    handleSortOrder: function() {
+    	const sortOrder = this.props.options.sortOrder === 'asc' ? 'desc' : 'asc'
+		optionsBO.setSortOrder(sortOrder)
+    },
+
+    handleQueryTerm: function() {
+		const queryTerm = event.target.value
+		optionsBO.setQueryTerm(queryTerm)
+    },
 
 	render: function() {
 		// console.log('somebody to love: ' + JSON.stringify(this.props, null, 4))
 		const settings = this.props.settings
-
-
-
 		const options = this.props.options
 		const urlQuery = {
 			query: options.query,
@@ -54,52 +59,11 @@ module.exports = React.createClass({
             return <SortWrapper key={option.id} option={option} />
         })
 
-        const handleFilterBy = function() {
-			const filterBy = event.target.value
-
-        	// console.log("mediaGUI.jsx.handleFilterBy:" + filterBy)
-
-			optionsBO.setFilterBy(filterBy)
-        }
-
-
-        const handleSortBy = function() {
-			const sortBy = event.target.value
-
-        	// console.log("mediaGUI.jsx.handleSortBy:" + sortBy)
-
-			// this.setState({selectedSort: sortBy})
-			optionsBO.setSortBy(sortBy)
-        }
-
-        const handleSortOrder = function() {
-        	const sortOrder = options.sortOrder === 'asc' ? 'desc' : 'asc'
-
-        	// console.log("mediaGUI.jsx.handleSortOrder:" + sortOrder)
-
-			// this.setState({selectedSort: sortBy})
-			optionsBO.setSortOrder(sortOrder)
-        }
-
-        const handleQueryTerm = function() {
-			const queryTerm = event.target.value
-
-        	// console.log("mediaGUI.jsx.handleQueryTerm:" + queryTerm)
-
-			optionsBO.setQueryTerm(queryTerm)
-        }
-
-
         const chevron = cx({
         	'icon-chevron-down': options.sortOrder === 'desc',
         	'icon-chevron-up': options.sortOrder === 'asc',
         	// 'header__action': true
         })
-        // const sortStyle = {marginLeft: "1em"}
-
-								// <select value={this.state.selectedFilter}>
-								// <select value={this.state.selectedSort}>
-										// <a href="#" className="spacer">{"prune".toUpperCase()}</a>
 
 		return (
 			// <div className={cx("container", "body")}>
@@ -118,16 +82,16 @@ module.exports = React.createClass({
 										<div className="header__menu-section">
 											<Link to="movies" query={urlQuery} className="spacer">MOVIES</Link>
 
-											<select value={options.filterBy} onChange={handleFilterBy}>
+											<select value={options.filterBy} onChange={this.handleFilterBy}>
 												{filterByNodes}
 											</select>
-											<input type="search" placeholder="Enter search string" onChange={handleQueryTerm} />
+											<input type="search" placeholder="Enter search string" onChange={this.handleQueryTerm} />
 
-											<select value={options.sortBy} onChange={handleSortBy} className="spacer">
+											<select value={options.sortBy} onChange={this.handleSortBy} className="spacer">
 												{sortByNodes}
 											</select>
 
-											<i onClick={handleSortOrder} className={chevron}></i>
+											<i onClick={this.handleSortOrder} className={chevron}></i>
 
 											<span className="spacer">|</span>
 

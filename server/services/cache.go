@@ -108,7 +108,7 @@ func (c *Caching) Execute() {
 	if _, err := os.Stat(backdropPath); err == nil && !c.forced {
 		lib.Notify(c.bus, "import:progress", fmt.Sprintf("BACKDROP DOWNLOAD SKIPPED [%d] %s (%s)", c.id, c.title, c.cover))
 	} else {
-		if err := lib.Download(c.url+"original"+c.cover, backdropPath); err == nil {
+		if err := lib.Download(c.url+"original"+c.backdrop, backdropPath); err == nil {
 			lib.Notify(c.bus, "import:progress", fmt.Sprintf("BACKDROP DOWNLOADED [%d] %s (%s)", c.id, c.title, c.cover))
 		} else {
 			lib.Notify(c.bus, "import:progress", fmt.Sprintf("UNABLE TO DOWNLOAD BACKDROP [%d] %s (%s)", c.id, c.title, c.cover))
