@@ -118,12 +118,13 @@ $headerMenuAnchorColor: $elegant-blue;
 $headerMenuBackground: $cement-gray;
 
 // MAIN
+$article-border-color: $white-gray;
+$director-color: $bright-orange;
+$title-color: $dark-red;
+
 $pagination-hover-bg: $cement-gray;
 $pagination-active-bg: $cheerful-blue;
-$pagination-border-color: $white-gray;
-
-$article-border-color: $pagination-border-color;
-$director-color: $bright-orange;
+$pagination-border-color: $article-border-color;
 
 $console-border: $light-gray;
 $console-color: white;

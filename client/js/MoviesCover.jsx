@@ -6,6 +6,33 @@ module.exports = React.createClass({
 	// componentWillMount: function() {
 	// 	movies.getCover()
 	// },
+    hourMinute: function(minutes) {
+        var hour = Math.floor(minutes / 60);
+        var minute = Math.floor(minutes % 60);
+
+        var time = '';
+        if (hour > 0) time += (hour + ":");
+        if (minute >= 0) {
+            if (minute <= 9) time += "0"+minute;
+            else time += minute;
+        }
+        if (hour <= 0) time += "m";
+
+        return time;
+    },	
+
+ //    truncate: function(text, length, end) {
+	// 	length = length || 23;
+	// 	end = end || '...';
+
+	// 	if (text.length <= length || text.length - end.length <= length) {
+	// 	    return text;
+	// 	}
+	// 	else {
+	// 		console.log("is something here")
+	// 	    return String(text).substring(0, length-end.length) + end;
+	// 	}
+	// },
 
 	render: function() {
 		// console.log('MoviesCover.jsx: ' + JSON.stringify(this.props, null, 4))
@@ -13,6 +40,8 @@ module.exports = React.createClass({
 		const movies = this.props.movies.items
 
 		// console.log('movies: ' + movies)
+
+		const that = this
 
 
 		if (typeof movies != 'undefined') {
@@ -27,14 +56,12 @@ module.exports = React.createClass({
 				}
 
 				return (
-					<div key={i} className="col-xs-12 col-sm-6 col-md-3 col-lg-2">
+					<div key={i} className="col-xs-12 col-sm-6 col-md-3 col-lg-2 bottom-spacer-large">
 						<div className="overlay" >
 							<img src={"/img/p" + movie.cover} />
 							{watched}
-							<span className="crimson">{movie.title} </span><br />
-							{movie.year} | 
-							<span className="bright">{movie.imdb_rating}</span> |
-							<span className="label">{movie.runtime}</span>							
+							<p className="cover-title">{movie.title}</p>
+							<span className="cover-details label">{movie.year} | {movie.imdb_rating} | {that.hourMinute(movie.runtime)}</span>
 						</div>
 					</div>				
 				)

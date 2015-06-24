@@ -13,6 +13,20 @@ article {
 	}
 }
 
+
+
+.cover-title {
+	color: $title-color;
+	white-space: nowrap;
+	width: 100%;                   
+	overflow: hidden;              /* "overflow" value must be different from "visible" */ 
+	text-overflow: ellipsis;
+}
+
+.cover-details {
+	font-size: 0.75em;
+}
+
 .overlay {
 	position: relative;
 	overflow: hidden;

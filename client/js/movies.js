@@ -67,6 +67,7 @@ module.exports = {
         const movieWatchedChanged = d
         	.stream('setWatched')
         	.flatMap( (movie) => Bacon.fromPromise( api.setMovieWatched(movie) ))
+        	// .log('movie-watched')
 
         const movieFixed = d
         	.stream('fixMovie')
@@ -90,7 +91,16 @@ module.exports = {
         	movieFixed, doMovieFixed
         )
 
+
         function doMovieScoreChanged(movies, changedMovie) {
+        	var id = changedMovie.id,
+        		score = changedMovie.score
+
+        	const items = R.map(updateItem(id, it => R.merge(it, {score})), movies.items)
+        	return R.merge(movies, {items})
+        }
+
+        function doMovieWatchedChanged(movies, changedMovie) {
         	var id = changedMovie.id,
         		changed = {
 	        		last_watched: changedMovie.last_watched,
@@ -101,15 +111,7 @@ module.exports = {
 
         	const items = R.map(updateItem(id, it => R.merge(it, changed)), movies.items)
         	return R.merge(movies, {items})
-        }
-
-        function doMovieWatchedChanged(movies, changedMovie) {
-        	var id = changedMovie.id,
-        		score = changedMovie.score
-
-        	const items = R.map(updateItem(id, it => R.merge(it, {score})), movies.items)
-        	return R.merge(movies, {items})
-        }
+        }        
 
         function doMovieFixed(movies, changedMovie) {
         	var id = changedMovie.id
