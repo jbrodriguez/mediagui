@@ -38,6 +38,7 @@ $datepicker__margin: 5px;
 // $rose: #F26A9A;
 $white-gray: #f2f2f2;
 $light-gray: #F6F7F8;
+$lighter-gray: #e9edef;
 $cement-gray: #DBE1E5;
 $dark-gray: #9DA3A7;
 $darker-gray: #7C8893;
@@ -114,13 +115,15 @@ $headerLogoBackground: $acre-red;
 // $headerLogoBackground: #F26A9A;
 
 $headerMenuAnchorColor: $elegant-blue;
-// $headerMenuBackground: #57626C;
-$headerMenuBackground: $cement-gray;
+$headerMenuBackground: $lighter-gray;
+
+// $headerMenuBackground: $cement-gray;
 
 // MAIN
+$movie-cover-bg: $lighter-gray;
 $article-border-color: $white-gray;
 $director-color: $bright-orange;
-$title-color: $dark-red;
+$movie-title-color: $elegant-blue;
 
 $pagination-hover-bg: $cement-gray;
 $pagination-active-bg: $cheerful-blue;

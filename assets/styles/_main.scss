@@ -2,7 +2,7 @@ main {
 	flex: 1;
 }
 
-article {
+.movie-info {
 	font-size: 0.9em;
 	margin-bottom: 2em;
 	border-bottom: 1px solid $article-border-color;
@@ -13,10 +13,16 @@ article {
 	}
 }
 
+.movie-cover {
+	background-color: $movie-cover-bg;
+}
 
+.movie-cover__details {
+	padding: 0 .5em;
+}
 
 .cover-title {
-	color: $title-color;
+	color: $movie-title-color;
 	white-space: nowrap;
 	width: 100%;                   
 	overflow: hidden;              /* "overflow" value must be different from "visible" */ 
@@ -24,7 +30,11 @@ article {
 }
 
 .cover-details {
+	display: flex;	
 	font-size: 0.75em;
+}
+
+.cover-details__wrapper {
 }
 
 .overlay {

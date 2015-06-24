@@ -33,7 +33,7 @@ function run(config) {
 	const	navigationS	= d.stream('navigation'),
 			settingsP 	= settings.toProperty(config),
 			optionsP 	= options.toProperty(getInitialOptions()),
-		  	moviesP  	= movies.toProperty([], optionsP),
+		  	moviesP  	= movies.toProperty({}, optionsP),
 		  	messageP 	= wsmessages.toProperty([], socketS, sendFn)
 
 	const	appState 	= Bacon.combineTemplate({
@@ -43,7 +43,7 @@ function run(config) {
 				messages: messageP,
 				navigation: navigationS
 			})
-			// .log('appState.value = ')
+			.log('appState.value = ')
 
 	const	routes 		= (
 				<Route name="app" path="/" handler={MediaGUI}>

@@ -41,6 +41,10 @@
 	margin-right: 1em;
 }
 
+.lspacer {
+	margin-left: 1em;
+}
+
 .bg-warning {
 	@include bg-variant($state-warning-bg);
 }
