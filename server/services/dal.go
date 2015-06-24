@@ -55,6 +55,7 @@ func (d *Dal) Start() {
 
 	d.mailbox = d.register(d.bus, "/get/movies/cover", d.getCover)
 	d.registerAdditional(d.bus, "/get/movies", d.getMovies, d.mailbox)
+	d.registerAdditional(d.bus, "/get/movies/duplicates", d.getDuplicates, d.mailbox)
 	d.registerAdditional(d.bus, "/command/movie/exists", d.checkExists, d.mailbox)
 	d.registerAdditional(d.bus, "/command/movie/store", d.storeMovie, d.mailbox)
 	d.registerAdditional(d.bus, "/command/movie/update", d.updateMovie, d.mailbox)
@@ -107,7 +108,7 @@ func (d *Dal) getMovies(msg *pubsub.Message) {
 }
 
 func (d *Dal) listMovies(options lib.Options) (total uint64, movies []*model.Movie) {
-	mlog.Info("listMovies.options: %+v", options)
+	// mlog.Info("listMovies.options: %+v", options)
 
 	tx, err := d.db.Begin()
 	if err != nil {
@@ -236,6 +237,51 @@ func (d *Dal) searchMovies(options lib.Options) (total uint64, movies []*model.M
 	mlog.Info("searchMovies:Listed %d movies (total %d)", len(items), d.searchCount)
 
 	return d.searchCount, items
+}
+
+func (d *Dal) getDuplicates(msg *pubsub.Message) {
+	mlog.Info("getDuplicates.starting")
+
+	tx, err := d.db.Begin()
+	if err != nil {
+		mlog.Fatalf("Unable to begin transaction: %s", err)
+	}
+
+	// rows, err := self.listMovies.Query()
+	// if err != nil {
+	// 	mlog.Fatalf("unable to prepare transaction: %s", err)
+	// }
+
+	// rows, err := self.db.Query("select rowid, title, original_title, file_title, year, runtime, tmdb_id, imdb_id, overview, tagline, resolution, filetype, location, cover, backdrop, genres, vote_average, vote_count, countries, added, modified, last_watched, all_watched, count_watched from movie where title in (select title from movie group by title having count(*) > 1);")
+	rows, err := d.db.Query(`select a.rowid, a.title, a.original_title, a.file_title, 
+				a.year, a.runtime, a.tmdb_id, a.imdb_id, a.overview, a.tagline, a.resolution, 
+				a.filetype, a.location, a.cover, a.backdrop, a.genres, a.vote_average, 
+				a.vote_count, a.countries, a.added, a.modified, a.last_watched, a.all_watched, 
+				a.count_watched, a.score, a.director, a.writer, a.actors, a.awards, a.imdb_rating, 
+				a.imdb_votes 
+				from 
+				movie a 
+				join 
+				(select title, year from movie group by title, year having count(*) > 1) b 
+				on a.title = b.title and a.year = b.year;`)
+	if err != nil {
+		mlog.Fatalf("Unable to prepare transaction: %s", err)
+	}
+
+	items := make([]*model.Movie, 0)
+
+	for rows.Next() {
+		movie := model.Movie{}
+		rows.Scan(&movie.Id, &movie.Title, &movie.Original_Title, &movie.File_Title, &movie.Year, &movie.Runtime, &movie.Tmdb_Id, &movie.Imdb_Id, &movie.Overview, &movie.Tagline, &movie.Resolution, &movie.FileType, &movie.Location, &movie.Cover, &movie.Backdrop, &movie.Genres, &movie.Vote_Average, &movie.Vote_Count, &movie.Production_Countries, &movie.Added, &movie.Modified, &movie.Last_Watched, &movie.All_Watched, &movie.Count_Watched, &movie.Score, &movie.Director, &movie.Writer, &movie.Actors, &movie.Awards, &movie.Imdb_Rating, &movie.Imdb_Votes)
+		items = append(items, &movie)
+	}
+	rows.Close()
+
+	tx.Commit()
+
+	mlog.Info("Found %d duplicate movies", len(items))
+
+	msg.Reply <- &model.MoviesDTO{Total: uint64(len(items)), Items: items}
 }
 
 func (d *Dal) checkExists(msg *pubsub.Message) {

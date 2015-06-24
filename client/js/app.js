@@ -51,6 +51,7 @@ function run(config) {
 					<Route name="movies" path="/movies" handler={MoviesPage} />
 					<Route name="settings" path="/settings" handler={SettingsPage} />
 					<Route name="import" path="/import" handler={Import} />
+					<Route name="duplicates" path="/movies/duplicates" handler={MoviesPage} />
 
 					<Redirect from="/" to="/movies/cover" />
 				</Route>
@@ -86,6 +87,10 @@ function run(config) {
 					break;
 				case "/movies/cover":
 					movies.getCover()
+					break;
+				case "/movies/duplicates":
+				console.log('are we reaching')
+					movies.getDuplicates()
 					break;
 				case "/import":
 				case "/settings":
