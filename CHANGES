@@ -1,0 +1,137 @@
+Version 0.1.0 - 2015-06-24
+    - Initial commit
+    - Add first version of business logic
+    - Add gulpfile
+    - Separate config from gulpfile main file
+    - Add LICENSE
+    - Ignore *.log files
+    - Initialize semver
+    - Accomplish react Hello World !!!
+    - Add server build task
+    - Create basic go server
+    - Rename main React component
+    - Add gulp 4 dependency
+    - Refactor gulpfile to reflect new task structure (functions rather than tasks)
+    - Use github.com/namsral/flag, because it's a very simple utility that reads both command line flags and environment variables (which can be defined in a config file)
+    - Fix syntax error
+    - Flatten src folder, so that import paths in go are simpler
+    - Create server service
+    - Refactor file/folder exists function into a separate file
+    - Scale down usage of gulpfile, to only rebuild javascript app and server go code, but doesn't start the binary (problems with streams). Will need to revisit this later.
+    - Remove server stop call in gulpfile, since pkill fails if the binary is not running (fails within node, succeed in the shell). It doesn't matter anyway, since I can rebuild go code while the binary is executing.
+    - Switch from httprouter to gin, because gin provides amenities that httprouter doesn't have (after all gin is a framework and httprouter is just a router)
+    - Use update pubsub, which defines a new Mailbox structure, to allow for registering functions vs topics in the services
+    - Create service component, which handles the bus/topic/function registration details
+    - Redefine logic of reply channel. It's created as a buffered channel, so that services can deliver the message and return inmediately
+    - First working version, rendering the UI
+    - Create first unstyled render of app navigation
+    - First styled rendering of the basic UI
+    - Add header navigation controls (without behaviour at the moment)
+    - Define framework to set initial options for filtering/sorting criteria
+    - Define app color palette
+    - Create api function to retrieve cover view
+    - Call api before rolling the ball with streams. Need to find a proper way to do this
+    - Add movie model in backend
+    - First render of backend data
+    - Add dal service (back end)
+    - Redefine database default location
+    - Add flexbox grid (still dormant)
+    - Fix to rebundle when jsx files change (not sure if this is working though, it's a bit erratic)
+    - Add first version of styling for the header and main sections of the application
+    - Add semantic class back to the html layout
+    - Remove markup that wasn't working
+    - Define one possible app logic structure. The movies business object listens to the options property and triggers a public api call. The Link react-router construc is passed query parameters which in turn are sent down to the api call
+    - Create skeleton for /movies api call (both on the client and server)
+    - Create skeleton of movie page. There's a compromise in the definition of side by side images, will hide backdrop at low resolutions
+    - Fix signature of register function (service package)
+    - Create getMovies functionality, ready to implement searchMovies feature
+    - First version of complete mobile layout
+    - Remove unnecessary markup
+    - Create skeleton of interaction to change one of the fiter/sort criteria. The first one is working (set sort by)
+    - First steps towards the definition of a color palette for the app
+    - Fix select html tag appearance
+    - Order result in descending order of creation (back end)
+    - Add fonts for the app (chevrons, social icons, etc)
+    - Complete navbar UI look
+    - Define behaviour of <i> tag element, to show pointer cursor and change color on hover
+    - Implement pagination (the bottom paginator isn't synchronized with the top one, need to figure out why not).
+    - Add setOffset function to options business object (needed for pagination)
+    - Complete article structure (still pending datepicker and star rating)
+    - Add watch task for fonts
+    - Add watched and added icons
+    - Add label css ui element
+    - Add watched field to MoviePage
+    - Let select and input have a min width
+    - Add datepicker
+    - Set up skeleton for Movie item operations
+    - Set default text for watched datepicker
+    - Prepare setStateXXX foundation with setStateWatched example
+    - Add support for query terms in the front end
+    - Add support for queryTerm in the backend
+    - Add filterBy functionality
+    - Fix sticky footer UI
+    - Fix footer UI
+    - Create new styling for header UI
+    - Store user preferences in localstorage (with regards to filter/sort)
+    - Fix select element focus UI
+    - Create scanner service
+    - Add scanner service
+    - Add import page
+    - Rename scrapeMovie bus command
+    - Add tmdb and omdb scraping code
+    - Add socket service
+    - Create new workpool library
+    - Fix syntax errors
+    - Replace incorrect websocket pubsub calls with lib.Notify
+    - Start socket service
+    - Handle connections from websocket endpoint
+    - Add console ui in import page
+    - Start scraper service
+    - Fix services starting order
+    - Create skeleton of import console ui
+    - Add websocket on the client side
+    - Fix logic of transmitting messages on the socket (server side). The processing was inverted when an error ocurred.
+    - Fix code to transmit message on the websocket wire (was sending gibberish)
+    - Remove emitter and jquery. No longer needed
+    - Replace jquery.ajax with node-fetch
+    - Go back to jquery, because node-fetch doesn't work worth a damn
+    - Rearchitect app startup on the client side. It's more managed, and there's no duplication of api calls
+    - Create settings page
+    - Gui improvements
+    - Add template for list of folders in the UI
+    - Consume addFolder functionality (front end)
+    - Expose addMediaFolder endpoint on the server side
+    - Rename wsMessage to Packet, so that it can used more universally
+    - Create the enter key handler for the folder input field in the settings page
+    - Fix issue with second paginator. It wasn't refreshing when the first one changed
+    - Add icons for movie rating
+    - Fix addfolder functionality both in client and server
+    - Add rating component
+    - General UI fixes
+    - Remove save button from Movie page, since I'll be saving both rating and watched date automatically when changed
+    - Refactor dto structs into their own package
+    - Complete setMovieScore functionality
+    - Fix issue where the page was scrolling to the top when setting movie score
+    - Use title as the key for the list of movies. Otherwise, react thought the movie wasnt changing, and calculated properties weren't being refreshed (rating remained the same as the previous movie at that same spot in the list)
+    - Add setWatched functionality
+    - Fix display of watched date (wasn't taking into account the timezone)
+    - Remove unnecessary utc conversion (moment does it intrinsically)
+    - Add cache service
+    - Complete storeMovie implementation
+    - Add fixMovie functionality, but implementation is not complete. Need to wait on the api call from the client, so I need to rearchitect a bit on the server (some services will optionally reply on a channel, rather than firing an event on the bus)
+    - Add spinner component
+    - Complete fixMovie functionality
+    - Finalize import functionality
+    - Comment console.log and stream.log calls (client side)
+    - Fix backdrop download
+    - Replace rating icons
+    - Add runtime and imdb rating overlays to individual movies
+    - Add overlayed watched ribbon both in cover and movies pages
+    - Fix setWatched, setScore functionality (code was reversed)
+    - Add watched ribbon in cover page
+    - General ui improvements
+    - Create cover component to better modularize
+    - Additional UI fixes
+    - Prepare for initial version
+
+

@@ -1,0 +1,4 @@
+data/.hgignore.i
+data/statecraft_test.go.i
+data/README.md.i
+data/statecraft.go.i

@@ -1,6 +1,6 @@
 .DS_Store
 
-src/art
+art
 target
 
 node_modules
@@ -8,5 +8,8 @@ node_modules
 *.zip
 *.tar.gz
 *.log
+*.a
 
-_vendor
+**/_vendor/pkg/
+
+server/server
