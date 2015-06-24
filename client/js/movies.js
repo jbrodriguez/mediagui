@@ -45,6 +45,10 @@ module.exports = {
     	d.push('getDuplicates')
     },
 
+    pruneMovies: function() {
+    	d.push('pruneMovies')
+    },
+
     toProperty: function(initialMovies, optionsS) {
     	// console.log('movies-before')
         const gotMovies = d
@@ -81,6 +85,11 @@ module.exports = {
         	.stream('getDuplicates')
         	.flatMap( _ => Bacon.fromPromise( api.getDuplicates() ))
 
+        const moviesPruned = d
+        	.stream('pruneMovies')
+        	.flatMap( (_) => Bacon.fromPromise(api.pruneMovies()))
+        	// .log('importMovies')        	
+
 
         optionsS.onValue((opt) => {
         	// console.log('movies.optionsS.onValue', opt)
@@ -97,7 +106,8 @@ module.exports = {
         	movieScoreChanged, doMovieScoreChanged,
         	movieWatchedChanged, doMovieWatchedChanged,
         	movieFixed, doMovieFixed,
-        	gotDuplicates, (_, newMovies) => newMovies
+        	gotDuplicates, (_, newMovies) => newMovies,
+        	moviesPruned,  (currentMovies, _) => currentMovies
         )
 
 

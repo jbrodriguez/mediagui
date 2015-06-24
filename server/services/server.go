@@ -57,6 +57,7 @@ func (s *Server) Start() {
 		api.GET("/movies/duplicates", s.getDuplicates)
 
 		api.POST("/import", s.importMovies)
+		api.POST("/prune", s.pruneMovies)
 
 		api.PUT("/config/folder", s.addMediaFolder)
 		api.PUT("/movies/:id/score", s.setMovieScore)
@@ -153,6 +154,10 @@ func (s *Server) getDuplicates(c *gin.Context) {
 
 func (s *Server) importMovies(c *gin.Context) {
 	s.bus.Pub(nil, "/post/import")
+}
+
+func (s *Server) pruneMovies(c *gin.Context) {
+	s.bus.Pub(nil, "/post/prune")
 }
 
 func (s *Server) addMediaFolder(c *gin.Context) {

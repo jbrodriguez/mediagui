@@ -24,9 +24,9 @@ type Dal struct {
 	db *sql.DB
 	// dbase       string
 	// err         error
-	count       uint64
-	searchCount uint64
-	searchArgs  string
+	// count       uint64
+	// searchCount uint64
+	// searchArgs  string
 
 	countRows *sql.Stmt
 	// storeMovie *sql.Stmt
@@ -59,6 +59,7 @@ func (d *Dal) Start() {
 	d.registerAdditional(d.bus, "/command/movie/exists", d.checkExists, d.mailbox)
 	d.registerAdditional(d.bus, "/command/movie/store", d.storeMovie, d.mailbox)
 	d.registerAdditional(d.bus, "/command/movie/update", d.updateMovie, d.mailbox)
+	d.registerAdditional(d.bus, "/command/movie/delete", d.deleteMovie, d.mailbox)
 	d.registerAdditional(d.bus, "/put/movies/score", d.setScore, d.mailbox)
 	d.registerAdditional(d.bus, "/put/movies/watched", d.setWatched, d.mailbox)
 
@@ -135,12 +136,14 @@ func (d *Dal) listMovies(options lib.Options) (total uint64, movies []*model.Mov
 	items := make([]*model.Movie, 0)
 
 	// if options.Offset == 0 {
-	if d.count == 0 {
-		err = d.countRows.QueryRow().Scan(&d.count)
-		if err != nil {
-			mlog.Fatalf("Unable to count rows: %s", err)
-		}
+	// if d.count == 0 {
+	var count uint64
+
+	err = d.countRows.QueryRow().Scan(&count)
+	if err != nil {
+		mlog.Fatalf("Unable to count rows: %s", err)
 	}
+	// }
 
 	for rows.Next() {
 		movie := model.Movie{}
@@ -159,9 +162,9 @@ func (d *Dal) listMovies(options lib.Options) (total uint64, movies []*model.Mov
 
 	tx.Commit()
 
-	mlog.Info("Listed %d movies (total %d)", len(items), d.count)
+	mlog.Info("Listed %d movies (total %d)", len(items), count)
 
-	return d.count, items
+	return count, items
 }
 
 func (d *Dal) searchMovies(options lib.Options) (total uint64, movies []*model.Movie) {
@@ -175,7 +178,7 @@ func (d *Dal) searchMovies(options lib.Options) (total uint64, movies []*model.M
 	term := options.Query + "*"
 	args := options.FilterBy
 
-	mlog.Info("this is: %s %s %s", term, d.searchArgs, args)
+	mlog.Info("this is: %s %s", term, args)
 
 	// if self.searchArgs != args {
 	// self.searchArgs = args
@@ -192,7 +195,8 @@ func (d *Dal) searchMovies(options lib.Options) (total uint64, movies []*model.M
 
 	mlog.Info("searchMovies:CountQuery:%s", countQuery)
 
-	err = stmt.QueryRow(term).Scan(&d.searchCount)
+	var count uint64
+	err = stmt.QueryRow(term).Scan(&count)
 	if err != nil {
 		mlog.Fatalf("searchMovies:Unable to count rows: %s", err)
 	}
@@ -234,9 +238,9 @@ func (d *Dal) searchMovies(options lib.Options) (total uint64, movies []*model.M
 
 	tx.Commit()
 
-	mlog.Info("searchMovies:Listed %d movies (total %d)", len(items), d.searchCount)
+	mlog.Info("searchMovies:Listed %d movies (total %d)", len(items), count)
 
-	return d.searchCount, items
+	return count, items
 }
 
 func (d *Dal) getDuplicates(msg *pubsub.Message) {
@@ -320,7 +324,7 @@ func (d *Dal) checkExists(msg *pubsub.Message) {
 func (d *Dal) storeMovie(msg *pubsub.Message) {
 	movie := msg.Payload.(*model.Movie)
 
-	d.count = 0
+	// d.count = 0
 
 	mlog.Info("STARTED SAVING %s", movie.Title)
 
@@ -408,6 +412,36 @@ func (d *Dal) updateMovie(msg *pubsub.Message) {
 
 	updated := &pubsub.Message{}
 	d.bus.Pub(updated, "/event/movie/updated")
+}
+
+func (d *Dal) deleteMovie(msg *pubsub.Message) {
+	movie := msg.Payload.(*model.Movie)
+
+	// d.count = 0
+
+	lib.Notify(d.bus, "prune:delete", fmt.Sprintf("STARTED DELETING [%d] %s", movie.Id, movie.Title))
+
+	tx, err := d.db.Begin()
+	if err != nil {
+		mlog.Fatalf("at begin: %s", err)
+	}
+
+	stmt, err := tx.Prepare("delete from movie where rowid = ?")
+	if err != nil {
+		tx.Rollback()
+		mlog.Fatalf("at prepare: %s", err)
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(movie.Id)
+	if err != nil {
+		tx.Rollback()
+		mlog.Fatalf("at exec: %s", err)
+	}
+
+	tx.Commit()
+
+	lib.Notify(d.bus, "prune:delete", fmt.Sprintf("FINISHED DELETING [%d] %s", movie.Id, movie.Title))
 }
 
 func (d *Dal) setScore(msg *pubsub.Message) {

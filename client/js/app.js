@@ -5,6 +5,7 @@ const	React 			= require('react'),
 		MoviesPage 		= require('./MoviesPage.jsx'),
 		SettingsPage	= require('./SettingsPage.jsx'),
 		Import 			= require('./Import.jsx'),
+		PrunePage 		= require('./PrunePage.jsx'),
 		settings 		= require('./settings'),
 		movies 			= require('./movies'),
 		wsmessages		= require('./wsmessages'),
@@ -52,6 +53,7 @@ function run(config) {
 					<Route name="settings" path="/settings" handler={SettingsPage} />
 					<Route name="import" path="/import" handler={Import} />
 					<Route name="duplicates" path="/movies/duplicates" handler={MoviesPage} />
+					<Route name="prune" path="/prune" handler={PrunePage} />
 
 					<Redirect from="/" to="/movies/cover" />
 				</Route>
@@ -89,11 +91,11 @@ function run(config) {
 					movies.getCover()
 					break;
 				case "/movies/duplicates":
-				console.log('are we reaching')
 					movies.getDuplicates()
 					break;
 				case "/import":
 				case "/settings":
+				case "/prune":
 					d.push('navigation')
 					break;
 			}

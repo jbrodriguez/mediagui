@@ -17,7 +17,8 @@ module.exports = {
 	setMovieScore: setMovieScore,
 	setMovieWatched: setMovieWatched,
 	fixMovie: fixMovie,
-	getDuplicates: getDuplicates
+	getDuplicates: getDuplicates,
+	pruneMovies: pruneMovies
 }
 
 function getSocket() {
@@ -109,4 +110,10 @@ function fixMovie(movie) {
 
 function getDuplicates() {
 	return fetch(hostr + '/movies/duplicates')
+}
+
+function pruneMovies() {
+	return fetch(hostr + '/prune', {
+		method: 'POST'
+	})
 }
