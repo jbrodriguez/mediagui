@@ -83,6 +83,12 @@ module.exports = {
 		fonts: assets + "fonts/*"
 	},
 
+	publish: {
+		src: build,
+		app: "app",
+		index: "index.html"
+	}
+
 
 
 	// tools: {
