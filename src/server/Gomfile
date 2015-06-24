@@ -1,2 +1,0 @@
-gom 'github.com/julienschmidt/httprouter', :commit => '8c199fb6259ffc1af525cc3ad52ee60ba8359669'
-gom 'github.com/namsral/flag', :commit => 'bd57b3fc9ada8271ff812ba54f938fe72749d969'

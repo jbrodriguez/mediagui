@@ -1,0 +1,179 @@
+main {
+	flex: 1;
+}
+
+.movie-info {
+	font-size: 0.9em;
+	margin-bottom: 2em;
+	border-bottom: 1px solid $article-border-color;
+
+	.director {
+		color: $director-color;
+		font-weight: bold;
+	}
+}
+
+.movie-cover {
+	background-color: $movie-cover-bg;
+}
+
+.movie-cover__details {
+	padding: 0 .5em;
+}
+
+.cover-title {
+	color: $movie-title-color;
+	white-space: nowrap;
+	width: 100%;                   
+	overflow: hidden;              /* "overflow" value must be different from "visible" */ 
+	text-overflow: ellipsis;
+}
+
+.cover-details {
+	display: flex;	
+	font-size: 0.75em;
+}
+
+.cover-details__wrapper {
+}
+
+.overlay {
+	position: relative;
+	overflow: hidden;
+}
+
+.overlay__backdrop {
+	width: 100%;
+	position: absolute;
+	top: 1em;
+	// bottom: 0;
+	left: 0;
+	// right: 0;
+	// padding: 0.4rem 1.6rem 0.4rem 1.6rem;
+	padding: 0 1em;
+}
+
+.overlay__backdrop span {
+	font-size: 1.25em;
+	color: white;
+	background-color: rgba(0, 0, 0, 0.4);
+	padding: 0.25em 1em;
+	// padding: 5px 15px 5px 15px;
+	// display: inline-block;
+	// margin-right: 1em;
+}
+
+.overlay__cover {
+	position: absolute;
+	left: -40px;
+	top: 10px;	
+	background-color: rgba(170, 0, 0, 0.6);	
+	transform: rotate(-45deg);
+	box-shadow: 0 0 10px #888;
+
+	span {
+		border: 1px solid #faa;
+		color: #fff;
+		display: block;
+		font-size: 0.8em;
+		// font: bold 81.25% Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+		margin: 1px 0;
+		padding: 5px 50px;
+		text-align: center;
+		text-decoration: none;
+		/* shadow */
+		text-shadow: 0 0 5px #444;		
+	}
+}
+
+// .date-picker > div {
+// 	display: inline-block;
+// }
+
+// .rating {
+// 	display: inline-block;
+// }
+
+ul.pagination {
+	font-size: 0.9em;
+	padding: 0.5em 0 1em 0;
+	margin-bottom: 0.5em;
+	border-bottom: 1px solid $pagination-border-color;
+
+	display: inline-block;
+
+	li {
+		display: inline-block;
+	
+		a {
+			padding: 0.5em 1em;
+			transition: background-color 300ms ease-out;
+		}
+
+		&:hover a {
+			background-color: $pagination-hover-bg;
+		}
+
+		&.active a {
+			background: $pagination-active-bg;
+			color: white;
+			font-weight: bold;
+			cursor: default; 
+		}
+	}
+
+	.pages {
+		display: inline;
+	}
+
+	.pages > li {
+		margin: 0 0.25em;
+	}
+
+}
+
+.console {
+	display: flex;
+
+    overflow: auto;
+    // width: 100%;
+    height: 650px;
+    // border: 1px solid $console-border;
+    padding: 0.75em;
+    color: $console-color;
+    background-color: $console-bg;
+
+	.console__line {
+		font-size: 0.8em;
+		// line-height: 0.5em;    	
+	}
+
+    p {
+    	margin-bottom: 0;
+    	white-space: nowrap;
+    }
+}
+
+
+// .console {
+
+// 	.console__lines {
+// 	    overflow: auto;
+// 	    width: 100%;
+// 	    height: 650px;
+// 	    border: 1px solid $console-border;
+// 	    padding: 0.75em;
+// 	    color: $console-color;
+// 	    background-color: $console-bg;
+// 	}
+
+// 	.console__line {
+// 		font-size: 0.8em;
+// 		line-height: 0.5em;    	
+// 	}
+
+//     p {
+//     	white-space: nowrap;
+//     }
+// }
+
