@@ -92,6 +92,14 @@ module.exports = React.createClass({
 			)
 		}
 
+		var watched_ribbon;
+		if (movie.count_watched > 0) {
+			watched_ribbon = (
+				<div className="overlay__cover">
+					<span>watched</span>
+				</div>
+			)
+		}
 
 		// console.log('movie.score: id('+movie.id+')-score('+movie.score+')')
 
@@ -103,18 +111,21 @@ module.exports = React.createClass({
 				<div className="col-xs-12">
 					<div className="row moviep-images">
 						<div className="col-xs-12 col-sm-2">
-							<img src={"/img/p" + movie.cover} />
-						</div>
-						<div className="col-xs-12 col-sm-10 backOver">
-							<img src={"/img/b" + movie.backdrop} />
-							<div className="row between-xs backOver-wrap">
-								<div className="col-xs-6">
-									<span>{this.hourMinute(movie.runtime)}</span>
-								</div>
-								<div className="col-xs-6 end-xs">
-									<span>{movie.imdb_rating}</span>
-								</div>
+							<div className="overlay">
+								<img src={"/img/p" + movie.cover} />
+								{watched_ribbon}
 							</div>
+						</div>
+						<div className="col-xs-12 col-sm-10 overlay">
+								<img src={"/img/b" + movie.backdrop} />
+								<div className="row between-xs overlay__backdrop">
+									<div className="col-xs-6">
+										<span>{this.hourMinute(movie.runtime)}</span>
+									</div>
+									<div className="col-xs-6 end-xs">
+										<span>{movie.imdb_rating}</span>
+									</div>
+								</div>
 						</div>
 					</div>
 				</div>

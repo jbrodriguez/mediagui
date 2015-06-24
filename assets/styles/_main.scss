@@ -13,11 +13,12 @@ article {
 	}
 }
 
-.backOver {
+.overlay {
 	position: relative;
+	overflow: hidden;
 }
 
-.backOver-wrap {
+.overlay__backdrop {
 	width: 100%;
 	position: absolute;
 	top: 1em;
@@ -28,7 +29,7 @@ article {
 	padding: 0 1em;
 }
 
-.backOver-wrap span {
+.overlay__backdrop span {
 	font-size: 1.25em;
 	color: white;
 	background-color: rgba(0, 0, 0, 0.4);
@@ -36,6 +37,29 @@ article {
 	// padding: 5px 15px 5px 15px;
 	// display: inline-block;
 	// margin-right: 1em;
+}
+
+.overlay__cover {
+	position: absolute;
+	left: -40px;
+	top: 10px;	
+	background-color: rgba(170, 0, 0, 0.6);	
+	transform: rotate(-45deg);
+	box-shadow: 0 0 10px #888;
+
+	span {
+		border: 1px solid #faa;
+		color: #fff;
+		display: block;
+		font-size: 0.8em;
+		// font: bold 81.25% Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+		margin: 1px 0;
+		padding: 5px 50px;
+		text-align: center;
+		text-decoration: none;
+		/* shadow */
+		text-shadow: 0 0 5px #444;		
+	}
 }
 
 // .date-picker > div {

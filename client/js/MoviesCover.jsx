@@ -1,5 +1,7 @@
 const 	React 	= require('react')
 
+
+
 module.exports = React.createClass({
 	// componentWillMount: function() {
 	// 	movies.getCover()
@@ -12,19 +14,27 @@ module.exports = React.createClass({
 
 		// console.log('movies: ' + movies)
 
+
 		if (typeof movies != 'undefined') {
 			var items = movies.map(function(movie, i) {
+				var watched;
+				if (movie.count_watched > 0) {
+					watched = (
+						<div className="overlay__cover">
+							<span>watched</span>
+						</div>
+					)
+				}
+
 				return (
 					<div key={i} className="col-xs-12 col-sm-6 col-md-3 col-lg-2">
-						<div key={i} className="cover-container" >
+						<div className="overlay" >
 							<img src={"/img/p" + movie.cover} />
+							{watched}
 							<span className="crimson">{movie.title} </span><br />
 							{movie.year} | 
 							<span className="bright">{movie.imdb_rating}</span> |
-							<span className="label">{movie.runtime}</span>
-							<div className="ribbon" data-ng-if="movie.count_watched > 0">
-								<span>watched</span>
-							</div>	
+							<span className="label">{movie.runtime}</span>							
 						</div>
 					</div>				
 				)
