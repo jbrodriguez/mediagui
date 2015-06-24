@@ -44,7 +44,7 @@ function run(config) {
 				messages: messageP,
 				navigation: navigationS
 			})
-			.log('appState.value = ')
+			// .log('appState.value = ')
 
 	const	routes 		= (
 				<Route name="app" path="/" handler={MediaGUI}>
