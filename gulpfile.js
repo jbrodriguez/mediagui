@@ -11,6 +11,7 @@ var gulp       		= require('gulp'),
     lrload 			= require('livereactload'),
     path 			= require('path'),
     del 			= require('del'),
+    sleep			= require('sleep'),
 	strings 		= require('string'),
 	exec 			= require('child_process').execSync,
 	spawn 			= require('child_process').spawn,
@@ -36,7 +37,7 @@ gulp.task('client', gulp.series(client))
 gulp.task('styles', gulp.series(styles))
 gulp.task('publish', gulp.series(
 		clean,
-		gulp.parallel(client, server, styles, images, fonts),
+		gulp.parallel(client_release, server, styles, images, fonts),
 		publish
 	)
 )
@@ -62,6 +63,13 @@ function clean(done) {
 function client(done) {
 	index()
 	app()
+
+	done()
+}
+
+function client_release(done) {
+	index()
+	app_release()
 
 	done()
 }
@@ -100,6 +108,19 @@ function app() {
 			.pipe(buffer())
 			.pipe(gulp.dest(config.app.dst))
 	}
+}
+
+function app_release() {
+	gutil.log("antes de app_release")
+
+
+	bundler
+		.bundle()
+		.pipe(source('bundle.js'))
+		// .pipe(buffer())
+		.pipe(gulp.dest(config.app.dst))
+
+	gutil.log("luego de app_release")
 }
 
 function server(done) {
@@ -188,7 +209,8 @@ function watch() {
 function publish(done) {
 	var home = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME']
 
-    const app = path.join(config.publish.src, config.publish.app, "**/*")
+    // const app = path.join(config.publish.src, config.publish.app, "**/*")
+    const app = path.join(config.publish.src, config.publish.app)
     const index = path.join(config.publish.src, config.publish.index)
     const bin = path.join(config.publish.src, "mediagui")
 
@@ -216,17 +238,17 @@ function publish(done) {
 
 	gulp.src(bin).pipe(gulp.dest(binDst))
 	gulp.src(index).pipe(gulp.dest(dst))
-	gulp.src(app).pipe(gulp.dest(delAppDst))
+	gulp.src(app).pipe(gulp.dest(dst))
 
-	gulp
-		.src(
-			path.join(config.publish.src, "app", "bundle.js")
-		)
-		.pipe(
-			gulp.dest(
-				path.join(home, ".mediagui", "web", "app")
-			)
-		)
+	// gulp
+	// 	.src(
+	// 		path.join(config.publish.src, "app", "bundle.js")
+	// 	)
+	// 	.pipe(
+	// 		gulp.dest(
+	// 			path.join(home, ".mediagui", "web", "app")
+	// 		)
+	// 	)
 
 	done()
 }
