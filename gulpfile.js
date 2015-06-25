@@ -188,7 +188,7 @@ function watch() {
 function publish(done) {
 	var home = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME']
 
-    const app = path.join(config.publish.src, config.publish.app)
+    const app = path.join(config.publish.src, config.publish.app, "**/*")
     const index = path.join(config.publish.src, config.publish.index)
     const bin = path.join(config.publish.src, "mediagui")
 
@@ -214,9 +214,19 @@ function publish(done) {
     del.sync(delIndexDst, {force: true})
     del.sync(delBinDst, {force: true})
 
-	gulp.src(app).pipe(gulp.dest(dst))
-	gulp.src(index).pipe(gulp.dest(dst))
 	gulp.src(bin).pipe(gulp.dest(binDst))
+	gulp.src(index).pipe(gulp.dest(dst))
+	gulp.src(app).pipe(gulp.dest(delAppDst))
+
+	gulp
+		.src(
+			path.join(config.publish.src, "app", "bundle.js")
+		)
+		.pipe(
+			gulp.dest(
+				path.join(home, ".mediagui", "web", "app")
+			)
+		)
 
 	done()
 }
