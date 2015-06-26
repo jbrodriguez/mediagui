@@ -38,8 +38,9 @@ module.exports = React.createClass({
 	// },
 	handlePageClick: function(data) {
 		this.shouldScroll = true
-		this.selected = data.selected
-		const offset = Math.ceil(this.selected * this.props.options.limit);
+		// this.selected = data.selected
+		// const offset = Math.ceil(this.selected * this.props.options.limit);
+		const offset = Math.ceil(data.selected * this.props.options.limit);
 		optionsBO.setOffset(offset)		
 	},
 
@@ -57,6 +58,11 @@ module.exports = React.createClass({
 		const movies = this.props.movies
 		const options = this.props.options
 
+		const selected = options.offset / options.limit
+
+		console.log('offset: ' + options.offset + ' limit: ' + options.limit)
+		console.log('selected: ' + selected)
+
 		var pagination;
 		if (movies.total > options.limit) {
 			// console.log('moviesPage.total('+movies.total+')>limit('+options.limit+'); selected='+this.selected)
@@ -68,7 +74,7 @@ module.exports = React.createClass({
 		                       pageNum={Math.ceil(movies.total / options.limit)}
 		                       marginPagesDisplayed={3}
 		                       pageRangeDisplayed={5}
-		                       forceSelected={this.selected}
+		                       forceSelected={selected}
 		                       clickCallback={this.handlePageClick}
 		                       containerClassName={"pagination col-xs-12"}
 		                       subContainerClassName={"pages"}
