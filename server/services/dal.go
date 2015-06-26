@@ -97,6 +97,8 @@ func (d *Dal) getCover(msg *pubsub.Message) {
 func (d *Dal) getMovies(msg *pubsub.Message) {
 	options := msg.Payload.(lib.Options)
 
+	mlog.Info("options: %+v", options)
+
 	var total uint64
 	var items []*model.Movie
 
@@ -280,7 +282,7 @@ func (d *Dal) searchByYear(options lib.Options) (total uint64, movies []*model.M
 		// rows.Scan(movie.Id, movie.Title, movie.Original_Title, movie.Year, movie.Runtime, movie.Tmdb_Id, movie.Imdb_Id, movie.Overview, movie.Tagline, movie.Resolution, movie.FileType, movie.Location, movie.Cover, movie.Backdrop)
 		// mlog.Info("title: (%s)", movie.Title)
 		items = append(items, &movie)
-		mlog.Info("movie: %+v:", movie)
+		// mlog.Info("movie: %+v:", movie)
 	}
 	rows.Close()
 

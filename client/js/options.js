@@ -50,10 +50,10 @@ module.exports = {
 
 		return Bacon.update(
 			initialOptions,
-			[d.stream('setFilterBy')], setFilterBy,
-			[d.stream('setSortBy')], setSortBy,
-			[d.stream('setSortOrder')], setSortOrder,
-			[d.stream('setOffset')], setOffset,
+			d.stream('setFilterBy'), setFilterBy,
+			d.stream('setSortBy'), setSortBy,
+			d.stream('setSortOrder'), setSortOrder,
+			d.stream('setOffset'), setOffset,
 			gotQueryTerm, setQueryTerm
 		)
 		// .log('options.baconUpdate')
@@ -75,7 +75,7 @@ module.exports = {
 		}
 
 		function setQueryTerm(options, term) {
-			return R.merge(options, {query: term, firstRun: false})
+			return R.merge(options, {query: term, offset: 0, firstRun: false})
 		}
 	}
 }

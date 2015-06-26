@@ -92,7 +92,7 @@ module.exports = {
 
 
         optionsS.onValue((opt) => {
-        	// console.log('movies.optionsS.onValue', opt)
+        	// console.log('movies.options', opt)
         	if (!opt.firstRun) {
 	        	this.getMovies(opt)
 	        }

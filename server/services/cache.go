@@ -54,7 +54,7 @@ func (c *Cache) cacheMovie(msg *pubsub.Message) {
 	dto := msg.Payload.(*dto.Scrape)
 	movie := dto.Movie.(*model.Movie)
 
-	mlog.Info("trying to cache movie: [%d] %s", movie.Id, movie.Title)
+	// mlog.Info("trying to cache movie: [%d] %s", movie.Id, movie.Title)
 
 	caching := &Caching{
 		bus:      c.bus,
