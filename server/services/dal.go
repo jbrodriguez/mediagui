@@ -280,7 +280,7 @@ func (d *Dal) searchByYear(options lib.Options) (total uint64, movies []*model.M
 		// rows.Scan(movie.Id, movie.Title, movie.Original_Title, movie.Year, movie.Runtime, movie.Tmdb_Id, movie.Imdb_Id, movie.Overview, movie.Tagline, movie.Resolution, movie.FileType, movie.Location, movie.Cover, movie.Backdrop)
 		// mlog.Info("title: (%s)", movie.Title)
 		items = append(items, &movie)
-		mlog.Info("movie: %+v:", movie)
+		// mlog.Info("movie: %+v:", movie)
 	}
 	rows.Close()
 

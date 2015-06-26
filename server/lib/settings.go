@@ -48,6 +48,7 @@ func NewSettings(version, home string, locations []string) (*Settings, error) {
 	flag.StringVar(&webDir, "webdir", filepath.Join(home, ".mediagui/web"), "folder where web app will be read from")
 	flag.StringVar(&logDir, "logdir", "", "folder where log file will be written to")
 	flag.StringVar(&mediaFolders, "mediafolders", "", "folders that will be scanned for media")
+	flag.StringVar(&ginMode, "gin_mode", "release", "gin mode")
 
 	flag.Set("config", location)
 	flag.Parse()

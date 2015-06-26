@@ -42,6 +42,8 @@ func (s *Server) Start() {
 
 	mlog.Info("Serving files from %s", s.settings.WebDir)
 
+	gin.SetMode(s.settings.GinMode)
+
 	s.router = gin.Default()
 
 	s.router.GET("/", s.index)
