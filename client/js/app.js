@@ -119,9 +119,10 @@ function getInitialOptions() {
     var filterByOptions = [
         {id: 1, value: 'title', label: 'Title'}, 
         {id: 2, value: 'genre', label: 'Genre'},
-        {id: 3, value: 'country', label: 'Country'},
-        {id: 4, value: 'director', label: 'Director'},
-        {id: 5, value: 'actor', label: 'Actor'}
+        {id: 3, value: 'year', label: 'Year'},
+        {id: 4, value: 'country', label: 'Country'},
+        {id: 5, value: 'director', label: 'Director'},
+        {id: 6, value: 'actor', label: 'Actor'}
     ]
     var filterBy = storage.get('filterBy') || 'title'
 

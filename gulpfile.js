@@ -184,7 +184,7 @@ function fonts() {
 
 function link(done) {
 	var home = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME']
-	var img = path.join(home, '.mediabase', 'web', 'img')
+	var img = path.join(home, '.mediagui', 'web', 'img')
 
 	gutil.log('\n src: ' + config.build.src + '\n dst: ' + config.build.dst)
 	command('link', 'cd target/build && ln -s ' + img + ' img')

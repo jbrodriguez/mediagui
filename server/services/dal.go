@@ -9,6 +9,7 @@ import (
 	"jbrodriguez/mediagui/server/lib"
 	"jbrodriguez/mediagui/server/model"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -168,6 +169,129 @@ func (d *Dal) listMovies(options lib.Options) (total uint64, movies []*model.Mov
 }
 
 func (d *Dal) searchMovies(options lib.Options) (total uint64, movies []*model.Movie) {
+	if options.FilterBy == "year" {
+		total, movies = d.searchByYear(options)
+	} else {
+		total, movies = d.regularSearch(options)
+	}
+
+	return total, movies
+}
+
+func (d *Dal) searchByYear(options lib.Options) (total uint64, movies []*model.Movie) {
+	var start, end, year uint64
+	var decade bool = false
+
+	if strings.Contains(options.Query, "-") {
+		decade = true
+		parts := strings.Split(options.Query, "-")
+
+		start, _ = strconv.ParseUint(parts[0], 0, 64)
+		end, _ = strconv.ParseUint(parts[1], 0, 64)
+	} else {
+		year, _ = strconv.ParseUint(options.Query, 0, 64)
+	}
+
+	var countQuery string
+	if decade {
+		countQuery = `select count(*) from movie where year between ? and ?;`
+	} else {
+		countQuery = `select count(*) from movie where year = ?;`
+	}
+
+	// mlog.Info("this is: %s %s", term, args)
+
+	tx, err := d.db.Begin()
+	if err != nil {
+		mlog.Fatalf("searchByYear:Unable to begin transaction: %s", err)
+	}
+
+	stmt, err := tx.Prepare(countQuery)
+	if err != nil {
+		mlog.Fatalf("searchByYear:Unable to prepare transaction: %s", err)
+	}
+	defer stmt.Close()
+
+	var count uint64
+
+	var rows *sql.Rows
+	if decade {
+		err = stmt.QueryRow(start, end).Scan(&count)
+		if err != nil {
+			mlog.Fatalf("searchByYear:Unable to count rows: %s", err)
+		}
+
+		sql := fmt.Sprintf(`select rowid, title, original_title, file_title, year, runtime, tmdb_id, imdb_id, 
+					overview, tagline, resolution, filetype, location, cover, backdrop, genres, vote_average, 
+					vote_count, countries, added, modified, last_watched, all_watched, count_watched, score, 
+					director, writer, actors, awards, imdb_rating, imdb_votes 
+					from movie where year between ? and ? order by %s %s, rowid desc limit ? offset ?`, options.SortBy, options.SortOrder)
+
+		stmt, err := tx.Prepare(sql)
+		if err != nil {
+			mlog.Fatalf("Unable to prepare transaction: %s", err)
+		}
+		defer stmt.Close()
+
+		rows, err = stmt.Query(start, end, options.Limit, options.Offset)
+		if err != nil {
+			mlog.Fatalf("Unable to prepare transaction: %s", err)
+		}
+	} else {
+		err = stmt.QueryRow(year).Scan(&count)
+		if err != nil {
+			mlog.Fatalf("searchByYear:Unable to count rows: %s", err)
+		}
+
+		sql := fmt.Sprintf(`select rowid, title, original_title, file_title, year, runtime, tmdb_id, imdb_id, 
+					overview, tagline, resolution, filetype, location, cover, backdrop, genres, vote_average, 
+					vote_count, countries, added, modified, last_watched, all_watched, count_watched, score, 
+					director, writer, actors, awards, imdb_rating, imdb_votes 
+					from movie where year = ? order by %s %s, rowid desc limit ? offset ?`, options.SortBy, options.SortOrder)
+
+		mlog.Info("sql.: %s", sql)
+
+		stmt, err := tx.Prepare(sql)
+		if err != nil {
+			mlog.Fatalf("Unable to prepare transaction: %s", err)
+		}
+		defer stmt.Close()
+
+		rows, err = stmt.Query(year, options.Limit, options.Offset)
+		if err != nil {
+			mlog.Fatalf("Unable to prepare transaction: %s", err)
+		}
+	}
+
+	items := make([]*model.Movie, 0)
+
+	for rows.Next() {
+		movie := model.Movie{}
+		rows.Scan(
+			&movie.Id, &movie.Title, &movie.Original_Title, &movie.File_Title, &movie.Year,
+			&movie.Runtime, &movie.Tmdb_Id, &movie.Imdb_Id, &movie.Overview, &movie.Tagline,
+			&movie.Resolution, &movie.FileType, &movie.Location, &movie.Cover, &movie.Backdrop,
+			&movie.Genres, &movie.Vote_Average, &movie.Vote_Count, &movie.Production_Countries,
+			&movie.Added, &movie.Modified, &movie.Last_Watched, &movie.All_Watched,
+			&movie.Count_Watched, &movie.Score, &movie.Director, &movie.Writer, &movie.Actors,
+			&movie.Awards, &movie.Imdb_Rating, &movie.Imdb_Votes,
+		)
+		// movie := &model.Movie{}
+		// rows.Scan(movie.Id, movie.Title, movie.Original_Title, movie.Year, movie.Runtime, movie.Tmdb_Id, movie.Imdb_Id, movie.Overview, movie.Tagline, movie.Resolution, movie.FileType, movie.Location, movie.Cover, movie.Backdrop)
+		// mlog.Info("title: (%s)", movie.Title)
+		items = append(items, &movie)
+		mlog.Info("movie: %+v:", movie)
+	}
+	rows.Close()
+
+	tx.Commit()
+
+	mlog.Info("searchByYear:Listed %d movies (total %d)", len(items), count)
+
+	return count, items
+}
+
+func (d *Dal) regularSearch(options lib.Options) (total uint64, movies []*model.Movie) {
 	mlog.Info("searchMovies.options: %+v", options)
 
 	tx, err := d.db.Begin()
