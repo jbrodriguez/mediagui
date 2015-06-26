@@ -1,3 +1,14 @@
+Version 0.2.0 - 2015-06-25
+    - Add duplicates functionality (client and server side)
+    - Add prune functionality
+    - Fix watched ribbont on cover page
+    - Remove logging
+    - Add publish taks to gulpfile
+    - Fixing publish task
+    - Finalize fix for publish task, need a command line copy, because for some reason the bundle is not present in the filesystem when the publish task is called
+    - Implement filter by Year functionality (you can specify ranges of years)
+
+
 Version 0.1.0 - 2015-06-24
     - Initial commit
     - Add first version of business logic
