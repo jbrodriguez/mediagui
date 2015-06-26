@@ -1,3 +1,11 @@
+Version 0.2.1 - 2015-06-26
+    - Reset offset when entering a new query term
+    - Handle GinMode. Set it to release by default, let it be overridden on the command line when in development
+    - Remove some logging
+    - Add missing ginMode field in settings structure
+    - Fix bug where pagination wouldn't reset to the first page when changing query term
+
+
 Version 0.2.0 - 2015-06-25
     - Add duplicates functionality (client and server side)
     - Add prune functionality
