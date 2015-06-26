@@ -97,6 +97,8 @@ func (d *Dal) getCover(msg *pubsub.Message) {
 func (d *Dal) getMovies(msg *pubsub.Message) {
 	options := msg.Payload.(lib.Options)
 
+	mlog.Info("options: %+v", options)
+
 	var total uint64
 	var items []*model.Movie
 

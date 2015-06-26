@@ -23,6 +23,7 @@ type Settings struct {
 	LogDir  string
 
 	Location string
+	GinMode  string
 }
 
 func searchConfig(locations []string) string {
@@ -42,7 +43,7 @@ func NewSettings(version, home string, locations []string) (*Settings, error) {
 		return nil, errors.New(msg)
 	}
 
-	var config, dataDir, webDir, logDir, mediaFolders string
+	var config, dataDir, webDir, logDir, mediaFolders, ginMode string
 	flag.StringVar(&config, "config", "", "config location")
 	flag.StringVar(&dataDir, "datadir", filepath.Join(home, ".mediagui/db"), "folder containing the database files")
 	flag.StringVar(&webDir, "webdir", filepath.Join(home, ".mediagui/web"), "folder where web app will be read from")
@@ -66,6 +67,7 @@ func NewSettings(version, home string, locations []string) (*Settings, error) {
 	s.WebDir = webDir
 	s.LogDir = logDir
 	s.Location = location
+	s.GinMode = ginMode
 
 	return s, nil
 }
