@@ -11,6 +11,7 @@ var gulp       		= require('gulp'),
     lrload 			= require('livereactload'),
     path 			= require('path'),
     del 			= require('del'),
+    sleep			= require('sleep'),
 	strings 		= require('string'),
 	exec 			= require('child_process').execSync,
 	spawn 			= require('child_process').spawn,
@@ -34,6 +35,12 @@ var mediagui;
 
 gulp.task('client', gulp.series(client))
 gulp.task('styles', gulp.series(styles))
+gulp.task('publish', gulp.series(
+		clean,
+		gulp.parallel(client_release, server, styles, images, fonts),
+		publish
+	)
+)
 
 gulp.task('dev', gulp.series(
 		clean,
@@ -56,6 +63,13 @@ function clean(done) {
 function client(done) {
 	index()
 	app()
+
+	done()
+}
+
+function client_release(done) {
+	index()
+	app_release()
 
 	done()
 }
@@ -96,6 +110,19 @@ function app() {
 	}
 }
 
+function app_release() {
+	gutil.log("antes de app_release")
+
+
+	bundler
+		.bundle()
+		.pipe(source('bundle.js'))
+		// .pipe(buffer())
+		.pipe(gulp.dest(config.app.dst))
+
+	gutil.log("luego de app_release")
+}
+
 function server(done) {
 	command('ls', 'ls -al /Volumes/Users/kayak/code/src/jbrodriguez/mediagui/target')
 
@@ -117,32 +144,6 @@ function build() {
 	gutil.log('\n src: ' + config.build.src + '\n dst: ' + config.build.dst)
 	command('build', 'cd server && ' + config.build.bin + 'gom build -ldflags \"-X main.Version ' + version + '-' + count + '.' + hash + '\" -v -o ' + path.join(config.build.dst, 'mediagui') + ' main.go && cd ..')
 }
-
-// function start() {
-// 	arg = path.join(process.cwd(), config.start.arg)
-// 	cmd = path.join(process.cwd(), config.start.src, "mediagui") + " -webdir " + arg
-// 	gutil.log('executing: ', cmd)
-//     mediagui = exec(cmd, [' -webdir', arg])
-//     // add a 'data' event listener for the spawn instance
-//     mediagui.stdout.on('data', function(data) {
-//     	gutil.log("sup dude:\n" + data);
-//     })
-//     // add an 'end' event listener to close the writeable stream
-//     mediagui.stdout.on('end', function(data) {
-//         gutil.log('mediagui stopped');
-//     });
-
-//     mediagui.on('error', function(data) {
-// 		gutil.log(data);
-//     })
-
-//     // when the spawn child process exits, check if there were any errors and close the writeable stream
-//     mediagui.on('close', function(code) {
-//         if (code != 0) {
-//             gutil.log('Failed: ' + code);
-//         }
-//     });
-// }
 
 function styles() {
     gutil.log('Bundling, minifying, and copying the app\'s css');
@@ -183,7 +184,7 @@ function fonts() {
 
 function link(done) {
 	var home = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME']
-	var img = path.join(home, '.mediabase', 'web', 'img')
+	var img = path.join(home, '.mediagui', 'web', 'img')
 
 	gutil.log('\n src: ' + config.build.src + '\n dst: ' + config.build.dst)
 	command('link', 'cd target/build && ln -s ' + img + ' img')
@@ -204,36 +205,53 @@ function watch() {
 	lrload.monitor(path.join(config.watch.app, 'bundle.js'), {displayNotification: true})
 }
 
-// gulp.task('serverwatch', function() {
-// 	nodemon({ script: 'server.js', ext: 'js', ignore: ['gulpfile.js', 'static/bundle.js', 'node_modules/*'] })
-// 		.on('change', [])
-// 		.on('restart', function () {
-// 			console.log('Server restarted')
-// 		})
-// })
 
-// gulp.task('watch', ['serverwatch', 'scripts'])
+function publish(done) {
+	var home = process.env[(process.platform == 'win32') ? 'USERPROFILE' : 'HOME']
 
-// gulp.task('watch', ['scripts'])
+    // const app = path.join(config.publish.src, config.publish.app, "**/*")
+    const app = path.join(config.publish.src, config.publish.app)
+    const index = path.join(config.publish.src, config.publish.index)
+    const bin = path.join(config.publish.src, "mediagui")
 
+    const dst = path.join(home, ".mediagui", "web")
+	const binDst = path.join(home, "bin")
 
+    const delAppDst = path.join(dst, config.publish.app)
+    const delIndexDst = path.join(dst, config.publish.index)
+    const delBinDst = path.join(binDst, "mediagui")
 
+	gutil.log("app: ", app)
+	gutil.log("index: ", index)
+	gutil.log("bin: ", bin)
 
+	gutil.log("dst: ", dst)
+	gutil.log("binDst: ", binDst)
 
-// gulp.task('copy', function() {
-// 	gulp.src(config.copy.src)
-// 	.pipe(gulp.dest(config.copy.dst))
-// })
+	gutil.log("delAppDst: ", delAppDst)
+	gutil.log("delIndexDst: ", delIndexDst)
+	gutil.log("delBinDst: ", delBinDst)
 
-// gulp.task('clean', function() {
-//     gutil.log('Cleaning: ' + gutil.colors.blue(config.clean.build));
+    del.sync(delAppDst, {force: true})
+    del.sync(delIndexDst, {force: true})
+    del.sync(delBinDst, {force: true})
 
-//     del.sync(config.clean.build)
-// })
+	gulp.src(bin).pipe(gulp.dest(binDst))
+	gulp.src(index).pipe(gulp.dest(dst))
+	gulp.src(app).pipe(gulp.dest(dst))
 
-// gulp.task('default', function(cb) {
-// 	series('clean', 'copy', 'build:server', 'watch', cb)
-// })
+	// gulp
+	// 	.src(
+	// 		path.join(config.publish.src, "app", "bundle.js")
+	// 	)
+	// 	.pipe(
+	// 		gulp.dest(
+	// 			path.join(home, ".mediagui", "web", "app")
+	// 		)
+	// 	)
+
+	done()
+}
 
 // HELPERS
 function bytediffFormatter(data) {

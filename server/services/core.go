@@ -9,6 +9,7 @@ import (
 	"jbrodriguez/mediagui/server/dto"
 	"jbrodriguez/mediagui/server/lib"
 	"jbrodriguez/mediagui/server/model"
+	"os"
 	"sync"
 )
 
@@ -35,6 +36,7 @@ func (c *Core) Start() {
 
 	c.mailbox = c.register(c.bus, "/get/config", c.getConfig)
 	c.registerAdditional(c.bus, "/post/import", c.importMovies, c.mailbox)
+	c.registerAdditional(c.bus, "/post/prune", c.pruneMovies, c.mailbox)
 	c.registerAdditional(c.bus, "/put/config/folder", c.addMediaFolder, c.mailbox)
 	c.registerAdditional(c.bus, "/put/movies/fix", c.fixMovie, c.mailbox)
 
@@ -81,6 +83,40 @@ func (c *Core) importMovies(msg *pubsub.Message) {
 	c.bus.Pub(nil, "/command/movie/scan")
 	//	msg.Reply <- &c.settings.Config
 	// mlog.Info("Import finished")
+}
+
+func (c *Core) pruneMovies(msg *pubsub.Message) {
+	lib.Notify(c.bus, "prune:begin", "Started Prune Process")
+
+	for _, folder := range c.settings.MediaFolders {
+		if _, err := os.Stat(folder); err != nil {
+			if os.IsNotExist(err) {
+				lib.Notify(c.bus, "prune:error", fmt.Sprintf("Folder %s is not present. Aborting Prune process.", folder))
+				return
+			}
+		}
+	}
+
+	options := &lib.Options{Offset: 0, Limit: 99999999999999, SortBy: "title", SortOrder: "asc"}
+	all := &pubsub.Message{Payload: options, Reply: make(chan interface{}, capacity)}
+	c.bus.Pub(all, "/get/movies")
+
+	reply := <-msg.Reply
+	dto := reply.(*model.MoviesDTO)
+
+	for _, item := range dto.Items {
+		if _, err := os.Stat(item.Location); err != nil {
+			if os.IsNotExist(err) {
+				lib.Notify(c.bus, "prune:selected", fmt.Sprintf("UP FOR DELETION: [%d] %s (%s))", item.Id, item.Title, item.Location))
+
+				movie := &pubsub.Message{Payload: item, Reply: make(chan interface{}, capacity)}
+				c.bus.Pub(movie, "/command/movies/delete")
+			}
+		}
+
+	}
+
+	lib.Notify(c.bus, "prune:end", "Finished Prune Process")
 }
 
 func (c *Core) addMediaFolder(msg *pubsub.Message) {

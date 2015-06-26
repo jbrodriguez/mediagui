@@ -102,8 +102,8 @@ module.exports = React.createClass({
 										<div className="header__menu-section">
 											<Link to="settings">{"settings".toUpperCase()}</Link>
 											<span className="spacer">|</span>
-											<a href="#">{"duplicates".toUpperCase()}</a>
-											<a href="#" className="spacer">{"prune".toUpperCase()}</a>
+											<Link to="duplicates">{"duplicates".toUpperCase()}</Link>
+											<Link to="prune" className="spacer">{"prune".toUpperCase()}</Link>
 										</div>
 									</div>
 								</div>

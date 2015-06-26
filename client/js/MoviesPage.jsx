@@ -78,7 +78,7 @@ module.exports = React.createClass({
 
 		var items = movies.items.map(function(movie) {
 			return (
-				<Movie movie={movie} key={movie.title} />
+				<Movie movie={movie} key={movie.title+movie.modified} />
 			)
 		})
 

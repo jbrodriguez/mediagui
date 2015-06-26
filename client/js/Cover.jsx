@@ -31,10 +31,12 @@ module.exports = React.createClass({
 		return (
 			<article className="col-xs-12 col-sm-6 col-md-3 col-lg-2 bottom-spacer-large ">
 				<div className="movie-cover">
-					<div className="row overlay" >
+					<div className="row" >
 						<div className="col-xs-12">
-							<img src={"/img/p" + movie.cover} />
-							{watched}
+							<div className="overlay">
+								<img src={"/img/p" + movie.cover} />
+								{watched}
+							</div>
 						</div>
 					</div>
 					<div className="row ">

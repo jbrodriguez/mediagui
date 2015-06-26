@@ -54,8 +54,10 @@ func (s *Server) Start() {
 		api.GET("/config", s.getConfig)
 		api.GET("/movies/cover", s.getMoviesCover)
 		api.GET("/movies", s.getMovies)
+		api.GET("/movies/duplicates", s.getDuplicates)
 
 		api.POST("/import", s.importMovies)
+		api.POST("/prune", s.pruneMovies)
 
 		api.PUT("/config/folder", s.addMediaFolder)
 		api.PUT("/movies/:id/score", s.setMovieScore)
@@ -127,7 +129,7 @@ func (s *Server) getMovies(c *gin.Context) {
 	var options lib.Options
 	c.Bind(&options) // You can also specify which binder to use. We support binding.Form, binding.JSON and binding.XML.
 
-	mlog.Info("server.getMovies.options: %+v", options)
+	// mlog.Info("server.getMovies.options: %+v", options)
 
 	msg := &pubsub.Message{Payload: options, Reply: make(chan interface{}, capacity)}
 	s.bus.Pub(msg, "/get/movies")
@@ -140,8 +142,22 @@ func (s *Server) getMovies(c *gin.Context) {
 	c.JSON(200, dto)
 }
 
+func (s *Server) getDuplicates(c *gin.Context) {
+	msg := &pubsub.Message{Reply: make(chan interface{}, capacity)}
+	s.bus.Pub(msg, "/get/movies/duplicates")
+
+	reply := <-msg.Reply
+	dto := reply.(*model.MoviesDTO)
+
+	c.JSON(200, dto)
+}
+
 func (s *Server) importMovies(c *gin.Context) {
 	s.bus.Pub(nil, "/post/import")
+}
+
+func (s *Server) pruneMovies(c *gin.Context) {
+	s.bus.Pub(nil, "/post/prune")
 }
 
 func (s *Server) addMediaFolder(c *gin.Context) {

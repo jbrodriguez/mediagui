@@ -16,7 +16,9 @@ module.exports = {
 	addMediaFolder: addMediaFolder,
 	setMovieScore: setMovieScore,
 	setMovieWatched: setMovieWatched,
-	fixMovie: fixMovie
+	fixMovie: fixMovie,
+	getDuplicates: getDuplicates,
+	pruneMovies: pruneMovies
 }
 
 function getSocket() {
@@ -104,4 +106,14 @@ function fixMovie(movie) {
 		method: 'PUT',
 		data: JSON.stringify(movie)
 	})	
+}
+
+function getDuplicates() {
+	return fetch(hostr + '/movies/duplicates')
+}
+
+function pruneMovies() {
+	return fetch(hostr + '/prune', {
+		method: 'POST'
+	})
 }
