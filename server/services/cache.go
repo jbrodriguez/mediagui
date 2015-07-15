@@ -81,37 +81,37 @@ type Caching struct {
 	backdrop string
 }
 
-func (c *Caching) Execute() {
+func (c *Caching) Execute(wid int) {
 	coverPath := filepath.Join(c.path, "img", "p", c.cover)
 	if _, err := os.Stat(coverPath); err == nil && !c.forced {
-		lib.Notify(c.bus, "import:progress", fmt.Sprintf("COVER DOWNLOAD SKIPPED [%d] %s (%s)", c.id, c.title, c.cover))
+		lib.Notify(c.bus, "import:progress", fmt.Sprintf("COVER DOWNLOAD SKIPPED (%d) [%d] %s (%s)", wid, c.id, c.title, c.cover))
 	} else {
 		if err := lib.Download(c.url+"original"+c.cover, coverPath); err == nil {
-			lib.Notify(c.bus, "import:progress", fmt.Sprintf("COVER DOWNLOADED [%d] %s (%s)", c.id, c.title, c.cover))
+			lib.Notify(c.bus, "import:progress", fmt.Sprintf("COVER DOWNLOADED (%d) [%d] %s (%s)", wid, c.id, c.title, c.cover))
 		} else {
-			lib.Notify(c.bus, "import:progress", fmt.Sprintf("UNABLE TO DOWNLOAD COVER [%d] %s (%s)", c.id, c.title, c.cover))
+			lib.Notify(c.bus, "import:progress", fmt.Sprintf("UNABLE TO DOWNLOAD COVER (%d) [%d] %s (%s)", wid, c.id, c.title, c.cover))
 		}
 	}
 
 	thumbPath := filepath.Join(c.path, "img", "t", c.cover)
 	if _, err := os.Stat(thumbPath); err == nil && !c.forced {
-		lib.Notify(c.bus, "import:progress", fmt.Sprintf("THUMB GENERATION SKIPPED [%d] %s (%s)", c.id, c.title, c.cover))
+		lib.Notify(c.bus, "import:progress", fmt.Sprintf("THUMB GENERATION SKIPPED (%d) [%d] %s (%s)", wid, c.id, c.title, c.cover))
 	} else {
 		if err := lib.ResizeImage(coverPath, thumbPath); err == nil {
-			lib.Notify(c.bus, "import:progress", fmt.Sprintf("THUMB CREATED [%d] %s (%s)", c.id, c.title, c.cover))
+			lib.Notify(c.bus, "import:progress", fmt.Sprintf("THUMB CREATED (%d) [%d] %s (%s)", wid, c.id, c.title, c.cover))
 		} else {
-			lib.Notify(c.bus, "import:progress", fmt.Sprintf("UNABLE TO CREATE THUMB [%d] %s (%s)", c.id, c.title, c.cover))
+			lib.Notify(c.bus, "import:progress", fmt.Sprintf("UNABLE TO CREATE THUMB (%d) [%d] %s (%s)", wid, c.id, c.title, c.cover))
 		}
 	}
 
 	backdropPath := filepath.Join(c.path, "img", "b", c.backdrop)
 	if _, err := os.Stat(backdropPath); err == nil && !c.forced {
-		lib.Notify(c.bus, "import:progress", fmt.Sprintf("BACKDROP DOWNLOAD SKIPPED [%d] %s (%s)", c.id, c.title, c.cover))
+		lib.Notify(c.bus, "import:progress", fmt.Sprintf("BACKDROP DOWNLOAD SKIPPED (%d) [%d] %s (%s)", wid, c.id, c.title, c.cover))
 	} else {
 		if err := lib.Download(c.url+"original"+c.backdrop, backdropPath); err == nil {
-			lib.Notify(c.bus, "import:progress", fmt.Sprintf("BACKDROP DOWNLOADED [%d] %s (%s)", c.id, c.title, c.cover))
+			lib.Notify(c.bus, "import:progress", fmt.Sprintf("BACKDROP DOWNLOADED (%d) [%d] %s (%s)", wid, c.id, c.title, c.cover))
 		} else {
-			lib.Notify(c.bus, "import:progress", fmt.Sprintf("UNABLE TO DOWNLOAD BACKDROP [%d] %s (%s)", c.id, c.title, c.cover))
+			lib.Notify(c.bus, "import:progress", fmt.Sprintf("UNABLE TO DOWNLOAD BACKDROP (%d) [%d] %s (%s)", wid, c.id, c.title, c.cover))
 		}
 	}
 

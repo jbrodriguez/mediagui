@@ -83,10 +83,10 @@ type Scrape struct {
 	dto  *dto.Scrape
 }
 
-func (s *Scrape) Execute() {
+func (s *Scrape) Execute(wid int) {
 	movie := s.dto.Movie.(*model.Movie)
 
-	lib.Notify(s.bus, "import:progress", fmt.Sprintf("SCRAPE REQUESTED [%s]", movie.Title))
+	lib.Notify(s.bus, "import:progress", fmt.Sprintf("SCRAPE REQUESTED (%d) [%s]", wid, movie.Title))
 
 	now := time.Now().UTC().Format(time.RFC3339)
 	movie.Added = now
@@ -94,7 +94,7 @@ func (s *Scrape) Execute() {
 
 	movie.Score = 0
 
-	lib.Notify(s.bus, "import:progress", fmt.Sprintf("STARTED TMDB [%s]", movie.Title))
+	lib.Notify(s.bus, "import:progress", fmt.Sprintf("STARTED TMDB (%d) [%s]", wid, movie.Title))
 	movies, err := s.tmdb.SearchMovie(movie.Title)
 	if err != nil {
 		mlog.Error(err)
@@ -102,20 +102,20 @@ func (s *Scrape) Execute() {
 	}
 
 	if movies.Total_Results == 0 {
-		lib.Notify(s.bus, "import:progress", fmt.Sprintf("TMDB: NO MATCH FOUND [%s]", movie.Title))
+		lib.Notify(s.bus, "import:progress", fmt.Sprintf("TMDB: NO MATCH FOUND (%d) [%s]", wid, movie.Title))
 		return
 	} else if movies.Total_Results > 1 {
-		lib.Notify(s.bus, "import:progress", fmt.Sprintf("TMDB: MORE THAN ONE [%s]", movie.Title))
+		lib.Notify(s.bus, "import:progress", fmt.Sprintf("TMDB: MORE THAN ONE (%d) [%s]", wid, movie.Title))
 	}
 
 	id := movies.Results[0].Id
 
-	_scrape(s.tmdb, id, movie)
+	_scrape(wid, s.tmdb, id, movie)
 
 	s.dto.BaseUrl = s.tmdb.BaseUrl
 	s.dto.SecureBaseUrl = s.tmdb.SecureBaseUrl
 
-	lib.Notify(s.bus, "import:progress", fmt.Sprintf("SCRAPE COMPLETED [%s]", movie.Title))
+	lib.Notify(s.bus, "import:progress", fmt.Sprintf("SCRAPE COMPLETED (%d) [%s]", movie.Title))
 
 	msg := &pubsub.Message{Payload: s.dto}
 	s.bus.Pub(msg, "/event/movie/scraped")
@@ -143,17 +143,17 @@ type ReScrape struct {
 	dto  *dto.Scrape
 }
 
-func (s *ReScrape) Execute() {
+func (s *ReScrape) Execute(wid int) {
 	movie := s.dto.Movie.(*model.Movie)
 
-	lib.Notify(s.bus, "import:progress", fmt.Sprintf("RESCRAPE REQUESTED [%d] %s", movie.Id, movie.Title))
+	lib.Notify(s.bus, "import:progress", fmt.Sprintf("RESCRAPE REQUESTED (%d) [%d] %s", wid, movie.Id, movie.Title))
 
 	now := time.Now().UTC().Format(time.RFC3339)
 	movie.Modified = now
 
 	id := movie.Tmdb_Id
 
-	err := _scrape(s.tmdb, id, movie)
+	err := _scrape(wid, s.tmdb, id, movie)
 	if err != nil {
 		lib.Notify(s.bus, "import:progress", err.Error())
 
@@ -166,18 +166,18 @@ func (s *ReScrape) Execute() {
 	s.dto.BaseUrl = s.tmdb.BaseUrl
 	s.dto.SecureBaseUrl = s.tmdb.SecureBaseUrl
 
-	lib.Notify(s.bus, "import:progress", fmt.Sprintf("RESCRAPE COMPLETED [%d] %s", movie.Id, movie.Title))
+	lib.Notify(s.bus, "import:progress", fmt.Sprintf("RESCRAPE COMPLETED (%d) [%d] %s", wid, movie.Id, movie.Title))
 
 	msg := &pubsub.Message{Payload: s.dto}
 	s.bus.Pub(msg, "/event/movie/rescraped")
 }
 
-func _scrape(tmdb *tmdb.Tmdb, id uint64, movie *model.Movie) error {
+func _scrape(wid int, tmdb *tmdb.Tmdb, id uint64, movie *model.Movie) error {
 	// log.Printf("before getmovie [%d] %s", id, media.Movie.Title)
 	// mlog.Info("[%s] before getmovie [%s]", movie.Title)
 	gmr, err := tmdb.GetMovie(id)
 	if err != nil {
-		return errors.New(fmt.Sprintf("FAILED GETTING MOVIE [%s]", movie.Title))
+		return errors.New(fmt.Sprintf("FAILED GETTING MOVIE (%d) [%s]", wid, movie.Title))
 	}
 
 	movie.Title = gmr.Title

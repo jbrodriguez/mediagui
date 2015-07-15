@@ -1,7 +1,7 @@
 package lib
 
 type Task interface {
-	Execute()
+	Execute(id int)
 }
 
 type Pool struct {
@@ -20,13 +20,13 @@ func NewPool(size, queue int) *Pool {
 	// pool.Resize(size)
 
 	for i := 0; i < size; i++ {
-		go pool.worker()
+		go pool.worker(i)
 	}
 
 	return pool
 }
 
-func (p *Pool) worker() {
+func (p *Pool) worker(id int) {
 	// defer p.wg.Done()
 	for {
 		select {
@@ -34,7 +34,7 @@ func (p *Pool) worker() {
 			if !ok {
 				return
 			}
-			task.Execute()
+			task.Execute(id)
 		case <-p.kill:
 			return
 		}

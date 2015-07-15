@@ -142,14 +142,11 @@ func (c *Core) doMovieFound(msg *pubsub.Message) {
 	reply := <-check.Reply
 	exists := reply.(bool)
 
-	var text string
 	if exists {
-		text = fmt.Sprintf("SKIPPED: exists [%s] (%s)", movie.Title, movie.Location)
+		mlog.Info("SKIPPED: exists [%s] (%s)", movie.Title, movie.Location)
 	} else {
-		text = fmt.Sprintf("NEW: [%s] (%s)", movie.Title, movie.Location)
+		lib.Notify(c.bus, "import:progress", fmt.Sprintf("NEW: [%s] (%s)", movie.Title, movie.Location))
 	}
-
-	lib.Notify(c.bus, "import:progress", text)
 
 	if !exists {
 		c.bus.Pub(msg, "/command/movie/scrape")
