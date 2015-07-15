@@ -60,8 +60,8 @@ module.exports = React.createClass({
 
 		const selected = options.offset / options.limit
 
-		console.log('offset: ' + options.offset + ' limit: ' + options.limit)
-		console.log('selected: ' + selected)
+		// console.log('offset: ' + options.offset + ' limit: ' + options.limit)
+		// console.log('selected: ' + selected)
 
 		var pagination;
 		if (movies.total > options.limit) {

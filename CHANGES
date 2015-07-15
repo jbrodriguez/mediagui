@@ -1,3 +1,9 @@
+Version 0.2.2 - 2015-07-15
+    - Remove logging
+    - Add id to pool worker, to better understand the dynamics of the pool
+    - Prevent messages about skipped movies to travel through the websocket and back to the ui
+
+
 Version 0.2.1 - 2015-06-26
     - Reset offset when entering a new query term
     - Handle GinMode. Set it to release by default, let it be overridden on the command line when in development
