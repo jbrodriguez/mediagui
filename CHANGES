@@ -1,3 +1,7 @@
+Version 0.2.4 - 2015-07-19
+    - Remove unneeded folder
+
+
 Version 0.2.3 - 2015-07-19
     - Update gin-gonic version
     - Fix message reply channel
