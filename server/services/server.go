@@ -133,7 +133,7 @@ func (s *Server) getMovies(c *gin.Context) {
 
 	// mlog.Info("server.getMovies.options: %+v", options)
 
-	msg := &pubsub.Message{Payload: options, Reply: make(chan interface{}, capacity)}
+	msg := &pubsub.Message{Payload: &options, Reply: make(chan interface{}, capacity)}
 	s.bus.Pub(msg, "/get/movies")
 
 	reply := <-msg.Reply

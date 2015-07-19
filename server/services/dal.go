@@ -89,13 +89,13 @@ func (d *Dal) getCover(msg *pubsub.Message) {
 		SortOrder: "desc",
 	}
 
-	total, items := d.listMovies(options)
+	total, items := d.listMovies(&options)
 
 	msg.Reply <- &model.MoviesDTO{Total: total, Items: items}
 }
 
 func (d *Dal) getMovies(msg *pubsub.Message) {
-	options := msg.Payload.(lib.Options)
+	options := msg.Payload.(*lib.Options)
 
 	mlog.Info("options: %+v", options)
 
@@ -111,7 +111,7 @@ func (d *Dal) getMovies(msg *pubsub.Message) {
 	msg.Reply <- &model.MoviesDTO{Total: total, Items: items}
 }
 
-func (d *Dal) listMovies(options lib.Options) (total uint64, movies []*model.Movie) {
+func (d *Dal) listMovies(options *lib.Options) (total uint64, movies []*model.Movie) {
 	// mlog.Info("listMovies.options: %+v", options)
 
 	tx, err := d.db.Begin()
@@ -170,7 +170,7 @@ func (d *Dal) listMovies(options lib.Options) (total uint64, movies []*model.Mov
 	return count, items
 }
 
-func (d *Dal) searchMovies(options lib.Options) (total uint64, movies []*model.Movie) {
+func (d *Dal) searchMovies(options *lib.Options) (total uint64, movies []*model.Movie) {
 	if options.FilterBy == "year" {
 		total, movies = d.searchByYear(options)
 	} else {
@@ -180,7 +180,7 @@ func (d *Dal) searchMovies(options lib.Options) (total uint64, movies []*model.M
 	return total, movies
 }
 
-func (d *Dal) searchByYear(options lib.Options) (total uint64, movies []*model.Movie) {
+func (d *Dal) searchByYear(options *lib.Options) (total uint64, movies []*model.Movie) {
 	var start, end, year uint64
 	var decade bool = false
 
@@ -293,7 +293,7 @@ func (d *Dal) searchByYear(options lib.Options) (total uint64, movies []*model.M
 	return count, items
 }
 
-func (d *Dal) regularSearch(options lib.Options) (total uint64, movies []*model.Movie) {
+func (d *Dal) regularSearch(options *lib.Options) (total uint64, movies []*model.Movie) {
 	mlog.Info("searchMovies.options: %+v", options)
 
 	tx, err := d.db.Begin()
