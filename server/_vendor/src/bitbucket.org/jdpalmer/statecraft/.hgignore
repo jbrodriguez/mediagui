@@ -1,9 +1,0 @@
-# use glob syntax.
-syntax: glob
-
-*.elc
-*.dot
-*.png
-*~
-.DS_Store
-
