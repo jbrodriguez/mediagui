@@ -101,7 +101,7 @@ func (c *Core) pruneMovies(msg *pubsub.Message) {
 	all := &pubsub.Message{Payload: options, Reply: make(chan interface{}, capacity)}
 	c.bus.Pub(all, "/get/movies")
 
-	reply := <-msg.Reply
+	reply := <-all.Reply
 	dto := reply.(*model.MoviesDTO)
 
 	for _, item := range dto.Items {
