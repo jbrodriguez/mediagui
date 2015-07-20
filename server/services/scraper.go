@@ -115,7 +115,7 @@ func (s *Scrape) Execute(wid int) {
 	s.dto.BaseUrl = s.tmdb.BaseUrl
 	s.dto.SecureBaseUrl = s.tmdb.SecureBaseUrl
 
-	lib.Notify(s.bus, "import:progress", fmt.Sprintf("SCRAPE COMPLETED (%d) [%s]", movie.Title))
+	lib.Notify(s.bus, "import:progress", fmt.Sprintf("SCRAPE COMPLETED (%d) [%s]", wid, movie.Title))
 
 	msg := &pubsub.Message{Payload: s.dto}
 	s.bus.Pub(msg, "/event/movie/scraped")
