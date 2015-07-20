@@ -1,3 +1,7 @@
+Version 0.2.5 - 2015-07-20
+    - Add missing parameter to logging call
+
+
 Version 0.2.4 - 2015-07-19
     - Remove unneeded folder
 
