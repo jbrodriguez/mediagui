@@ -1,3 +1,7 @@
+Version 0.2.7 - 2015-09-07
+    - Call cat version with proper path
+
+
 Version 0.2.6 - 2015-09-07
     - Upgrade client-side packages, both for gulp build system, as well as the web interface itself
     - Remove building of server code from gulp
