@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"runtime/pprof"
 )
 
 var Version string
@@ -36,6 +37,16 @@ func main() {
 	if err != nil {
 		log.Printf("Unable to start the app: %s", err.Error())
 		os.Exit(2)
+	}
+
+	if settings.CpuProfile != "" {
+		f, err := os.Create(settings.CpuProfile)
+		if err != nil {
+			log.Printf("Unable to set up profiling: %s", err)
+			os.Exit(3)
+		}
+		pprof.StartCPUProfile(f)
+		defer pprof.StopCPUProfile()
 	}
 
 	if settings.LogDir != "" {

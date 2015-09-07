@@ -11,7 +11,6 @@ var gulp       		= require('gulp'),
     lrload 			= require('livereactload'),
     path 			= require('path'),
     del 			= require('del'),
-    sleep			= require('sleep'),
 	strings 		= require('string'),
 	exec 			= require('child_process').execSync,
 	spawn 			= require('child_process').spawn,
@@ -37,7 +36,7 @@ gulp.task('client', gulp.series(client))
 gulp.task('styles', gulp.series(styles))
 gulp.task('publish', gulp.series(
 		clean,
-		gulp.parallel(client_release, server, styles, images, fonts),
+		gulp.parallel(client_release, styles, images, fonts),
 		publish
 	)
 )
@@ -127,7 +126,7 @@ function server(done) {
 	command('ls', 'ls -al /Volumes/Users/kayak/code/src/jbrodriguez/mediagui/target')
 
 	// stop()
-	build()
+//	build()
 
 	done()
 }
