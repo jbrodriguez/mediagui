@@ -1,3 +1,12 @@
+Version 0.2.6 - 2015-09-07
+    - Upgrade client-side packages, both for gulp build system, as well as the web interface itself
+    - Remove building of server code from gulp
+    - Upgrade server side dependencies
+    - Enable app profiling to find bottleneck. So far, looks awesome !
+    - Remove completely the server task when building the client
+    - Add makefile for server code
+
+
 Version 0.2.5 - 2015-07-20
     - Add missing parameter to logging call
 
