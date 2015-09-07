@@ -31,11 +31,11 @@ clean:
 # run formatting tool and build
 build: dependencies clean
 	~/code/bin/gom build fmt
-	~/code/bin/gom build -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v
+	~/code/bin/gom build -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v -o ${PROG}
 
 buildx: dependencies clean
 	~/code/bin/gom build fmt
-	env GOOS=linux GOARCH=amd64 ~/code/bin/gom build -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v
+	env GOOS=linux GOARCH=amd64 ~/code/bin/gom build -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v -o ${PROG}
  
 # run unit tests with code coverage
 test: dependencies
