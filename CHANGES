@@ -1,3 +1,8 @@
+Version 0.2.9 - 2015-09-07
+    - Solve issue conclusively by invoking -o flag on build
+    - Ignore the app binary
+
+
 Version 0.2.8 - 2015-09-07
     - Rename main go file to match app name and behave better when building/copying etc.
 
