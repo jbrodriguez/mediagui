@@ -36,7 +36,7 @@ gulp.task('client', gulp.series(client))
 gulp.task('styles', gulp.series(styles))
 gulp.task('publish', gulp.series(
 		clean,
-		gulp.parallel(client_release, server, styles, images, fonts),
+		gulp.parallel(client_release, styles, images, fonts),
 		publish
 	)
 )
