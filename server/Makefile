@@ -7,7 +7,7 @@
 # $ make serve
 #
 
-mb_version := $(shell cat VERSION)
+mb_version := $(shell cat ../VERSION)
 mb_count := $(shell git rev-list HEAD --count)
 mb_hash := $(shell git rev-parse --short HEAD)
 
