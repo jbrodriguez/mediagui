@@ -11,7 +11,6 @@ var gulp       		= require('gulp'),
     lrload 			= require('livereactload'),
     path 			= require('path'),
     del 			= require('del'),
-    sleep			= require('sleep'),
 	strings 		= require('string'),
 	exec 			= require('child_process').execSync,
 	spawn 			= require('child_process').spawn,
@@ -127,7 +126,7 @@ function server(done) {
 	command('ls', 'ls -al /Volumes/Users/kayak/code/src/jbrodriguez/mediagui/target')
 
 	// stop()
-	build()
+//	build()
 
 	done()
 }
