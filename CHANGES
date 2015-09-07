@@ -1,3 +1,7 @@
+Version 0.2.8 - 2015-09-07
+    - Rename main go file to match app name and behave better when building/copying etc.
+
+
 Version 0.2.7 - 2015-09-07
     - Call cat version with proper path
 
