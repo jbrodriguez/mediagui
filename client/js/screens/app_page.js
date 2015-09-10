@@ -126,7 +126,7 @@ export default class App extends React.Component {
     }
 
     handleSortOrder() {
-    	const sortOrder = this.props.options.sortOrder === 'asc' ? 'desc' : 'asc'
+    	const sortOrder = this.props.state.options.sortOrder === 'asc' ? 'desc' : 'asc'
 		this.props.actions.options.setSortOrder(sortOrder)
     }
 
