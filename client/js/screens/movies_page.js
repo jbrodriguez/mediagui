@@ -1,62 +1,49 @@
-const 	React 			= require('react'),
-		Link			= require('react-router').Link,
-		RouteHandler 	= require('react-router').RouteHandler,
-		Pager 			= require('react-paginate'),
-		Movie 			= require('./Movie.jsx'),
-		// DatePicker 		= require('react-datepicker'),
-		// moment 			= require('moment'),
-		optionsBO 		= require('./options.js')
+import React from 'react'
+import Pager from 'react-paginate'
+
+import Movie from './movie_card'
+import { isNotValid } from '../lib/utils'
 
 
-// const DatePickerWrapper = React.createClass({
-// 	// getInitialState: function() {
-// 	// 	return {
-// 	// 		date: moment()
-// 	// 	}
-// 	// },
+export default class MoviesPage extends React.Component {
+	constructor() {
+		super()
 
-// 	render: function() {
-// 		<span>
-// 			<DatePicker
-// 				key="example1"
-// 				selected={movie.last_watched}
-// 				onChange={handleWatched}
-// 			/>
+		this.handlePageClick = this.handlePageClick.bind(this)
 
-// 		</span>
-// 	}
-// })
+		this.shouldScroll = false
+	}
 
-module.exports = React.createClass({
-	// componentWillUpdate: function() {
-	// 	console.log('this.selected', this.selected)
-	// 	console.log('selected', this.state.selected)
-	// 	this.forced = 0
-	// 	if (this.selected) {
-	// 		this.forced = this.selected
-	// 	}		
-	// },
-	handlePageClick: function(data) {
-		this.shouldScroll = true
-		// this.selected = data.selected
-		// const offset = Math.ceil(this.selected * this.props.options.limit);
-		const offset = Math.ceil(data.selected * this.props.options.limit);
-		optionsBO.setOffset(offset)		
-	},
+	componentWillMount() {
+		const options = this.props.state.options
 
-	componentDidUpdate: function() {
+		const proxy = {
+			query: options.query,
+			filterBy: options.filterBy,
+			sortBy: options.sortBy,
+			sortOrder: options.sortOrder,
+			limit: options.limit,
+			offset: options.offset
+		}
+
+		this.props.actions.movies.getMovies(proxy)
+	}
+
+	componentDidUpdate() {
 		if (this.shouldScroll) {
 			window.scrollTo(0, 0)
 		}
 
 		this.shouldScroll = false
+	}
 
-		// console.log('didUdpate')
-	},	
+	render() {
+		if (isNotValid(this.props.state.movies)) {
+			return null
+		}
 
-	render: function() {
-		const movies = this.props.movies
-		const options = this.props.options
+		const movies = this.props.state.movies
+		const options = this.props.state.options
 
 		const selected = options.offset / options.limit
 
@@ -96,6 +83,13 @@ module.exports = React.createClass({
 
 				{pagination}
 			</section>
-		)
+		)		
 	}
-})
+
+	handlePageClick(data) {
+		this.shouldScroll = true
+
+		const offset = Math.ceil(data.selected * this.props.state.options.limit);
+		this.props.actions.options.setOffset(offset)
+	}
+}

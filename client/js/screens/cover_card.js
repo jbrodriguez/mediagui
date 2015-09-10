@@ -1,22 +1,7 @@
-const 	React 			= require('react')
+import React from 'react'
 
-module.exports = React.createClass({
-    hourMinute: function(minutes) {
-        var hour = Math.floor(minutes / 60);
-        var minute = Math.floor(minutes % 60);
-
-        var time = '';
-        if (hour > 0) time += (hour + ":");
-        if (minute >= 0) {
-            if (minute <= 9) time += "0"+minute;
-            else time += minute;
-        }
-        if (hour <= 0) time += "m";
-
-        return time;
-    },	
-
-	render: function() {
+export default class CoverCard extends React.Component {
+	render() {
 		const movie = this.props.movie
 
 		var watched;
@@ -55,4 +40,19 @@ module.exports = React.createClass({
 			</article>
 		)
 	}
-})
+
+	hourMinute(minutes) {
+        var hour = Math.floor(minutes / 60)
+        var minute = Math.floor(minutes % 60)
+
+        var time = ''
+        if (hour > 0) time += (hour + ":")
+        if (minute >= 0) {
+            if (minute <= 9) time += "0"+minute
+            else time += minute
+        }
+        if (hour <= 0) time += "m"
+
+        return time
+	}
+}

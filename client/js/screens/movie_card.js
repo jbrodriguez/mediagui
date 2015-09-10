@@ -1,51 +1,23 @@
-const 	React 			= require('react'),
-		DatePicker 		= require('react-datepicker'),
-		IconRating 		= require('react-icon-rating'),
-		moment 			= require('moment'),
-		moviesBO 		= require('./movies')
+import React from 'react'
+import DatePicker from 'react-datepicker'
+import IconRating from 'react-icon-rating'
+import moment from 'moment'
 
-module.exports = React.createClass({
-	setScore: function(score) {
-		moviesBO.setMovieScore(this.props.movie, score)
-	},
+export default class MovieCard extends React.Component {
+	constructor() {
+		super()
 
-	setWatched: function(watched) {
-		moviesBO.setMovieWatched(this.props.movie, watched)
-	},
+		this.setScore = this.setScore.bind(this)
+		this.setWatched = this.setWatched.bind(this)
+		this.setTmdbId = this.setTmdbId.bind(this)
+		this.fixMovie = this.fixMovie.bind(this)
 
-	setTmdbId: function(e) {
-		this.tmdb_id = e.target.value
-	},
-
-	fixMovie: function() {
-		if (this.tmdb_id) {
-			this.setState({ loading: true })
-			moviesBO.fixMovie(this.props.movie, parseInt(this.tmdb_id))
-		}
-	},
-
-    hourMinute: function(minutes) {
-        var hour = Math.floor(minutes / 60);
-        var minute = Math.floor(minutes % 60);
-
-        var time = '';
-        if (hour > 0) time += (hour + ":");
-        if (minute >= 0) {
-            if (minute <= 9) time += "0"+minute;
-            else time += minute;
-        }
-        if (hour <= 0) time += "m";
-
-        return time;
-    },
-
-	getInitialState: function() {
-		return {
+		this.state = {
 			loading: false
 		}
-	},
+	}
 
-	render: function() {
+	render() {
 		const movie = this.props.movie
 		const key = this.props.key
 		// const options = this.props.options
@@ -181,5 +153,40 @@ module.exports = React.createClass({
 				</div>										
 			</article>				
 		)	
+
 	}
-})
+
+	hourMinute(minutes) {
+        var hour = Math.floor(minutes / 60)
+        var minute = Math.floor(minutes % 60)
+
+        var time = ''
+        if (hour > 0) time += (hour + ":")
+        if (minute >= 0) {
+            if (minute <= 9) time += "0"+minute
+            else time += minute
+        }
+        if (hour <= 0) time += "m"
+
+        return time
+	}
+
+	setScore(score) {
+		this.props.actions.movies.setMovieScore(this.props.movie, score)
+	}
+
+	setWatched(watched) {
+		this.props.actions.movies.setMovieWatched(this.props.movie, watched)
+	}
+
+	setTmdbId(e) {
+		this.tmdb_id = e.target.value
+	}
+
+	fixMovie() {
+		if (this.tmdb_id) {
+			this.setState({ loading: true })
+			this.props.actions.movies.fixMovie(this.props.movie, parseInt(this.tmdb_id))
+		}
+	}	
+}

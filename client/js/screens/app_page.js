@@ -1,62 +1,36 @@
-const 	React 			= require('react'),
-		cx 		 		= require('classnames'),
-		Router 			= require('react-router'),
-		Link			= Router.Link,
-		RouteHandler 	= Router.RouteHandler,
-		optionsBO 		= require('./options.js')
+import React from 'react'
+import cx from 'classnames'
+// import { Link, RouteHandler } from 'react-router'
+import { isNotValid } from '../lib/utils'
 
-var FilterWrapper = React.createClass({
-  render: function() {
-    return <option value={this.props.option.value}>{this.props.option.label}</option>
-  }
-})
+const 	Router = require('react-router'),
+		Link = Router.Link,
+		RouteHandler = Router.RouteHandler
 
-var SortWrapper = React.createClass({
-  render: function() {
-    return <option value={this.props.option.value}>{this.props.option.label}</option>
-  }
-})
+export default class App extends React.Component {
+	constructor() {
+		super()
 
-module.exports = React.createClass({
-    handleFilterBy: function() {
-		const filterBy = event.target.value
-		optionsBO.setFilterBy(filterBy)
-    },
+	    this.handleFilterBy = this.handleFilterBy.bind(this)
+	    this.handleSortBy = this.handleSortBy.bind(this)
+	    this.handleSortOrder = this.handleSortOrder.bind(this)
+	    this.handleQueryTerm = this.handleQueryTerm.bind(this)
+	}
 
-    handleSortBy: function() {
-		const sortBy = event.target.value
-		optionsBO.setSortBy(sortBy)
-    },
-
-    handleSortOrder: function() {
-    	const sortOrder = this.props.options.sortOrder === 'asc' ? 'desc' : 'asc'
-		optionsBO.setSortOrder(sortOrder)
-    },
-
-    handleQueryTerm: function() {
-		const queryTerm = event.target.value
-		optionsBO.setQueryTerm(queryTerm)
-    },
-
-	render: function() {
-		// console.log('somebody to love: ' + JSON.stringify(this.props, null, 4))
-		const settings = this.props.settings
-		const options = this.props.options
-		const urlQuery = {
-			query: options.query,
-			filterBy: options.filterBy,
-			sortBy: options.sortBy,
-			sortOrder: options.sortOrder,
-			limit: options.limit,
-			offset: options.offset
+	render() {
+		if (isNotValid(this.props.state.settings)) {
+			return null
 		}
 
-        var filterByNodes = options.filterByOptions.map(function(option){
-            return <FilterWrapper key={option.id} option={option} />
+		const settings = this.props.state.settings
+		const options = this.props.state.options
+
+        var filterByNodes = options.filterByOptions.map(function(option, i){
+            return <option key={i} value={option.value}>{option.label}</option>
         })
 
-        var sortByNodes = options.sortByOptions.map(function(option){
-            return <SortWrapper key={option.id} option={option} />
+        var sortByNodes = options.sortByOptions.map(function(option, i){
+            return <option key={i} value={option.value}>{option.label}</option>
         })
 
         const chevron = cx({
@@ -80,7 +54,7 @@ module.exports = React.createClass({
 								<div className="row between-xs">
 									<div className="col-xs-12 col-sm-8">
 										<div className="header__menu-section">
-											<Link to="movies" query={urlQuery} className="spacer">MOVIES</Link>
+											<Link to="movies" className="spacer">MOVIES</Link>
 
 											<select value={options.filterBy} onChange={this.handleFilterBy}>
 												{filterByNodes}
@@ -140,4 +114,24 @@ module.exports = React.createClass({
 			</div>
 		)
 	}
-})
+
+    handleFilterBy() {
+		const filterBy = event.target.value
+		this.props.actions.options.setFilterBy(filterBy)
+    }
+
+    handleSortBy() {
+		const sortBy = event.target.value
+		this.props.actions.options.setSortBy(sortBy)
+    }
+
+    handleSortOrder() {
+    	const sortOrder = this.props.options.sortOrder === 'asc' ? 'desc' : 'asc'
+		this.props.actions.options.setSortOrder(sortOrder)
+    }
+
+    handleQueryTerm() {
+		const queryTerm = event.target.value
+		this.props.actions.options.setQueryTerm(queryTerm)
+    }	
+}
