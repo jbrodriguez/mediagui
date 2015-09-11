@@ -12,10 +12,6 @@ export default class SettingsPage extends React.Component {
 		}
 	}
 
-	// componentWillMount() {
-	// 	this.props.actions.settings.getConfig()
-	// }
-
 	render() {
 		if (isNotValid(this.props.state.settings)) {
 			return null
@@ -87,7 +83,6 @@ export default class SettingsPage extends React.Component {
 
 		e.preventDefault()
 
-		// console.log("settingsPage.addFolder: ", e.target.value)
 		this.props.actions.settings.addMediaFolder(e.target.value)
 	}	
 }

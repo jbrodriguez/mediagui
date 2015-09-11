@@ -1,39 +1,31 @@
-var prefix = 'jbrmg.';
+const prefix = 'jbrmg.'
 
-var service = {
-    get: get,
-    set: set,
-    remove: remove,
-    // clearAll: clearAll,
-};
+export default class Storage {
+	static get(key) {
+	    var item = window.localStorage.getItem(prefix + key)
 
-module.exports = service
-/////////////////////
+	    if (!item || item === 'null') {
+	        return null
+	    }
 
-function get(key) {
-    var item = window.localStorage.getItem(prefix + key)
+	    if (item.charAt(0) === "{" || item.charAt(0) === "[") {
+	        return JSON.stringify(item);
+	    }
 
-    if (!item || item === 'null') {
-        return null
+	    return item
     }
 
-    if (item.charAt(0) === "{" || item.charAt(0) === "[") {
-        return JSON.stringify(item);
+    static set(key, value) {
+	    if (typeof value === 'object' || typeof value === 'array') {
+	        value = JSON.parse(value);
+	    }
+
+	    window.localStorage.setItem(prefix + key, value)
+	    return true
     }
 
-    return item
+    static remove(key) {
+	    window.localStorage.removeItem(prefix + key)
+	    return true
+	}
 }
-
-function set(key, value) {
-    if (typeof value === 'object' || typeof value === 'array') {
-        value = JSON.parse(value);
-    }
-
-    window.localStorage.setItem(prefix + key, value)
-    return true
-};
-
-function remove(key) {
-    window.localStorage.removeItem(prefix + key)
-    return true
-};

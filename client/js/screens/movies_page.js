@@ -15,19 +15,7 @@ export default class MoviesPage extends React.Component {
 	}
 
 	componentWillMount() {
-		// const options = this.props.state.options
-
-		// const proxy = {
-		// 	query: options.query,
-		// 	filterBy: options.filterBy,
-		// 	sortBy: options.sortBy,
-		// 	sortOrder: options.sortOrder,
-		// 	limit: 50,
-		// 	offset: options.offset
-		// }
-
 		const proxy = Object.assign({}, this.props.state.options, {limit: 60})
-
 		this.props.actions.movies.getMovies(proxy)
 	}
 
@@ -49,13 +37,8 @@ export default class MoviesPage extends React.Component {
 
 		const selected = options.offset / options.limit
 
-		// console.log('offset: ' + options.offset + ' limit: ' + options.limit)
-		// console.log('selected: ' + selected)
-
 		var pagination;
 		if (movies.total > options.limit) {
-			// console.log('moviesPage.total('+movies.total+')>limit('+options.limit+'); selected='+this.selected)
-
 			pagination = (
 		        <Pager previousLabel={<i className="icon-chevron-left"></i>}
 		                       nextLabel={<i className="icon-chevron-right"></i>}
@@ -72,7 +55,6 @@ export default class MoviesPage extends React.Component {
 		}
 
 		var that = this
-
 		var items = movies.items.map(function(movie, i) {
 			return (
 				<Movie movie={movie} key={movie.title+movie.modified+i} { ...that.props} />

@@ -2,6 +2,7 @@ import React from 'react'
 import DatePicker from 'react-datepicker'
 import IconRating from 'react-icon-rating'
 import moment from 'moment'
+import { hourMinute } from '../lib/utils'
 
 export default class MovieCard extends React.Component {
 	constructor() {
@@ -20,23 +21,6 @@ export default class MovieCard extends React.Component {
 	render() {
 		const movie = this.props.movie
 		const key = this.props.key
-		// const options = this.props.options
-
-		// var that = this;
-
-		const setStateTmdbId = function(data) {
-			return
-		}
-
-		const fixTmdbId = function() {
-			return
-		}
-
-				// <span className="label success spacer"><i className="icon-watched"></i>&nbsp;{moment.utc(movie.last_watched).local().format('MMM DD, YYYY')}</span>
-
-
-		const saveWatched = function() {
-		}
 		
 		var watched;
 		if (movie.last_watched != '') {
@@ -73,8 +57,6 @@ export default class MovieCard extends React.Component {
 			)
 		}
 
-		// console.log('movie.score: id('+movie.id+')-score('+movie.score+')')
-
 		return (
 			<article className="movie-info">
 				<div className="col-xs-12">
@@ -92,7 +74,7 @@ export default class MovieCard extends React.Component {
 								<img src={"/img/b" + movie.backdrop} />
 								<div className="row between-xs overlay__backdrop">
 									<div className="col-xs-6">
-										<span>{this.hourMinute(movie.runtime)}</span>
+										<span>{hourMinute(movie.runtime)}</span>
 									</div>
 									<div className="col-xs-6 end-xs">
 										<span>{movie.imdb_rating}</span>
@@ -155,21 +137,6 @@ export default class MovieCard extends React.Component {
 			</article>				
 		)	
 
-	}
-
-	hourMinute(minutes) {
-        var hour = Math.floor(minutes / 60)
-        var minute = Math.floor(minutes % 60)
-
-        var time = ''
-        if (hour > 0) time += (hour + ":")
-        if (minute >= 0) {
-            if (minute <= 9) time += "0"+minute
-            else time += minute
-        }
-        if (hour <= 0) time += "m"
-
-        return time
 	}
 
 	setScore(score) {

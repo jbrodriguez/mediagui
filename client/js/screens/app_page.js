@@ -40,7 +40,6 @@ export default class App extends React.Component {
         })
 
 		return (
-			// <div className={cx("container", "body")}>
 			<div className="container body">
 				<header>
 					<nav className="row between-xs">
