@@ -172,6 +172,8 @@ export default class MovieCard extends React.Component {
 	}
 
 	setScore(score) {
+		// console.log('score: ', score)
+		// console.log('this.props.movie: ', this.props.movie)
 		this.props.actions.movies.setMovieScore(this.props.movie, score)
 	}
 

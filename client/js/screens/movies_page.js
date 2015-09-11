@@ -15,16 +15,18 @@ export default class MoviesPage extends React.Component {
 	}
 
 	componentWillMount() {
-		const options = this.props.state.options
+		// const options = this.props.state.options
 
-		const proxy = {
-			query: options.query,
-			filterBy: options.filterBy,
-			sortBy: options.sortBy,
-			sortOrder: options.sortOrder,
-			limit: options.limit,
-			offset: options.offset
-		}
+		// const proxy = {
+		// 	query: options.query,
+		// 	filterBy: options.filterBy,
+		// 	sortBy: options.sortBy,
+		// 	sortOrder: options.sortOrder,
+		// 	limit: 50,
+		// 	offset: options.offset
+		// }
+
+		const proxy = Object.assign({}, this.props.state.options, {limit: 60})
 
 		this.props.actions.movies.getMovies(proxy)
 	}
@@ -69,9 +71,11 @@ export default class MoviesPage extends React.Component {
 			)
 		}
 
-		var items = movies.items.map(function(movie) {
+		var that = this
+
+		var items = movies.items.map(function(movie, i) {
 			return (
-				<Movie movie={movie} key={movie.title+movie.modified} />
+				<Movie movie={movie} key={movie.title+movie.modified+i} { ...that.props} />
 			)
 		})
 

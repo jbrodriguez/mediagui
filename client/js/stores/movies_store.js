@@ -1,12 +1,13 @@
 import Bacon from 'baconjs'
 import R from 'ramda'
+import moment from 'moment'
 import ffux from 'ffux'
 
 const Movies = ffux.createStore({
 	actions: ["getCover", "getMovies", "importMovies", "setMovieScore", "setMovieWatched", "fixMovie", "getDuplicates", "pruneMovies"],
 
 	state: (initialMovies, {getCover, getMovies, importMovies, setMovieScore, setMovieWatched, fixMovie, getDuplicates, pruneMovies}, {api, options}) => {
-		var _proxy = function(options) {
+		const _options = function(options) {
 			const proxy = {
 				query: options.query,
 				filterBy: options.filterBy,
@@ -19,6 +20,21 @@ const Movies = ffux.createStore({
 			return api.getMovies(proxy)
 		}
 
+		const _score = function(movie, score) {
+			movie.score = score
+			return api.setMovieScore(movie)
+		}
+
+		const _watched = function(movie, watched) {
+			movie.last_watched = moment.utc(watched).format()
+			return api.setMovieWatched(movie)
+		}
+
+		const _fix = function(movie, tmdb_id) {
+			movie.tmdb_id = tmdb_id
+			return api.fixMovie(movie)
+		}
+
 		// console.log('options: ', options)
 		const optionsS = options.toEventStream().skip(1).skipDuplicates()
 
@@ -27,11 +43,11 @@ const Movies = ffux.createStore({
 		const moviesS = getMovies.merge(optionsS)
 
 		const getCoverS = getCover.flatMap(Bacon.fromPromise(api.getCover()))
-		const getMoviesS = moviesS.flatMap(opt => Bacon.fromPromise(_proxy(opt)))
+		const getMoviesS = moviesS.flatMap(opt => Bacon.fromPromise(_options(opt)))
 		const importMoviesS = importMovies.flatMap( _ => Bacon.fromPromise(api.importMovies()))
-		const setMovieScoreS = setMovieScore.flatMap(movie => Bacon.fromPromise(api.setMovieScore(movie)))
-		const setMovieWatchedS = setMovieWatched.flatMap(movie => Bacon.fromPromise(api.setMovieWatched(movie)))
-		const fixMovieS = fixMovie.flatMap(movie => Bacon.fromPromise(api.fixMovie(movie)))
+		const setMovieScoreS = setMovieScore.flatMap(([movie, score]) => Bacon.fromPromise(_score(movie, score)))
+		const setMovieWatchedS = setMovieWatched.flatMap(([movie, watched]) => Bacon.fromPromise(_watched(movie, watched)))
+		const fixMovieS = fixMovie.flatMap(([movie, tmdb_id]) => Bacon.fromPromise(_fix(movie, tmdb_id)))
 		const getDuplicatesS = getDuplicates.flatMap(_ => Bacon.fromPromise(api.getDuplicates()))
 		const pruneMoviesS = pruneMovies.flatMap(_ => Bacon.fromPromise(api.pruneMovies()))
 		// const optionsS = options.skip(1).flatMap(opt => Bacon.fromPromise(doProxy(opt)))
