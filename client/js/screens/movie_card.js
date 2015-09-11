@@ -146,6 +146,7 @@ export default class MovieCard extends React.Component {
 								onChange={this.setScore} />
 							<DatePicker
 								key="{key}"
+								selected={moment()}
 								placeholderText="YYYY-MM-DD"
 								onChange={this.setWatched} />
 						</div>
