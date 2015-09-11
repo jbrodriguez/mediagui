@@ -1,29 +1,23 @@
-const 	React 		= require('react'),
-		settingsBO 	= require('./settings')
+import React from 'react'
+import { isNotValid } from '../lib/utils'
 
-module.exports = React.createClass({
-	// componentWillMount: function() {
-	// 	movies.getCover()
-	// },
-	addFolder: function(e) {
-		if (e.key !== "Enter") {
-			return
-		}
+export default class SettingsPage extends React.Component {
+	constructor() {
+		super()
 
-		e.preventDefault()
+		this.addFolder = this.addFolder.bind(this)
 
-		// console.log("settingsPage.addFolder: ", e.target.value)
-		settingsBO.addMediaFolder(e.target.value)
-	},
-
-	getInitialState: function() {
-		return {
+		this.state = {
 			folder: ""
 		}
-	},
+	}
 
-	render: function() {
-		const settings = this.props.settings
+	render() {
+		if (isNotValid(this.props.state.settings)) {
+			return null
+		}
+
+		const settings = this.props.state.settings
 
 		var noFolders;
 		if (settings.mediaFolders.length === 0) {
@@ -79,7 +73,16 @@ module.exports = React.createClass({
 				</div>
 
 			</section>
-		)
+		)	
 	}
-})
 
+	addFolder(e) {
+		if (e.key !== "Enter") {
+			return
+		}
+
+		e.preventDefault()
+
+		this.props.actions.settings.addMediaFolder(e.target.value)
+	}	
+}

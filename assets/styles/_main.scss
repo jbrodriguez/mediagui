@@ -120,6 +120,7 @@ ul.pagination {
 			font-weight: bold;
 			cursor: default; 
 		}
+
 	}
 
 	.pages {
@@ -130,7 +131,13 @@ ul.pagination {
 		margin: 0 0.25em;
 	}
 
+	ul.pages li.selected {
+		margin: 0 0.25em;
+		background-color: $pagination-hover-bg;
+	}	
 }
+
+
 
 .console {
 	display: flex;

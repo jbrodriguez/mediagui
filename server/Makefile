@@ -53,7 +53,7 @@ kill:
 # attempt to build and start server
 restart:
 	@make kill
-	@make build; (if [ "$$?" -eq 0 ]; then (env GIN_MODE=debug ./${PROG} -pg_port_5432_tcp_addr api.apertoire.org &); fi)
+	@make build; (if [ "$$?" -eq 0 ]; then (env GIN_MODE=debug ./${PROG} &); fi)
  
 # watch .go files for changes then recompile & try to start server
 # will also kill server after ctrl+c

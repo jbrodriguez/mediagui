@@ -1,70 +1,26 @@
-const 	React 			= require('react'),
-		DatePicker 		= require('react-datepicker'),
-		IconRating 		= require('react-icon-rating'),
-		moment 			= require('moment'),
-		moviesBO 		= require('./movies')
+import React from 'react'
+import DatePicker from 'react-datepicker'
+import IconRating from 'react-icon-rating'
+import moment from 'moment'
+import { hourMinute } from '../lib/utils'
 
-module.exports = React.createClass({
-	setScore: function(score) {
-		moviesBO.setMovieScore(this.props.movie, score)
-	},
+export default class MovieCard extends React.Component {
+	constructor() {
+		super()
 
-	setWatched: function(watched) {
-		moviesBO.setMovieWatched(this.props.movie, watched)
-	},
+		this.setScore = this.setScore.bind(this)
+		this.setWatched = this.setWatched.bind(this)
+		this.setTmdbId = this.setTmdbId.bind(this)
+		this.fixMovie = this.fixMovie.bind(this)
 
-	setTmdbId: function(e) {
-		this.tmdb_id = e.target.value
-	},
-
-	fixMovie: function() {
-		if (this.tmdb_id) {
-			this.setState({ loading: true })
-			moviesBO.fixMovie(this.props.movie, parseInt(this.tmdb_id))
-		}
-	},
-
-    hourMinute: function(minutes) {
-        var hour = Math.floor(minutes / 60);
-        var minute = Math.floor(minutes % 60);
-
-        var time = '';
-        if (hour > 0) time += (hour + ":");
-        if (minute >= 0) {
-            if (minute <= 9) time += "0"+minute;
-            else time += minute;
-        }
-        if (hour <= 0) time += "m";
-
-        return time;
-    },
-
-	getInitialState: function() {
-		return {
+		this.state = {
 			loading: false
 		}
-	},
+	}
 
-	render: function() {
+	render() {
 		const movie = this.props.movie
 		const key = this.props.key
-		// const options = this.props.options
-
-		// var that = this;
-
-		const setStateTmdbId = function(data) {
-			return
-		}
-
-		const fixTmdbId = function() {
-			return
-		}
-
-				// <span className="label success spacer"><i className="icon-watched"></i>&nbsp;{moment.utc(movie.last_watched).local().format('MMM DD, YYYY')}</span>
-
-
-		const saveWatched = function() {
-		}
 		
 		var watched;
 		if (movie.last_watched != '') {
@@ -101,8 +57,6 @@ module.exports = React.createClass({
 			)
 		}
 
-		// console.log('movie.score: id('+movie.id+')-score('+movie.score+')')
-
 		return (
 			<article className="movie-info">
 				<div className="col-xs-12">
@@ -120,7 +74,7 @@ module.exports = React.createClass({
 								<img src={"/img/b" + movie.backdrop} />
 								<div className="row between-xs overlay__backdrop">
 									<div className="col-xs-6">
-										<span>{this.hourMinute(movie.runtime)}</span>
+										<span>{hourMinute(movie.runtime)}</span>
 									</div>
 									<div className="col-xs-6 end-xs">
 										<span>{movie.imdb_rating}</span>
@@ -174,6 +128,7 @@ module.exports = React.createClass({
 								onChange={this.setScore} />
 							<DatePicker
 								key="{key}"
+								selected={moment()}
 								placeholderText="YYYY-MM-DD"
 								onChange={this.setWatched} />
 						</div>
@@ -181,5 +136,27 @@ module.exports = React.createClass({
 				</div>										
 			</article>				
 		)	
+
 	}
-})
+
+	setScore(score) {
+		// console.log('score: ', score)
+		// console.log('this.props.movie: ', this.props.movie)
+		this.props.actions.movies.setMovieScore(this.props.movie, score)
+	}
+
+	setWatched(watched) {
+		this.props.actions.movies.setMovieWatched(this.props.movie, watched)
+	}
+
+	setTmdbId(e) {
+		this.tmdb_id = e.target.value
+	}
+
+	fixMovie() {
+		if (this.tmdb_id) {
+			this.setState({ loading: true })
+			this.props.actions.movies.fixMovie(this.props.movie, parseInt(this.tmdb_id))
+		}
+	}	
+}
