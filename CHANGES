@@ -1,3 +1,15 @@
+Version 0.3.0 - 2015-09-11
+    - Refactor client code to use ffux as 'flux'-like framework
+    - Refactor client code into es6 style
+    - Reorganize client code into folders for better understading
+    - Add missing state parameter
+    - Send parent props down to each movie, probably can make it lighter need to revisit
+    - Set the changed fields in the movie object that we'll be sending down the wire to the server
+    - Set required property selected (to today)
+    - Refactor common code into utils lib
+    - Code cleanup (comments, dead code, etc)
+
+
 Version 0.2.9 - 2015-09-07
     - Solve issue conclusively by invoking -o flag on build
     - Ignore the app binary
