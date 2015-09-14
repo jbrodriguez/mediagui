@@ -20,26 +20,22 @@ const Movies = ffux.createStore({
 			return api.getMovies(proxy)
 		}
 
-		const _score = function(movie, score) {
+		function _score(movie, score) {
 			movie.score = score
 			return api.setMovieScore(movie)
 		}
 
-		const _watched = function(movie, watched) {
+		function _watched(movie, watched) {
 			movie.last_watched = moment.utc(watched).format()
 			return api.setMovieWatched(movie)
 		}
 
-		const _fix = function(movie, tmdb_id) {
+		function _fix(movie, tmdb_id) {
 			movie.tmdb_id = tmdb_id
 			return api.fixMovie(movie)
 		}
 
-		// console.log('options: ', options)
 		const optionsS = options.toEventStream().skip(1).skipDuplicates()
-
-		// console.log('getMovies: ', getMovies)
-		// console.log('optionsS: ', optionsS)
 		const moviesS = getMovies.merge(optionsS)
 
 		const getCoverS = getCover.flatMap(Bacon.fromPromise(api.getCover()))
@@ -50,7 +46,6 @@ const Movies = ffux.createStore({
 		const fixMovieS = fixMovie.flatMap(([movie, tmdb_id]) => Bacon.fromPromise(_fix(movie, tmdb_id)))
 		const getDuplicatesS = getDuplicates.flatMap(_ => Bacon.fromPromise(api.getDuplicates()))
 		const pruneMoviesS = pruneMovies.flatMap(_ => Bacon.fromPromise(api.pruneMovies()))
-		// const optionsS = options.skip(1).flatMap(opt => Bacon.fromPromise(doProxy(opt)))
 
 		return Bacon.update(
 			initialMovies,

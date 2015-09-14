@@ -1,0 +1,21 @@
+# .NET
+(?<Resolution>.*?)\\(?<Name>.*?)\\(?:.*\\)*.*\.(?<FileType>bdmv|iso|img|nrg|mkv|avi|xvid|ts|mpg|dvr-ms)$
+(?<Resolution>.*?)\\(?<Name>.*?)\.(?<FileType>bdmv|iso|img|nrg|mkv|avi|xvid|ts|mpg|dvr-ms)$
+(?<Resolution>.*?)\\(?<Name>.*?)\\(?:.*\\)*(video_ts|hv000i01)\.(?<FileType>ifo)$
+
+# go
+# samples
+# /Volumes/films/bluray/Constantine (2005)/BDMV/index.bdmv
+# /Volumes/films/blurip/Alien (1979)/Alien.1979.Directors.Cut.1080p.BluRay.x264.DTS-WiKi.mkv
+# /Volumes/films/blurip/Alien (1979)/Alien.1979.Directors.Cut.1080p.BluRay.x264.DTS-WiKi_mkv_JRSidecar.xml
+
+# old
+# /Volumes/films/(.*?)/(.*?)/(?:.*/)*.*\.(bdmv|iso|img|nrg|mkv|avi|xvid|ts|mpg|dvr-ms)$
+# /Volumes/films/(.*?)/(.*?)/(?:.*/)*.*\.(bdmv|iso|img|nrg|mkv|avi|xvid|ts|mpg|dvr-ms)$
+# /Volumes/films/(.*?)/(.*?)/.*\.(bdmv|iso|img|nrg|mkv|avi|xvid|ts|mpg|dvr-ms)$
+# /Volumes/films/(?P<Resolution>.*?)/(?P<Name>.*?)/(?:.*/)*.*_JRSidecar\.(?P<FileType>xml)$
+
+# current
+/Volumes/films/(?P<Resolution>.*?)/(?P<Name>.*?)/(?:.*/)*BDMV/index.bdmv$
+/Volumes/films/(?P<Resolution>.*?)/(?P<Name>.*?)/(?:.*/)*.*\.(?P<FileType>bdmv|iso|img|nrg|mkv|avi|xvid|ts|mpg|dvr-ms)$
+/Volumes/films/(?P<Resolution>.*?)/(?P<Name>.*?)/(?:.*/)*(video_ts|hv000i01)\.(?P<FileType>ifo)$
