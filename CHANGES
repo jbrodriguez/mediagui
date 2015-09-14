@@ -1,3 +1,13 @@
+Version 0.4.0 - 2015-09-14
+    - Add readme and docs
+    - Remove some commented logging code
+    - Do some copy-edit on the readme
+    - Replace deprecated function
+    - Add missing state field
+    - Return empty object from post calls that just trigger some server side function
+    - Add streams to the update function, otherwise they wouldn't be called
+
+
 Version 0.3.0 - 2015-09-11
     - Refactor client code to use ffux as 'flux'-like framework
     - Refactor client code into es6 style
