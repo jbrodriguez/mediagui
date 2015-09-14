@@ -24,7 +24,7 @@ export default class Api {
 
 	importMovies() {
 		return fetch(this.hostr + '/import', {method: 'POST'})
-			.then(resp => resp.json())
+			.then(resp => {})
 	}
 
 	addMediaFolder(folder) {
@@ -66,7 +66,7 @@ export default class Api {
 
 	pruneMovies() {
 		return fetch(this.hostr + '/prune', { method: 'POST' })
-			.then(resp => resp.json())
+			.then(resp => {})
 	}	
 
 }

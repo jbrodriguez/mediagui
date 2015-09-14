@@ -20,37 +20,32 @@ const Movies = ffux.createStore({
 			return api.getMovies(proxy)
 		}
 
-		const _score = function(movie, score) {
+		function _score(movie, score) {
 			movie.score = score
 			return api.setMovieScore(movie)
 		}
 
-		const _watched = function(movie, watched) {
+		function _watched(movie, watched) {
 			movie.last_watched = moment.utc(watched).format()
 			return api.setMovieWatched(movie)
 		}
 
-		const _fix = function(movie, tmdb_id) {
+		function _fix(movie, tmdb_id) {
 			movie.tmdb_id = tmdb_id
 			return api.fixMovie(movie)
 		}
 
-		// console.log('options: ', options)
 		const optionsS = options.toEventStream().skip(1).skipDuplicates()
-
-		// console.log('getMovies: ', getMovies)
-		// console.log('optionsS: ', optionsS)
 		const moviesS = getMovies.merge(optionsS)
 
 		const getCoverS = getCover.flatMap(Bacon.fromPromise(api.getCover()))
 		const getMoviesS = moviesS.flatMap(opt => Bacon.fromPromise(_options(opt)))
-		const importMoviesS = importMovies.flatMap( _ => Bacon.fromPromise(api.importMovies()))
+		const importMoviesS = importMovies.flatMap(_ => Bacon.fromPromise( api.importMovies() ))
 		const setMovieScoreS = setMovieScore.flatMap(([movie, score]) => Bacon.fromPromise(_score(movie, score)))
 		const setMovieWatchedS = setMovieWatched.flatMap(([movie, watched]) => Bacon.fromPromise(_watched(movie, watched)))
 		const fixMovieS = fixMovie.flatMap(([movie, tmdb_id]) => Bacon.fromPromise(_fix(movie, tmdb_id)))
 		const getDuplicatesS = getDuplicates.flatMap(_ => Bacon.fromPromise(api.getDuplicates()))
 		const pruneMoviesS = pruneMovies.flatMap(_ => Bacon.fromPromise(api.pruneMovies()))
-		// const optionsS = options.skip(1).flatMap(opt => Bacon.fromPromise(doProxy(opt)))
 
 		return Bacon.update(
 			initialMovies,
@@ -59,8 +54,9 @@ const Movies = ffux.createStore({
 			setMovieScoreS, _setMovieScore,
 			setMovieWatchedS, _setMovieWatched,
 			fixMovieS, _fixMovie,
-			getDuplicatesS, (_, remote) => remote
-			// optionsS, (_, remote) => remote
+			getDuplicatesS, (_, remote) => remote,
+			importMoviesS, (local, _) => local,
+			pruneMoviesS, (local, _) => local
 		)
 
 		function _setMovieScore(movies, changedMovie) {

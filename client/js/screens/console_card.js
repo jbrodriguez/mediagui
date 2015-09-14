@@ -2,8 +2,8 @@ import React from 'react'
 
 export default class Console extends React.Component {
 	componentDidUpdate() {
-		var node = this.getDOMNode();
-		node.scrollTop = node.scrollHeight;
+		var node = React.findDOMNode(this)
+		node.scrollTop = node.scrollHeight
 	}
 
 	render() {
