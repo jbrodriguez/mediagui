@@ -25,7 +25,7 @@ In a common MVC architecture, ReactJS is the View.
 
 React views are, for the most part, just smart enough to know **how** to display themselves, while other model-like components obtain and manipulate **what** shall be displayed.
 
-In the end, this gives a far stronger separation of concerns and is a much simpler conceptual model of an application.
+In the end, this gives a far stronger separation of concerns and is a much simpler conceptual model for an application.
 
 ## Flux framework
 
@@ -95,7 +95,7 @@ Very nice stuff.
 ## Final comments
 ReactJS is definitely here to stay.
 
-Its brother, React Native is extremely powerful and lowers the entry barrier for javascript developers who want to do iOS apps (soon Android as well).
+Its sibling, React Native is extremely powerful and lowers the entry barrier for javascript developers who want to do iOS apps (soon Android as well).
 
 ffux offers one of the simplest conceptual understandings of the flux architecture, I hope it becomes more popular going forward.
 
