@@ -40,7 +40,7 @@ const Movies = ffux.createStore({
 
 		const getCoverS = getCover.flatMap(Bacon.fromPromise(api.getCover()))
 		const getMoviesS = moviesS.flatMap(opt => Bacon.fromPromise(_options(opt)))
-		const importMoviesS = importMovies.flatMap( _ => Bacon.fromPromise(api.importMovies()))
+		const importMoviesS = importMovies.flatMap(_ => Bacon.fromPromise( api.importMovies() ))
 		const setMovieScoreS = setMovieScore.flatMap(([movie, score]) => Bacon.fromPromise(_score(movie, score)))
 		const setMovieWatchedS = setMovieWatched.flatMap(([movie, watched]) => Bacon.fromPromise(_watched(movie, watched)))
 		const fixMovieS = fixMovie.flatMap(([movie, tmdb_id]) => Bacon.fromPromise(_fix(movie, tmdb_id)))
@@ -54,8 +54,9 @@ const Movies = ffux.createStore({
 			setMovieScoreS, _setMovieScore,
 			setMovieWatchedS, _setMovieWatched,
 			fixMovieS, _fixMovie,
-			getDuplicatesS, (_, remote) => remote
-			// optionsS, (_, remote) => remote
+			getDuplicatesS, (_, remote) => remote,
+			importMoviesS, (local, _) => local,
+			pruneMoviesS, (local, _) => local
 		)
 
 		function _setMovieScore(movies, changedMovie) {
