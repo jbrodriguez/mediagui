@@ -15,7 +15,7 @@ export default class ImportPage extends React.Component {
 					<button className="btn btn-default" onClick={this.handleImportMovies}>Import</button>
 				</div>
 				<div className="col-xs-12">
-					<Console messages={this.props.messages} />
+					<Console messages={this.props.state.messages} />
 				</div>
 			</section>
 		)
