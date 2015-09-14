@@ -66,8 +66,6 @@ By default, the app will build/look for the following structure
 |_ _ _ app (app bundle, css, fonts, etc)<br>
 |_ _ _ img (storage for movie covers, backdrops, etc)<br>
 
-Additionally, the app scans for movies (as per 
-
 
 ### Client code
 In the code's root folder, an `npm install` will download dependencies.
