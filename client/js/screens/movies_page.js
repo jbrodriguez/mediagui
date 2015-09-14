@@ -15,7 +15,7 @@ export default class MoviesPage extends React.Component {
 	}
 
 	componentWillMount() {
-		const proxy = Object.assign({}, this.props.state.options, {limit: 60})
+		const proxy = Object.assign({}, this.props.state.options, {limit: 50})
 		this.props.actions.movies.getMovies(proxy)
 	}
 
