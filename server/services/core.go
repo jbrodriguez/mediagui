@@ -10,6 +10,8 @@ import (
 	"jbrodriguez/mediagui/server/lib"
 	"jbrodriguez/mediagui/server/model"
 	"os"
+	"path/filepath"
+	"regexp"
 	"sync"
 )
 
@@ -21,6 +23,8 @@ type Core struct {
 	// socket   *Socket
 
 	mailbox chan *pubsub.Mailbox
+	re      *regexp.Regexp
+	maps    map[string]bool
 
 	fix sync.WaitGroup
 }
@@ -46,6 +50,16 @@ func (c *Core) Start() {
 	c.registerAdditional(c.bus, "/event/movie/updated", c.doMovieUpdated, c.mailbox)
 	c.registerAdditional(c.bus, "/event/movie/cached/forced", c.doMovieCachedForced, c.mailbox)
 
+	c.re = regexp.MustCompile(`(?i)/Volumes/(.*?)/.*`)
+	c.maps = make(map[string]bool)
+
+	// maps["/Volumes/wopr-films"] = true // for example
+	for _, folder := range c.settings.MediaFolders {
+		c.maps[folder] = false
+		if _, err := os.Stat(folder); err == nil {
+			c.maps[folder] = true
+		}
+	}
 	// c.m = sc.NewMachine("idle")
 	// c.m.Rule("import", "idle", "scanning")
 	// c.m.Rule("import", "scanning", "scanning")
@@ -88,14 +102,15 @@ func (c *Core) importMovies(msg *pubsub.Message) {
 func (c *Core) pruneMovies(msg *pubsub.Message) {
 	lib.Notify(c.bus, "prune:begin", "Started Prune Process")
 
-	for _, folder := range c.settings.MediaFolders {
-		if _, err := os.Stat(folder); err != nil {
-			if os.IsNotExist(err) {
-				lib.Notify(c.bus, "prune:error", fmt.Sprintf("Folder %s is not present. Aborting Prune process.", folder))
-				return
-			}
-		}
-	}
+	// for _, folder := range c.settings.MediaFolders {
+	// 	mlog.Info("folder: %s", folder)
+	// 	if _, err := os.Stat(folder); err != nil {
+	// 		if os.IsNotExist(err) {
+	// 			lib.Notify(c.bus, "prune:error", fmt.Sprintf("Folder %s is not present. Aborting Prune process.", folder))
+	// 			return
+	// 		}
+	// 	}
+	// }
 
 	options := &lib.Options{Offset: 0, Limit: 99999999999999, SortBy: "title", SortOrder: "asc"}
 	all := &pubsub.Message{Payload: options, Reply: make(chan interface{}, capacity)}
@@ -105,15 +120,27 @@ func (c *Core) pruneMovies(msg *pubsub.Message) {
 	dto := reply.(*model.MoviesDTO)
 
 	for _, item := range dto.Items {
+		matches := c.re.FindStringSubmatch(item.Location)
+		if len(matches) == 0 {
+			continue
+		}
+
+		folder := filepath.Join("/Volumes", matches[1])
+		if !c.maps[folder] {
+			// mlog.Info("Folder not mapped (%s): %s", folder, item.Location)
+			continue
+		}
+
+		// mlog.Info("Folder mapped (%s): %s", folder, item.Location)
+
 		if _, err := os.Stat(item.Location); err != nil {
 			if os.IsNotExist(err) {
 				lib.Notify(c.bus, "prune:selected", fmt.Sprintf("UP FOR DELETION: [%d] %s (%s))", item.Id, item.Title, item.Location))
 
 				movie := &pubsub.Message{Payload: item, Reply: make(chan interface{}, capacity)}
-				c.bus.Pub(movie, "/command/movies/delete")
+				c.bus.Pub(movie, "/command/movie/delete")
 			}
 		}
-
 	}
 
 	lib.Notify(c.bus, "prune:end", "Finished Prune Process")
