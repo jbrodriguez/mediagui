@@ -9,6 +9,7 @@ node_modules
 *.tar.gz
 *.log
 *.a
+*.prof
 
 **/_vendor/pkg/
 

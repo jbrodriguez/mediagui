@@ -45,6 +45,7 @@ func (c *Core) Start() {
 	c.registerAdditional(c.bus, "/put/movies/fix", c.fixMovie, c.mailbox)
 
 	c.registerAdditional(c.bus, "/event/movie/found", c.doMovieFound, c.mailbox)
+	c.registerAdditional(c.bus, "/event/movie/tmdbnotfound", c.doMovieTmdbNotFound, c.mailbox)
 	c.registerAdditional(c.bus, "/event/movie/scraped", c.doMovieScraped, c.mailbox)
 	c.registerAdditional(c.bus, "/event/movie/rescraped", c.doMovieReScraped, c.mailbox)
 	c.registerAdditional(c.bus, "/event/movie/updated", c.doMovieUpdated, c.mailbox)
@@ -178,6 +179,13 @@ func (c *Core) doMovieFound(msg *pubsub.Message) {
 	if !exists {
 		c.bus.Pub(msg, "/command/movie/scrape")
 	}
+}
+
+func (c *Core) doMovieTmdbNotFound(msg *pubsub.Message) {
+	dto := msg.Payload.(*dto.Scrape)
+
+	store := &pubsub.Message{Payload: dto.Movie, Reply: make(chan interface{}, 3)}
+	c.bus.Pub(store, "/command/movie/partialstore")
 }
 
 func (c *Core) doMovieScraped(msg *pubsub.Message) {
