@@ -103,6 +103,10 @@ func (s *Scrape) Execute(wid int) {
 
 	if movies.Total_Results == 0 {
 		lib.Notify(s.bus, "import:progress", fmt.Sprintf("TMDB: NO MATCH FOUND (%d) [%s]", wid, movie.Title))
+
+		msg := &pubsub.Message{Payload: s.dto}
+		s.bus.Pub(msg, "/event/movie/tmdbnotfound")
+
 		return
 	} else if movies.Total_Results > 1 {
 		lib.Notify(s.bus, "import:progress", fmt.Sprintf("TMDB: MORE THAN ONE (%d) [%s]", wid, movie.Title))

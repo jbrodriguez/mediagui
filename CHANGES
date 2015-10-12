@@ -1,3 +1,7 @@
+Version 0.4.5 - 2015-10-12
+    - Add case where no tmdb information is found. A partial save will be done to the db.
+
+
 Version 0.4.4 - 2015-09-26
     - Allow prune to work even if any of the volume mappings is not present
 

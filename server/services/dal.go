@@ -59,6 +59,7 @@ func (d *Dal) Start() {
 	d.registerAdditional(d.bus, "/get/movies/duplicates", d.getDuplicates, d.mailbox)
 	d.registerAdditional(d.bus, "/command/movie/exists", d.checkExists, d.mailbox)
 	d.registerAdditional(d.bus, "/command/movie/store", d.storeMovie, d.mailbox)
+	d.registerAdditional(d.bus, "/command/movie/partialstore", d.partialStoreMovie, d.mailbox)
 	d.registerAdditional(d.bus, "/command/movie/update", d.updateMovie, d.mailbox)
 	d.registerAdditional(d.bus, "/command/movie/delete", d.deleteMovie, d.mailbox)
 	d.registerAdditional(d.bus, "/put/movies/score", d.setScore, d.mailbox)
@@ -487,6 +488,41 @@ func (d *Dal) storeMovie(msg *pubsub.Message) {
 
 	tx.Commit()
 	mlog.Info("FINISHED SAVING %s [%d]", movie.Title, movie.Id)
+}
+
+func (d *Dal) partialStoreMovie(msg *pubsub.Message) {
+	movie := msg.Payload.(*model.Movie)
+
+	// d.count = 0
+	now := time.Now().UTC().Format(time.RFC3339)
+	movie.Added = now
+	movie.Modified = now
+
+	mlog.Info("STARTED PARTIAL SAVING %s", movie.Title)
+
+	tx, err := d.db.Begin()
+	if err != nil {
+		mlog.Fatalf("at begin: %s", err)
+	}
+
+	stmt, err := tx.Prepare(`insert into movie(title, file_title, year,
+								resolution, filetype, location, added, modified) 
+								values (?, ?, ?, ?, ?, ?, ?, ?)`)
+	if err != nil {
+		tx.Rollback()
+		mlog.Fatalf("at prepare: %s", err)
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec(movie.Title, movie.File_Title, movie.Year,
+		movie.Resolution, movie.FileType, movie.Location, movie.Added, movie.Modified)
+	if err != nil {
+		tx.Rollback()
+		mlog.Fatalf("at exec: %s", err)
+	}
+
+	tx.Commit()
+	mlog.Info("FINISHED PARTIAL SAVING %s [%d]", movie.Title, movie.Id)
 }
 
 func (d *Dal) updateMovie(msg *pubsub.Message) {
