@@ -16,6 +16,7 @@ import App from './screens/app_page.js'
 import CoversPage from './screens/covers_page'
 import MoviesPage from './screens/movies_page'
 import SettingsPage from './screens/settings_page'
+import DuplicatesPage from './screens/duplicates_page'
 import ImportPage from './screens/import_page'
 import PrunePage from './screens/prune_page'
 
@@ -37,6 +38,8 @@ function run(config) {
 			options = Options(getInitialOptions(), {storage}),
 			movies = Movies({}, {api, options}),
 			messages = Socket([], {wsapi})
+
+
 
 	class Frame extends React.Component {
 		render() {
@@ -61,7 +64,7 @@ function run(config) {
 			<Route name="movies" path="/movies" handler={MoviesPage} />
 			<Route name="settings" path="/settings" handler={SettingsPage} />
 			<Route name="import" path="/import" handler={ImportPage} />
-			<Route name="duplicates" path="/movies/duplicates" handler={MoviesPage} />
+			<Route name="duplicates" path="/duplicates" handler={DuplicatesPage} />
 			<Route name="prune" path="/prune" handler={PrunePage} />
 
 			<Redirect from="/" to="/cover" />

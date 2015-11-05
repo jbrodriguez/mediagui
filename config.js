@@ -86,7 +86,8 @@ module.exports = {
 	publish: {
 		src: build,
 		app: "app",
-		index: "index.html"
+		index: "index.html",
+		bin: server
 	}
 
 

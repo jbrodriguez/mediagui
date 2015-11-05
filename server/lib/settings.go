@@ -25,6 +25,7 @@ type Settings struct {
 	Location   string
 	GinMode    string
 	CpuProfile string
+	UnraidMode bool
 }
 
 func searchConfig(locations []string) string {
@@ -45,7 +46,7 @@ func NewSettings(version, home string, locations []string) (*Settings, error) {
 	}
 
 	var config, dataDir, webDir, logDir, mediaFolders, ginMode, cpuprofile string
-	var logtostderr bool
+	var logtostderr, unraidMode bool
 	flag.BoolVar(&logtostderr, "logtostderr", true, "true/false log to stderr")
 	flag.StringVar(&config, "config", "", "config location")
 	flag.StringVar(&dataDir, "datadir", filepath.Join(home, ".mediagui/db"), "folder containing the database files")
@@ -54,6 +55,7 @@ func NewSettings(version, home string, locations []string) (*Settings, error) {
 	flag.StringVar(&mediaFolders, "mediafolders", "", "folders that will be scanned for media")
 	flag.StringVar(&ginMode, "gin_mode", "release", "gin mode")
 	flag.StringVar(&cpuprofile, "cpuprofile", "", "write cpu profile to file")
+	flag.BoolVar(&unraidMode, "unraid_mode", true, "if true the app will work distributed with a service running on the unraid host")
 
 	flag.Set("config", location)
 	flag.Parse()
@@ -73,6 +75,7 @@ func NewSettings(version, home string, locations []string) (*Settings, error) {
 	s.Location = location
 	s.GinMode = ginMode
 	s.CpuProfile = cpuprofile
+	s.UnraidMode = unraidMode
 
 	return s, nil
 }

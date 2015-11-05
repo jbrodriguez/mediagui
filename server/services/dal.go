@@ -394,7 +394,7 @@ func (d *Dal) getDuplicates(msg *pubsub.Message) {
 				movie a 
 				join 
 				(select title, year from movie group by title, year having count(*) > 1) b 
-				on soundex(a.title) = soundex(b.title) and a.year = b.year;`)
+				on a.title = b.title and a.year = b.year;`)
 	if err != nil {
 		mlog.Fatalf("Unable to prepare transaction: %s", err)
 	}
