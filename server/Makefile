@@ -30,21 +30,21 @@ clean:
  
 # run formatting tool and build
 build: dependencies clean
-	~/code/bin/gom build fmt
-	~/code/bin/gom build -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v -o ${PROG}
+	go build fmt
+	go build -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v -o ${PROG}
 
 buildx: dependencies clean
-	~/code/bin/gom build fmt
-	env GOOS=linux GOARCH=amd64 ~/code/bin/gom build -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v -o ${PROG}
+	go build fmt
+	env GOOS=linux GOARCH=amd64 go build -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v -o ${PROG}
  
 # run unit tests with code coverage
 test: dependencies
-	~/code/bin/gom test -v
+	go test -v
  
 # generate code coverage report
 coverage: test
-	~/code/bin/gom build test -coverprofile=.coverage.out
-	~/code/bin/gom build tool cover -html=.coverage.out
+	go build test -coverprofile=.coverage.out
+	go build tool cover -html=.coverage.out
  
 # attempt to kill running server
 kill:

@@ -58,7 +58,7 @@ func main() {
 	mlog.Info("mediagui v%s starting ...", Version)
 	mlog.Info("using config file located at %s", settings.Location)
 
-	bus := pubsub.New(623)
+	bus := pubsub.New(8623)
 
 	dal := services.NewDal(bus, settings)
 	socket := services.NewSocket(bus, settings)

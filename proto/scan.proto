@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+message Request {
+	repeated string folders = 1;
+}
+
+message Response {
+	repeated string filenames = 1;
+}

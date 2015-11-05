@@ -45,6 +45,8 @@ func NewSettings(version, home string, locations []string) (*Settings, error) {
 	}
 
 	var config, dataDir, webDir, logDir, mediaFolders, ginMode, cpuprofile string
+	var logtostderr bool
+	flag.BoolVar(&logtostderr, "logtostderr", true, "true/false log to stderr")
 	flag.StringVar(&config, "config", "", "config location")
 	flag.StringVar(&dataDir, "datadir", filepath.Join(home, ".mediagui/db"), "folder containing the database files")
 	flag.StringVar(&webDir, "webdir", filepath.Join(home, ".mediagui/web"), "folder where web app will be read from")

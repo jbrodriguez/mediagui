@@ -174,11 +174,9 @@ func (c *Core) doMovieFound(msg *pubsub.Message) {
 		mlog.Info("SKIPPED: exists [%s] (%s)", movie.Title, movie.Location)
 	} else {
 		lib.Notify(c.bus, "import:progress", fmt.Sprintf("NEW: [%s] (%s)", movie.Title, movie.Location))
-	}
-
-	if !exists {
 		c.bus.Pub(msg, "/command/movie/scrape")
 	}
+
 }
 
 func (c *Core) doMovieTmdbNotFound(msg *pubsub.Message) {
@@ -191,13 +189,15 @@ func (c *Core) doMovieTmdbNotFound(msg *pubsub.Message) {
 func (c *Core) doMovieScraped(msg *pubsub.Message) {
 	dto := msg.Payload.(*dto.Scrape)
 
+	mlog.Info("ScrapeDTO: %+v", dto)
+
 	store := &pubsub.Message{Payload: dto.Movie, Reply: make(chan interface{}, 3)}
 	c.bus.Pub(store, "/command/movie/store")
 
 	cache := &pubsub.Message{Payload: dto, Reply: make(chan interface{}, 3)}
 	c.bus.Pub(cache, "/command/movie/cache")
 
-	mlog.Info("ScrapeDTO: %+v", dto)
+	// mlog.Info("ScrapeDTO: %+v", dto)
 }
 
 func (c *Core) fixMovie(msg *pubsub.Message) {
