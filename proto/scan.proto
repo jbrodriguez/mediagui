@@ -2,6 +2,7 @@ syntax = "proto3";
 
 message Request {
 	repeated string folders = 1;
+	string mask = 2;
 }
 
 message Response {

@@ -11,8 +11,6 @@ import (
 	"golang.org/x/net/context"
 )
 
-const includedMask = ".bdmv|.iso|.img|.nrg|.mkv|.avi|.xvid|.ts|.mpg|.dvr-ms|.mdf|.wmv|.ifo"
-
 type Scanner struct {
 	host string
 }
@@ -23,7 +21,7 @@ func (s *Scanner) Scan(ctx context.Context, req *scan.Request, rsp *scan.Respons
 	// var files []string
 
 	for _, folder := range req.Folders {
-		list := s.walk(folder)
+		list := s.walk(folder, req.Mask)
 		// if err != nil {
 		// 	mlog.Warning("Unable to scan folder (%s): %s", folder, err)
 		// }
@@ -41,7 +39,7 @@ func (s *Scanner) Scan(ctx context.Context, req *scan.Request, rsp *scan.Respons
 	return nil
 }
 
-func (s *Scanner) walk(folder string) []string {
+func (s *Scanner) walk(folder, mask string) []string {
 	if folder[len(folder)-1] != '/' {
 		folder = folder + "/"
 	}
@@ -57,7 +55,7 @@ func (s *Scanner) walk(folder string) []string {
 			return nil
 		}
 
-		if !strings.Contains(includedMask, strings.ToLower(filepath.Ext(path))) {
+		if !strings.Contains(mask, strings.ToLower(filepath.Ext(path))) {
 			// mlog.Info("[%s] excluding %s", filepath.Ext(path), path)
 			return nil
 		}

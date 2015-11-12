@@ -25,6 +25,7 @@ var _ = math.Inf
 
 type Request struct {
 	Folders []string `protobuf:"bytes,1,rep,name=folders" json:"folders,omitempty"`
+	Mask    string   `protobuf:"bytes,2,opt,name=mask" json:"mask,omitempty"`
 }
 
 func (m *Request) Reset()         { *m = Request{} }
