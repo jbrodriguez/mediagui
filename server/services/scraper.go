@@ -97,6 +97,8 @@ func (s *Scrape) Execute(wid int) {
 	lib.Notify(s.bus, "import:progress", fmt.Sprintf("STARTED TMDB (%d) [%s]", wid, movie.Title))
 	movies, err := s.tmdb.SearchMovie(movie.Title)
 	if err != nil {
+		s.bus.Pub(nil, "/event/workunit/done")
+
 		mlog.Error(err)
 		return
 	}
@@ -150,7 +152,8 @@ type ReScrape struct {
 func (s *ReScrape) Execute(wid int) {
 	movie := s.dto.Movie.(*model.Movie)
 
-	lib.Notify(s.bus, "import:progress", fmt.Sprintf("RESCRAPE REQUESTED (%d) [%d] %s", wid, movie.Id, movie.Title))
+	// lib.Notify(s.bus, "import:progress", fmt.Sprintf("RESCRAPE REQUESTED (%d) [%d] %s", wid, movie.Id, movie.Title))
+	mlog.Info("RESCRAPE REQUESTED (%d) [%d] %s", wid, movie.Id, movie.Title)
 
 	now := time.Now().UTC().Format(time.RFC3339)
 	movie.Modified = now
@@ -159,10 +162,9 @@ func (s *ReScrape) Execute(wid int) {
 
 	err := _scrape(wid, s.tmdb, id, movie)
 	if err != nil {
-		lib.Notify(s.bus, "import:progress", err.Error())
-
-		msg := &pubsub.Message{Payload: s.dto}
-		s.bus.Pub(msg, "/event/movie/rescraped")
+		// lib.Notify(s.bus, "import:progress", fmt.Sprintf("RESCRAPE FAILED (%d) [%d] %s: %s", wid, movie.Id, movie.Title, err))
+		mlog.Warning("RESCRAPE FAILED (%d) [%d] %s: %s", wid, movie.Id, movie.Title, err)
+		s.bus.Pub(nil, "/event/workunit/done")
 
 		return
 	}
@@ -170,10 +172,11 @@ func (s *ReScrape) Execute(wid int) {
 	s.dto.BaseUrl = s.tmdb.BaseUrl
 	s.dto.SecureBaseUrl = s.tmdb.SecureBaseUrl
 
-	lib.Notify(s.bus, "import:progress", fmt.Sprintf("RESCRAPE COMPLETED (%d) [%d] %s", wid, movie.Id, movie.Title))
+	// lib.Notify(s.bus, "import:progress", fmt.Sprintf("RESCRAPE COMPLETED (%d) [%d] %s", wid, movie.Id, movie.Title))
+	mlog.Info("RESCRAPE COMPLETED (%d) [%d] %s", wid, movie.Id, movie.Title)
 
 	msg := &pubsub.Message{Payload: s.dto}
-	s.bus.Pub(msg, "/event/movie/rescraped")
+	s.bus.Pub(msg, "/event/movie/scraped")
 }
 
 func _scrape(wid int, tmdb *tmdb.Tmdb, id uint64, movie *model.Movie) error {

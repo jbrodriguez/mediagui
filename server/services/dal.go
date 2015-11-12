@@ -451,6 +451,8 @@ func (d *Dal) checkExists(msg *pubsub.Message) {
 }
 
 func (d *Dal) storeMovie(msg *pubsub.Message) {
+	defer d.bus.Pub(nil, "/event/workunit/done")
+
 	movie := msg.Payload.(*model.Movie)
 
 	// d.count = 0
@@ -493,6 +495,8 @@ func (d *Dal) storeMovie(msg *pubsub.Message) {
 }
 
 func (d *Dal) partialStoreMovie(msg *pubsub.Message) {
+	defer d.bus.Pub(nil, "/event/workunit/done")
+
 	movie := msg.Payload.(*model.Movie)
 
 	// d.count = 0
@@ -538,6 +542,8 @@ func (d *Dal) partialStoreMovie(msg *pubsub.Message) {
 }
 
 func (d *Dal) updateMovie(msg *pubsub.Message) {
+	defer d.bus.Pub(nil, "/event/workunit/done")
+
 	movie := msg.Payload.(*model.Movie)
 
 	mlog.Info("STARTED UPDATING [%d] %s", movie.Id, movie.Title)
@@ -584,8 +590,8 @@ func (d *Dal) updateMovie(msg *pubsub.Message) {
 	tx.Commit()
 	mlog.Info("FINISHED UPDATING [%d] %s", movie.Id, movie.Title)
 
-	updated := &pubsub.Message{}
-	d.bus.Pub(updated, "/event/movie/updated")
+	// updated := &pubsub.Message{}
+	// d.bus.Pub(updated, "/event/movie/updated")
 }
 
 func (d *Dal) deleteMovie(msg *pubsub.Message) {

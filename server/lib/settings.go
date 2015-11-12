@@ -11,6 +11,8 @@ import (
 )
 
 type Config struct {
+	UnraidMode   bool     `json:"unraidMode"`
+	UnraidHosts  []string `json:"unraidHosts"`
 	MediaFolders []string `json:"mediaFolders"`
 	Version      string   `json:"version"`
 }
@@ -25,7 +27,6 @@ type Settings struct {
 	Location   string
 	GinMode    string
 	CpuProfile string
-	UnraidMode bool
 }
 
 func searchConfig(locations []string) string {
@@ -45,17 +46,18 @@ func NewSettings(version, home string, locations []string) (*Settings, error) {
 		return nil, errors.New(msg)
 	}
 
-	var config, dataDir, webDir, logDir, mediaFolders, ginMode, cpuprofile string
+	var config, dataDir, webDir, logDir, mediaFolders, ginMode, cpuprofile, unraidHosts string
 	var logtostderr, unraidMode bool
 	flag.BoolVar(&logtostderr, "logtostderr", true, "true/false log to stderr")
 	flag.StringVar(&config, "config", "", "config location")
 	flag.StringVar(&dataDir, "datadir", filepath.Join(home, ".mediagui/db"), "folder containing the database files")
 	flag.StringVar(&webDir, "webdir", filepath.Join(home, ".mediagui/web"), "folder where web app will be read from")
 	flag.StringVar(&logDir, "logdir", "", "folder where log file will be written to")
-	flag.StringVar(&mediaFolders, "mediafolders", "", "folders that will be scanned for media")
+	flag.StringVar(&mediaFolders, "mediafolders", "/mnt/user/films", "folders that will be scanned for media")
 	flag.StringVar(&ginMode, "gin_mode", "release", "gin mode")
 	flag.StringVar(&cpuprofile, "cpuprofile", "", "write cpu profile to file")
 	flag.BoolVar(&unraidMode, "unraid_mode", true, "if true the app will work distributed with a service running on the unraid host")
+	flag.StringVar(&unraidHosts, unraidHosts, "wopr|hal", "specify which unraid hosts will be scanned for movies. the service agent must be running in that host")
 
 	flag.Set("config", location)
 	flag.Parse()
@@ -76,6 +78,11 @@ func NewSettings(version, home string, locations []string) (*Settings, error) {
 	s.GinMode = ginMode
 	s.CpuProfile = cpuprofile
 	s.UnraidMode = unraidMode
+	if unraidHosts == "" {
+		s.UnraidHosts = make([]string, 0)
+	} else {
+		s.UnraidHosts = strings.Split(unraidHosts, "|")
+	}
 
 	return s, nil
 }

@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"sync"
+	"time"
 )
 
 type Core struct {
@@ -26,7 +27,7 @@ type Core struct {
 	re      *regexp.Regexp
 	maps    map[string]bool
 
-	fix sync.WaitGroup
+	wg sync.WaitGroup
 }
 
 func NewCore(bus *pubsub.PubSub, settings *lib.Settings) *Core {
@@ -47,9 +48,11 @@ func (c *Core) Start() {
 	c.registerAdditional(c.bus, "/event/movie/found", c.doMovieFound, c.mailbox)
 	c.registerAdditional(c.bus, "/event/movie/tmdbnotfound", c.doMovieTmdbNotFound, c.mailbox)
 	c.registerAdditional(c.bus, "/event/movie/scraped", c.doMovieScraped, c.mailbox)
-	c.registerAdditional(c.bus, "/event/movie/rescraped", c.doMovieReScraped, c.mailbox)
-	c.registerAdditional(c.bus, "/event/movie/updated", c.doMovieUpdated, c.mailbox)
-	c.registerAdditional(c.bus, "/event/movie/cached/forced", c.doMovieCachedForced, c.mailbox)
+	// c.registerAdditional(c.bus, "/event/movie/rescraped", c.doMovieReScraped, c.mailbox)
+	// c.registerAdditional(c.bus, "/event/movie/updated", c.doMovieUpdated, c.mailbox)
+	// c.registerAdditional(c.bus, "/event/movie/cached/forced", c.doMovieCachedForced, c.mailbox)
+
+	c.registerAdditional(c.bus, "/event/workunit/done", c.doWorkUnitDone, c.mailbox)
 
 	c.re = regexp.MustCompile(`(?i)/Volumes/(.*?)/.*`)
 	c.maps = make(map[string]bool)
@@ -61,17 +64,6 @@ func (c *Core) Start() {
 			c.maps[folder] = true
 		}
 	}
-	// c.m = sc.NewMachine("idle")
-	// c.m.Rule("import", "idle", "scanning")
-	// c.m.Rule("import", "scanning", "scanning")
-	// c.m.Rule("found", "scanning", "scanning")
-	// c.m.Rule("scraped", "scanning", "scanning")
-	// c.m.Rule("status", "idle", "scanning")
-	// c.m.Rule("status", "scanning", "scanning")
-	// c.m.Rule("finish", "scanning", "idle")
-
-	// data := c.m.Export()
-	// ioutil.WriteFile("/Volumes/Users/kayak/tmp/fsm.dot", []byte(data), 0644)
 
 	go c.react()
 }
@@ -93,11 +85,84 @@ func (c *Core) getConfig(msg *pubsub.Message) {
 }
 
 func (c *Core) importMovies(msg *pubsub.Message) {
+	t0 := time.Now()
 	// mlog.Info("Begin movie scanning ...")
+	lib.Notify(c.bus, "import:begin", "Import process started")
+
+	c.wg.Add(1)
 
 	c.bus.Pub(nil, "/command/movie/scan")
 	//	msg.Reply <- &c.settings.Config
 	// mlog.Info("Import finished")
+
+	go func() {
+		c.wg.Wait()
+		// 𝛥t := float64(time.Since(t0)) / 1e9
+		lib.Notify(c.bus, "import:end", fmt.Sprintf("Import process finished (%s elapsed)", time.Since(t0).String()))
+	}()
+
+}
+
+func (c *Core) doMovieFound(msg *pubsub.Message) {
+	movie := msg.Payload.(*model.Movie)
+
+	check := &pubsub.Message{Payload: movie, Reply: make(chan interface{}, 3)}
+	c.bus.Pub(check, "/command/movie/exists")
+
+	reply := <-check.Reply
+	exists := reply.(bool)
+
+	if exists {
+		mlog.Info("SKIPPED: exists [%s] (%s)", movie.Title, movie.Location)
+	} else {
+		lib.Notify(c.bus, "import:progress", fmt.Sprintf("NEW: [%s] (%s)", movie.Title, movie.Location))
+
+		c.wg.Add(1)
+		c.bus.Pub(msg, "/command/movie/scrape")
+	}
+}
+
+func (c *Core) fixMovie(msg *pubsub.Message) {
+	movie := msg.Payload.(*model.Movie)
+
+	// 3 operations, rescrape, update and cache
+	c.wg.Add(1)
+
+	// rescrape
+	scrape := &pubsub.Message{Payload: movie, Reply: make(chan interface{}, 3)}
+	c.bus.Pub(scrape, "/command/movie/rescrape")
+
+	go func() {
+		c.wg.Wait()
+		msg.Reply <- movie
+	}()
+	// go c.waitFixMovie(msg.Reply, movie)
+}
+
+func (c *Core) doMovieTmdbNotFound(msg *pubsub.Message) {
+	dto := msg.Payload.(*dto.Scrape)
+
+	store := &pubsub.Message{Payload: dto.Movie, Reply: make(chan interface{}, 3)}
+	c.bus.Pub(store, "/command/movie/partialstore")
+}
+
+func (c *Core) doMovieScraped(msg *pubsub.Message) {
+	dto := msg.Payload.(*dto.Scrape)
+
+	mlog.Info("ScrapeDTO: %+v", dto)
+
+	// I treat the following two commands as one, for the sake of the wg
+	// now there are two oustanding locks, which will be decreased by each
+	// responding service
+	c.wg.Add(1)
+
+	store := &pubsub.Message{Payload: dto.Movie, Reply: make(chan interface{}, 3)}
+	c.bus.Pub(store, "/command/movie/store")
+
+	cache := &pubsub.Message{Payload: dto, Reply: make(chan interface{}, 3)}
+	c.bus.Pub(cache, "/command/movie/cache")
+
+	// mlog.Info("ScrapeDTO: %+v", dto)
 }
 
 func (c *Core) pruneMovies(msg *pubsub.Message) {
@@ -161,83 +226,19 @@ func (c *Core) addMediaFolder(msg *pubsub.Message) {
 	// mlog.Info("Sent config")
 }
 
-func (c *Core) doMovieFound(msg *pubsub.Message) {
-	movie := msg.Payload.(*model.Movie)
+// func (c *Core) waitFixMovie(ch chan interface{}, movie *model.Movie) {
+// 	c.wg.Wait()
+// 	ch <- movie
+// }
 
-	check := &pubsub.Message{Payload: movie, Reply: make(chan interface{}, 3)}
-	c.bus.Pub(check, "/command/movie/exists")
+// func (c *Core) doMovieUpdated(msg *pubsub.Message) {
+// 	c.wg.Done()
+// }
 
-	reply := <-check.Reply
-	exists := reply.(bool)
+// func (c *Core) doMovieCachedForced(msg *pubsub.Message) {
+// 	c.wg.Done()
+// }
 
-	if exists {
-		mlog.Info("SKIPPED: exists [%s] (%s)", movie.Title, movie.Location)
-	} else {
-		lib.Notify(c.bus, "import:progress", fmt.Sprintf("NEW: [%s] (%s)", movie.Title, movie.Location))
-		c.bus.Pub(msg, "/command/movie/scrape")
-	}
-
-}
-
-func (c *Core) doMovieTmdbNotFound(msg *pubsub.Message) {
-	dto := msg.Payload.(*dto.Scrape)
-
-	store := &pubsub.Message{Payload: dto.Movie, Reply: make(chan interface{}, 3)}
-	c.bus.Pub(store, "/command/movie/partialstore")
-}
-
-func (c *Core) doMovieScraped(msg *pubsub.Message) {
-	dto := msg.Payload.(*dto.Scrape)
-
-	mlog.Info("ScrapeDTO: %+v", dto)
-
-	store := &pubsub.Message{Payload: dto.Movie, Reply: make(chan interface{}, 3)}
-	c.bus.Pub(store, "/command/movie/store")
-
-	cache := &pubsub.Message{Payload: dto, Reply: make(chan interface{}, 3)}
-	c.bus.Pub(cache, "/command/movie/cache")
-
-	// mlog.Info("ScrapeDTO: %+v", dto)
-}
-
-func (c *Core) fixMovie(msg *pubsub.Message) {
-	movie := msg.Payload.(*model.Movie)
-
-	// 3 operations, rescrape, update and cache
-	c.fix.Add(3)
-
-	// rescrape
-	scrape := &pubsub.Message{Payload: movie, Reply: make(chan interface{}, 3)}
-	c.bus.Pub(scrape, "/command/movie/rescrape")
-
-	go c.waitFixMovie(msg.Reply, movie)
-}
-
-func (c *Core) waitFixMovie(ch chan interface{}, movie *model.Movie) {
-	c.fix.Wait()
-	ch <- movie
-}
-
-func (c *Core) doMovieReScraped(msg *pubsub.Message) {
-	dto := msg.Payload.(*dto.Scrape)
-
-	c.fix.Done()
-
-	// update movie
-	store := &pubsub.Message{Payload: dto.Movie, Reply: make(chan interface{}, 3)}
-	c.bus.Pub(store, "/command/movie/update")
-
-	// cache movie
-	cache := &pubsub.Message{Payload: dto, Reply: make(chan interface{}, 3)}
-	c.bus.Pub(cache, "/command/movie/cache")
-
-	// mlog.Info("ScrapeDTO: %+v", dto)
-}
-
-func (c *Core) doMovieUpdated(msg *pubsub.Message) {
-	c.fix.Done()
-}
-
-func (c *Core) doMovieCachedForced(msg *pubsub.Message) {
-	c.fix.Done()
+func (c *Core) doWorkUnitDone(msg *pubsub.Message) {
+	c.wg.Done()
 }
