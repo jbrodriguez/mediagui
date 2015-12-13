@@ -421,7 +421,7 @@ func (d *Dal) checkExists(msg *pubsub.Message) {
 		mlog.Fatalf("at begin: %s", err)
 	}
 
-	stmt, err := tx.Prepare("select rowid from movie where upper(location) = ?")
+	stmt, err := tx.Prepare("select rowid from movie where location = ?")
 	if err != nil {
 		tx.Rollback()
 		mlog.Fatalf("at prepare: %s", err)
@@ -431,7 +431,7 @@ func (d *Dal) checkExists(msg *pubsub.Message) {
 	movie := msg.Payload.(*model.Movie)
 
 	var id int
-	err = stmt.QueryRow(strings.ToUpper(movie.Location)).Scan(&id)
+	err = stmt.QueryRow(movie.Location).Scan(&id)
 
 	// if err == sql.ErrNoRows {
 	// 	mlog.Fatalf("id = %d, err = %d", id, err)
@@ -445,10 +445,14 @@ func (d *Dal) checkExists(msg *pubsub.Message) {
 
 	tx.Commit()
 
+	// mlog.Info("Check exists: [%d] (%s)", id, movie.Location)
+
 	msg.Reply <- (id != 0)
 }
 
 func (d *Dal) storeMovie(msg *pubsub.Message) {
+	defer d.bus.Pub(nil, "/event/workunit/done")
+
 	movie := msg.Payload.(*model.Movie)
 
 	// d.count = 0
@@ -491,6 +495,8 @@ func (d *Dal) storeMovie(msg *pubsub.Message) {
 }
 
 func (d *Dal) partialStoreMovie(msg *pubsub.Message) {
+	defer d.bus.Pub(nil, "/event/workunit/done")
+
 	movie := msg.Payload.(*model.Movie)
 
 	// d.count = 0
@@ -505,17 +511,27 @@ func (d *Dal) partialStoreMovie(msg *pubsub.Message) {
 		mlog.Fatalf("at begin: %s", err)
 	}
 
-	stmt, err := tx.Prepare(`insert into movie(title, file_title, year,
-								resolution, filetype, location, added, modified) 
-								values (?, ?, ?, ?, ?, ?, ?, ?)`)
+	stmt, err := tx.Prepare(`insert into movie(title, original_title, file_title, 
+								year, runtime, tmdb_id, imdb_id, overview, tagline, 
+								resolution, filetype, location, cover, backdrop, genres, 
+								vote_average, vote_count, countries, added, modified, 
+								last_watched, all_watched, count_watched, score, director, 
+								writer, actors, awards, imdb_rating, imdb_votes) 
+								values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
+									?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		tx.Rollback()
 		mlog.Fatalf("at prepare: %s", err)
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(movie.Title, movie.File_Title, movie.Year,
-		movie.Resolution, movie.FileType, movie.Location, movie.Added, movie.Modified)
+	_, err = stmt.Exec(movie.Title, movie.Original_Title, movie.File_Title, movie.Year,
+		movie.Runtime, movie.Tmdb_Id, movie.Imdb_Id, movie.Overview, movie.Tagline,
+		movie.Resolution, movie.FileType, movie.Location, movie.Cover, movie.Backdrop,
+		movie.Genres, movie.Vote_Average, movie.Vote_Count, movie.Production_Countries,
+		movie.Added, movie.Modified, movie.Last_Watched, movie.All_Watched, movie.Count_Watched,
+		movie.Score, movie.Director, movie.Writer, movie.Actors, movie.Awards, movie.Imdb_Rating,
+		movie.Imdb_Votes)
 	if err != nil {
 		tx.Rollback()
 		mlog.Fatalf("at exec: %s", err)
@@ -526,6 +542,8 @@ func (d *Dal) partialStoreMovie(msg *pubsub.Message) {
 }
 
 func (d *Dal) updateMovie(msg *pubsub.Message) {
+	defer d.bus.Pub(nil, "/event/workunit/done")
+
 	movie := msg.Payload.(*model.Movie)
 
 	mlog.Info("STARTED UPDATING [%d] %s", movie.Id, movie.Title)
@@ -572,8 +590,8 @@ func (d *Dal) updateMovie(msg *pubsub.Message) {
 	tx.Commit()
 	mlog.Info("FINISHED UPDATING [%d] %s", movie.Id, movie.Title)
 
-	updated := &pubsub.Message{}
-	d.bus.Pub(updated, "/event/movie/updated")
+	// updated := &pubsub.Message{}
+	// d.bus.Pub(updated, "/event/movie/updated")
 }
 
 func (d *Dal) deleteMovie(msg *pubsub.Message) {

@@ -10,6 +10,7 @@ import (
 	"os/signal"
 	"path/filepath"
 	"runtime/pprof"
+	"syscall"
 )
 
 var Version string
@@ -58,7 +59,7 @@ func main() {
 	mlog.Info("mediagui v%s starting ...", Version)
 	mlog.Info("using config file located at %s", settings.Location)
 
-	bus := pubsub.New(623)
+	bus := pubsub.New(8623)
 
 	dal := services.NewDal(bus, settings)
 	socket := services.NewSocket(bus, settings)
@@ -79,20 +80,16 @@ func main() {
 	mlog.Info("Press Ctrl+C to stop ...")
 
 	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	for _ = range c {
-		mlog.Info("Received an interrupt, shutting the app down ...")
+	signal.Notify(c, syscall.SIGTERM, syscall.SIGINT, syscall.SIGKILL)
+	mlog.Info("Received signal: (%s) ... shutting down the app now ...", <-c)
 
-		core.Stop()
-		cache.Stop()
-		scraper.Stop()
-		scanner.Stop()
-		server.Stop()
-		socket.Stop()
-		dal.Stop()
-
-		break
-	}
+	core.Stop()
+	cache.Stop()
+	scraper.Stop()
+	scanner.Stop()
+	server.Stop()
+	socket.Stop()
+	dal.Stop()
 
 	mlog.Stop()
 }

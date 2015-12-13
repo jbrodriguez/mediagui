@@ -79,7 +79,7 @@ function index() {
 }
 
 var bundler = browserify({
-	entries:      [ path.join(config.base.client, 'js/app.js') ],
+	entries:      [ path.join(config.base.client, "js/app.js") ],
 	extension: 	  [ "jsx" ],
 	transform:    isDebug ? [ babelify, lrload ] : [ babelify ],
 	debug:        isDebug,
@@ -116,7 +116,7 @@ function app_release() {
 	bundler
 		.bundle()
 		.pipe(source('bundle.js'))
-		// .pipe(buffer())
+		.pipe(buffer())
 		.pipe(gulp.dest(config.app.dst))
 
 	gutil.log("luego de app_release")
@@ -211,7 +211,7 @@ function publish(done) {
     // const app = path.join(config.publish.src, config.publish.app, "**/*")
     const app = path.join(config.publish.src, config.publish.app)
     const index = path.join(config.publish.src, config.publish.index)
-    const bin = path.join(config.publish.src, "mediagui")
+    const bin = path.join(config.publish.bin, "mediagui")
 
     const dst = path.join(home, ".mediagui", "web")
 	const binDst = path.join(home, "bin")
@@ -237,7 +237,7 @@ function publish(done) {
 
 	gulp.src(bin).pipe(gulp.dest(binDst))
 	gulp.src(index).pipe(gulp.dest(dst))
-	gulp.src(app).pipe(gulp.dest(dst))
+//	gulp.src(app).pipe(gulp.dest(dst))
 
 	// gulp
 	// 	.src(

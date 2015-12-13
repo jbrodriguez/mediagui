@@ -15,9 +15,9 @@ export default class CoversPage extends React.Component {
 
 		const movies = this.props.state.movies.items
 
-		var items = movies.map(function(movie) {
+		var items = movies.map(function(movie,i) {
 			return (
-				<Cover movie={movie} key={movie.title} />
+				<Cover movie={movie} key={i} />
 			)
 		})
 

@@ -11,7 +11,7 @@ import (
 	"jbrodriguez/mediagui/server/services"
 	"log"
 	"os"
-	"os/signal"
+	// "os/signal"
 	"path/filepath"
 	// "strings"
 	"testing"
@@ -141,6 +141,66 @@ import (
 // 	server.Start()
 // }
 
+// func TestScraper(t *testing.T) {
+// 	// look for mediagui.conf at the following places
+// 	// $HOME/.mediagui/mediagui.conf
+// 	// /usr/local/etc/mediagui.conf
+// 	// <current dir>/mediagui.conf
+// 	home := os.Getenv("HOME")
+
+// 	cwd, err := os.Getwd()
+// 	if err != nil {
+// 		log.Printf("Unable to get current directory: %s", err.Error())
+// 		os.Exit(1)
+// 	}
+
+// 	locations := []string{
+// 		filepath.Join(home, ".mediagui/mediagui.conf"),
+// 		"/usr/local/etc/mediagui.conf",
+// 		filepath.Join(cwd, "mediagui.conf"),
+// 	}
+
+// 	settings, err := lib.NewSettings(Version, home, locations)
+// 	if err != nil {
+// 		log.Printf("Unable to start the app: %s", err.Error())
+// 		os.Exit(2)
+// 	}
+
+// 	mlog.Start(mlog.LevelInfo, "")
+
+// 	mlog.Info("mediagui v%s starting ...", Version)
+
+// 	bus := pubsub.New(623)
+
+// 	core := services.NewCore(bus, settings)
+// 	scraper := services.NewScraper(bus, settings)
+
+// 	// socket.Start()
+// 	scraper.Start()
+// 	core.Start()
+
+// 	movie := &model.Movie{
+// 		Title: "Pulp Fiction",
+// 	}
+
+// 	msg := &pubsub.Message{Payload: movie}
+// 	bus.Pub(msg, "/command/movie/scrape")
+
+// 	mlog.Info("Press Ctrl+C to stop ...")
+
+// 	c := make(chan os.Signal, 1)
+// 	signal.Notify(c, os.Interrupt)
+// 	for _ = range c {
+// 		mlog.Info("Received an interrupt, shutting the app down ...")
+
+// 		core.Stop()
+// 		scraper.Stop()
+// 		// socket.Stop()
+
+// 		break
+// 	}
+// }
+
 func TestScraper(t *testing.T) {
 	// look for mediagui.conf at the following places
 	// $HOME/.mediagui/mediagui.conf
@@ -172,33 +232,39 @@ func TestScraper(t *testing.T) {
 
 	bus := pubsub.New(623)
 
-	core := services.NewCore(bus, settings)
-	scraper := services.NewScraper(bus, settings)
+	dal := services.NewDal(bus, settings)
 
 	// socket.Start()
-	scraper.Start()
-	core.Start()
+	dal.Start()
 
 	movie := &model.Movie{
-		Title: "Pulp Fiction",
+		Location: "wopr:/mnt/user/films/xvid/Visitor Q (2001)/ils-visitorq.avi",
 	}
 
-	msg := &pubsub.Message{Payload: movie}
-	bus.Pub(msg, "/command/movie/scrape")
+	check := &pubsub.Message{Payload: movie, Reply: make(chan interface{}, 3)}
+	bus.Pub(check, "/command/movie/exists")
 
-	mlog.Info("Press Ctrl+C to stop ...")
+	reply := <-check.Reply
+	exists := reply.(bool)
 
-	c := make(chan os.Signal, 1)
-	signal.Notify(c, os.Interrupt)
-	for _ = range c {
-		mlog.Info("Received an interrupt, shutting the app down ...")
-
-		core.Stop()
-		scraper.Stop()
-		// socket.Stop()
-
-		break
+	if exists {
+		mlog.Info("SKIPPED: exists [%s] (%s)", movie.Title, movie.Location)
+	} else {
+		mlog.Info("NEW: [%s] (%s)", movie.Title, movie.Location)
+		// c.bus.Pub(msg, "/command/movie/scrape")
 	}
+
+	// mlog.Info("Press Ctrl+C to stop ...")
+
+	// c := make(chan os.Signal, 1)
+	// signal.Notify(c, os.Interrupt)
+	// for _ = range c {
+	// 	mlog.Info("Received an interrupt, shutting the app down ...")
+
+	dal.Stop()
+
+	// 	break
+	// }
 }
 
 func TestMain(m *testing.M) {

@@ -82,6 +82,8 @@ type Caching struct {
 }
 
 func (c *Caching) Execute(wid int) {
+	defer c.bus.Pub(nil, "/event/workunit/done")
+
 	coverPath := filepath.Join(c.path, "img", "p", c.cover)
 	if _, err := os.Stat(coverPath); err == nil && !c.forced {
 		lib.Notify(c.bus, "import:progress", fmt.Sprintf("COVER DOWNLOAD SKIPPED (%d) [%d] %s (%s)", wid, c.id, c.title, c.cover))
@@ -115,11 +117,11 @@ func (c *Caching) Execute(wid int) {
 		}
 	}
 
-	event := "/event/movie/cached"
-	if c.forced {
-		event += "/forced"
-	}
+	// event := "/event/movie/cached"
+	// if c.forced {
+	// 	event += "/forced"
+	// }
 
-	cached := &pubsub.Message{}
-	c.bus.Pub(cached, event)
+	// cached := &pubsub.Message{}
+	// c.bus.Pub(cached, event)
 }
