@@ -4,16 +4,21 @@ import (
 	// sc "bitbucket.org/jdpalmer/statecraft"
 	"github.com/jbrodriguez/mlog"
 	"github.com/jbrodriguez/pubsub"
+	"github.com/myodc/go-micro/client"
 	// "io/ioutil"
 	"fmt"
+	"jbrodriguez/mediagui/proto"
 	"jbrodriguez/mediagui/server/dto"
 	"jbrodriguez/mediagui/server/lib"
 	"jbrodriguez/mediagui/server/model"
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 	"sync"
 	"time"
+
+	"golang.org/x/net/context"
 )
 
 type Core struct {
@@ -166,7 +171,72 @@ func (c *Core) doMovieScraped(msg *pubsub.Message) {
 }
 
 func (c *Core) pruneMovies(msg *pubsub.Message) {
+	t0 := time.Now()
+
 	lib.Notify(c.bus, "prune:begin", "Started Prune Process")
+
+	options := &lib.Options{Offset: 0, Limit: 99999999999999, SortBy: "title", SortOrder: "asc"}
+	all := &pubsub.Message{Payload: options, Reply: make(chan interface{}, capacity)}
+	c.bus.Pub(all, "/get/movies")
+
+	reply := <-all.Reply
+	dto := reply.(*model.MoviesDTO)
+
+	if c.settings.UnraidMode {
+		for _, item := range dto.Items {
+			// mlog.Info("Item is %s (%s)", item.Title, item.Location)
+
+			index := strings.Index(item.Location, ":")
+
+			host := item.Location[:index]
+			location := item.Location[index+1:]
+
+			req := client.NewRequest("io.jbrodriguez.mediagui.agent."+host, "Agent.Exists", &agent.ExistsReq{
+				Location: location,
+			})
+
+			rsp := &agent.ExistsRsp{}
+
+			if err := client.Call(context.Background(), req, rsp); err != nil {
+				mlog.Warning("Unable to connect to service (%s): %s", "io.jbrodriguez.mediagui.agent."+host, err)
+				// lib.Notify(s.bus, "import:progress", "Unable to connect to host "+host)
+				// lib.Notify(s.bus, "import:end", "Import process finished")
+				// return
+				continue
+			}
+
+			if !rsp.Exists {
+				lib.Notify(c.bus, "prune:selected", fmt.Sprintf("UP FOR DELETION: [%d] %s (%s))", item.Id, item.Title, item.Location))
+
+				movie := &pubsub.Message{Payload: item, Reply: make(chan interface{}, capacity)}
+				c.bus.Pub(movie, "/command/movie/delete")
+			}
+		}
+	} else {
+		for _, item := range dto.Items {
+			matches := c.re.FindStringSubmatch(item.Location)
+			if len(matches) == 0 {
+				continue
+			}
+
+			folder := filepath.Join("/Volumes", matches[1])
+			if !c.maps[folder] {
+				// mlog.Info("Folder not mapped (%s): %s", folder, item.Location)
+				continue
+			}
+
+			// mlog.Info("Folder mapped (%s): %s", folder, item.Location)
+
+			if _, err := os.Stat(item.Location); err != nil {
+				if os.IsNotExist(err) {
+					lib.Notify(c.bus, "prune:selected", fmt.Sprintf("UP FOR DELETION: [%d] %s (%s))", item.Id, item.Title, item.Location))
+
+					movie := &pubsub.Message{Payload: item, Reply: make(chan interface{}, capacity)}
+					c.bus.Pub(movie, "/command/movie/delete")
+				}
+			}
+		}
+	}
 
 	// for _, folder := range c.settings.MediaFolders {
 	// 	mlog.Info("folder: %s", folder)
@@ -178,38 +248,9 @@ func (c *Core) pruneMovies(msg *pubsub.Message) {
 	// 	}
 	// }
 
-	options := &lib.Options{Offset: 0, Limit: 99999999999999, SortBy: "title", SortOrder: "asc"}
-	all := &pubsub.Message{Payload: options, Reply: make(chan interface{}, capacity)}
-	c.bus.Pub(all, "/get/movies")
+	// lib.Notify(c.bus, "prune:end", "Finished Prune Process")
+	lib.Notify(c.bus, "prune:end", fmt.Sprintf("Prune process finished (%s elapsed)", time.Since(t0).String()))
 
-	reply := <-all.Reply
-	dto := reply.(*model.MoviesDTO)
-
-	for _, item := range dto.Items {
-		matches := c.re.FindStringSubmatch(item.Location)
-		if len(matches) == 0 {
-			continue
-		}
-
-		folder := filepath.Join("/Volumes", matches[1])
-		if !c.maps[folder] {
-			// mlog.Info("Folder not mapped (%s): %s", folder, item.Location)
-			continue
-		}
-
-		// mlog.Info("Folder mapped (%s): %s", folder, item.Location)
-
-		if _, err := os.Stat(item.Location); err != nil {
-			if os.IsNotExist(err) {
-				lib.Notify(c.bus, "prune:selected", fmt.Sprintf("UP FOR DELETION: [%d] %s (%s))", item.Id, item.Title, item.Location))
-
-				movie := &pubsub.Message{Payload: item, Reply: make(chan interface{}, capacity)}
-				c.bus.Pub(movie, "/command/movie/delete")
-			}
-		}
-	}
-
-	lib.Notify(c.bus, "prune:end", "Finished Prune Process")
 }
 
 func (c *Core) addMediaFolder(msg *pubsub.Message) {

@@ -125,17 +125,17 @@ func (s *Scanner) scanMovies(msg *pubsub.Message) {
 
 		for _, host := range s.settings.UnraidHosts {
 			// Create new request to service go.micro.srv.example, method Example.Call
-			req := client.NewRequest("io.jbrodriguez.mediagui.scanner."+host, "Scanner.Scan", &scan.Request{
+			req := client.NewRequest("io.jbrodriguez.mediagui.agent."+host, "Agent.Scan", &agent.ScanReq{
 				// Folders: s.settings.MediaFolders,
 				Folders: s.settings.MediaFolders,
 				Mask:    s.includedMask,
 			})
 
-			rsp := &scan.Response{}
+			rsp := &agent.ScanRsp{}
 
 			// Call service
 			if err := client.Call(context.Background(), req, rsp); err != nil {
-				mlog.Warning("Unable to connect to service (%s): %s", "io.jbrodriguez.mediagui.scanner."+host, err)
+				mlog.Warning("Unable to connect to service (%s): %s", "io.jbrodriguez.mediagui.agent."+host, err)
 				lib.Notify(s.bus, "import:progress", "Unable to connect to host "+host)
 				// lib.Notify(s.bus, "import:end", "Import process finished")
 				// return
