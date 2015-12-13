@@ -1,3 +1,13 @@
+Version 0.5.1 - 2015-12-13
+    (agent) Rename scanner services to  agent
+    (mediagui) Ignore agent binary
+    (mediagui) Create new agent protobuf, containing messages for scanning and checking for existing items
+    (mediagui) Remove scanner service (microservice)
+    (mediagui) Implement prune functionality (microservices style)
+    (mediagui) Rename protobuf messages as appropriate
+    (mediagui) Ignore .out files
+
+
 Version 0.5.0 - 2015-12-13
     - Implement distributed microservice architecture, where a service is running on the unraid host, collecting files and sending them back to the client, thus involving only one network roundtrip. This has brought down scanning times from 5 minutes to about 15 seconds :)
     - Fix partial save to match the same semantics as a full save (avoid nulls in the database)
