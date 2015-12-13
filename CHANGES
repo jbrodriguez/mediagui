@@ -1,3 +1,15 @@
+Version 0.5.0 - 2015-12-13
+    - Implement distributed microservice architecture, where a service is running on the unraid host, collecting files and sending them back to the client, thus involving only one network roundtrip. This has brought down scanning times from 5 minutes to about 15 seconds :)
+    - Fix partial save to match the same semantics as a full save (avoid nulls in the database)
+    - Fix duplicates feature
+    - Add mask parameter to pb message
+    - Define a new key for cover collection
+    - Simpliy signal handling logic
+    - Define unraidmode so that app will behave in one of two ways: unraidmode = using an agent on the unraid host; not unraidmode = scanning from a mounted volumen on the client workstation
+    - Redefine import logic to be able to time the entire process by using a fan-in, fan-out pipeline strategy (based on waitgroups)
+    - Add vendor folder to ignored files
+
+
 Version 0.4.5 - 2015-10-12
     - Add case where no tmdb information is found. A partial save will be done to the db.
 
