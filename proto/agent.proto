@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+message ScanReq {
+	repeated string folders = 1;
+	string mask = 2;
+}
+
+message ScanRsp {
+	repeated string filenames = 1;
+}
+
+message ExistsReq {
+	string location = 1;
+}
+
+message ExistsRsp {
+	bool exists = 1;
+}
