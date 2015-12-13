@@ -12,6 +12,7 @@ node_modules
 *.prof
 
 **/_vendor/pkg/
+**/vendor
 
 server/server
 server/mediagui
