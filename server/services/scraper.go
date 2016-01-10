@@ -203,7 +203,11 @@ func _scrape(wid int, tmdb *tmdb.Tmdb, id uint64, movie *model.Movie) error {
 		if movie.Genres == "" {
 			movie.Genres = attr.Name
 		} else {
-			movie.Genres += " " + attr.Name
+			if strings.Contains(movie.Genres, attr.Name) {
+				continue
+			}
+
+			movie.Genres += "|" + attr.Name
 		}
 	}
 
@@ -216,6 +220,10 @@ func _scrape(wid int, tmdb *tmdb.Tmdb, id uint64, movie *model.Movie) error {
 		if movie.Production_Countries == "" {
 			movie.Production_Countries = attr.Name
 		} else {
+			if strings.Contains(movie.Production_Countries, attr.Name) {
+				continue
+			}
+
 			movie.Production_Countries += "|" + attr.Name
 		}
 	}
