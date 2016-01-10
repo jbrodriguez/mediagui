@@ -53,7 +53,7 @@ func (c *Core) Start() {
 	c.registerAdditional(c.bus, "/event/movie/found", c.doMovieFound, c.mailbox)
 	c.registerAdditional(c.bus, "/event/movie/tmdbnotfound", c.doMovieTmdbNotFound, c.mailbox)
 	c.registerAdditional(c.bus, "/event/movie/scraped", c.doMovieScraped, c.mailbox)
-	// c.registerAdditional(c.bus, "/event/movie/rescraped", c.doMovieReScraped, c.mailbox)
+	c.registerAdditional(c.bus, "/event/movie/rescraped", c.doMovieReScraped, c.mailbox)
 	// c.registerAdditional(c.bus, "/event/movie/updated", c.doMovieUpdated, c.mailbox)
 	// c.registerAdditional(c.bus, "/event/movie/cached/forced", c.doMovieCachedForced, c.mailbox)
 
@@ -163,6 +163,25 @@ func (c *Core) doMovieScraped(msg *pubsub.Message) {
 
 	store := &pubsub.Message{Payload: dto.Movie, Reply: make(chan interface{}, 3)}
 	c.bus.Pub(store, "/command/movie/store")
+
+	cache := &pubsub.Message{Payload: dto, Reply: make(chan interface{}, 3)}
+	c.bus.Pub(cache, "/command/movie/cache")
+
+	// mlog.Info("ScrapeDTO: %+v", dto)
+}
+
+func (c *Core) doMovieReScraped(msg *pubsub.Message) {
+	dto := msg.Payload.(*dto.Scrape)
+
+	mlog.Info("ScrapeDTO: %+v", dto)
+
+	// I treat the following two commands as one, for the sake of the wg
+	// now there are two oustanding locks, which will be decreased by each
+	// responding service
+	c.wg.Add(1)
+
+	store := &pubsub.Message{Payload: dto.Movie, Reply: make(chan interface{}, 3)}
+	c.bus.Pub(store, "/command/movie/update")
 
 	cache := &pubsub.Message{Payload: dto, Reply: make(chan interface{}, 3)}
 	c.bus.Pub(cache, "/command/movie/cache")
