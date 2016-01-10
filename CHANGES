@@ -1,3 +1,10 @@
+Version 0.5.2 - 2016-01-10
+    (back) Split genres with a "|" and don't add a genre if it exists already
+    (back) Don't add a country if it exists already
+    (back) Update movie if rescraped (don't store it as new as previous version)
+    (mediagui) Remove unneeded file
+
+
 Version 0.5.1 - 2015-12-13
     (agent) Rename scanner services to  agent
     (mediagui) Ignore agent binary
