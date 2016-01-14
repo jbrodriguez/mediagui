@@ -1,3 +1,7 @@
+Version 0.5.3 - 2016-01-14
+    - Publish correct message
+
+
 Version 0.5.2 - 2016-01-10
     (back) Split genres with a "|" and don't add a genre if it exists already
     (back) Don't add a country if it exists already
