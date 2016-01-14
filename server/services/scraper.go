@@ -176,7 +176,7 @@ func (s *ReScrape) Execute(wid int) {
 	mlog.Info("RESCRAPE COMPLETED (%d) [%d] %s", wid, movie.Id, movie.Title)
 
 	msg := &pubsub.Message{Payload: s.dto}
-	s.bus.Pub(msg, "/event/movie/scraped")
+	s.bus.Pub(msg, "/event/movie/rescraped")
 }
 
 func _scrape(wid int, tmdb *tmdb.Tmdb, id uint64, movie *model.Movie) error {
