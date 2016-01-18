@@ -9,10 +9,13 @@ import (
 	"jbrodriguez/mediagui/server/lib"
 	"jbrodriguez/mediagui/server/model"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
 )
+
+const DATETIME_LAYOUT = "2006-01-02T15:04:05-07:00"
 
 type Dal struct {
 	Service
@@ -663,12 +666,63 @@ func (d *Dal) setWatched(msg *pubsub.Message) {
 
 	mlog.Info("STARTED UPDATING MOVIE WATCHED DATE [%d] %s (%s)", dto.Id, dto.Title, dto.Last_Watched)
 
+	now := time.Now().UTC().Format(time.RFC3339)
+
+	stmt, err := d.db.Prepare("select all_watched from movie where rowid = ?")
+	if err != nil {
+		mlog.Fatalf("at prepare: %s", err)
+	}
+
+	// get all watched times from the db
+	var when string
+	err = stmt.QueryRow(dto.Id).Scan(&when)
+	if err != nil {
+		mlog.Fatalf("at queryrow: %s", err)
+	}
+
+	// create an array with all watched times
+	var watched_times []string
+	if when != "" {
+		watched_times = strings.Split(when, "|")
+	}
+
+	// convert incoming watched time to sane format
+	watched, err := parseToday(dto.Last_Watched)
+	if err != nil {
+		mlog.Fatalf("at parseToday: %s", err)
+	}
+	last_watched := watched.UTC().Format(time.RFC3339)
+
+	// add last watched to array, only if it doesn't already exist
+	if !strings.Contains(when, last_watched) {
+		watched_times = append(watched_times, last_watched)
+	}
+
+	// this sorts the dates in ascending order by default
+	sort.Strings(watched_times)
+
+	// set final variables
+	last_watched = watched_times[len(watched_times)-1]
+	count_watched := uint64(len(watched_times))
+	all_watched := strings.Join(watched_times, "|")
+
+	// var all_watched string
+	// count_watched := dto.Count_Watched
+	// if !strings.Contains(dto.All_Watched, dto.Last_Watched) {
+	// 	count_watched++
+	// 	if dto.All_Watched == "" {
+	// 		all_watched = dto.Last_Watched
+	// 	} else {
+	// 		all_watched += "|" + dto.Last_Watched
+	// 	}
+	// }
+
 	tx, err := d.db.Begin()
 	if err != nil {
 		mlog.Fatalf("at begin: %s", err)
 	}
 
-	stmt, err := tx.Prepare(`update movie set 
+	stmt, err = tx.Prepare(`update movie set 
 								last_watched = ?, 
 								all_watched = ?, 
 								count_watched = ?, 
@@ -680,20 +734,7 @@ func (d *Dal) setWatched(msg *pubsub.Message) {
 	}
 	defer stmt.Close()
 
-	now := time.Now().UTC().Format(time.RFC3339)
-
-	var all_watched string
-	count_watched := dto.Count_Watched
-	if !strings.Contains(dto.All_Watched, dto.Last_Watched) {
-		count_watched++
-		if dto.All_Watched == "" {
-			all_watched = dto.Last_Watched
-		} else {
-			all_watched += "|" + dto.Last_Watched
-		}
-	}
-
-	_, err = stmt.Exec(dto.Last_Watched, all_watched, count_watched, now, dto.Id)
+	_, err = stmt.Exec(last_watched, all_watched, count_watched, now, dto.Id)
 	if err != nil {
 		tx.Rollback()
 		mlog.Fatalf("at exec: %s", err)
@@ -715,4 +756,15 @@ func (d *Dal) prepare(sql string) *sql.Stmt {
 		mlog.Fatalf("prepare sql: %s (%s)", err, sql)
 	}
 	return stmt
+}
+
+func parseToday(client_today string) (today time.Time, err error) {
+	client, perr := time.Parse(time.RFC3339, client_today)
+	if perr != nil {
+		return today, perr
+	}
+
+	today = time.Date(client.Year(), client.Month(), client.Day(), 0, 0, 0, 0, client.Location())
+
+	return today, nil
 }

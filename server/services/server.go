@@ -45,6 +45,7 @@ func (s *Server) Start() {
 	gin.SetMode(s.settings.GinMode)
 
 	s.router = gin.Default()
+	s.router.Use(Closer())
 
 	s.router.GET("/", s.index)
 	s.router.GET("/ws", s.handleSocket)
@@ -74,6 +75,12 @@ func (s *Server) Start() {
 
 func (s *Server) Stop() {
 	mlog.Info("Stopped service Server ...")
+}
+
+func Closer() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Header("Connection", "close")
+	}
 }
 
 func (s *Server) index(c *gin.Context) {
@@ -132,6 +139,7 @@ func (s *Server) getMovies(c *gin.Context) {
 	c.Bind(&options) // You can also specify which binder to use. We support binding.Form, binding.JSON and binding.XML.
 
 	// mlog.Info("server.getMovies.options: %+v", options)
+	// mlog.Info("request: ", c.Request)
 
 	msg := &pubsub.Message{Payload: &options, Reply: make(chan interface{}, capacity)}
 	s.bus.Pub(msg, "/get/movies")
