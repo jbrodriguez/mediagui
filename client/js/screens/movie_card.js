@@ -62,7 +62,7 @@ export default class MovieCard extends React.Component {
 				<div>
 				History:
 				<span className="label success spacer">{movie.count_watched}</span>
-				<select value={shows[shows.length-1]} style={{width: 200px}}>
+				<select value={shows[shows.length-1]} style={{width: 150}}>
 					{ 
 						shows.map( (option, i) => {
 							return <option key={i} value={option}>{moment(option).format('MMM DD, YYYY')}</option>
