@@ -1,3 +1,11 @@
+Version 0.5.4 - 2016-01-18
+    (front) Send the current time including timezone. The server does the conversion to UTC.
+    (back) Close connections (to prevent too many open files)
+    (back) Change logic of set watched time operation. Get current all_watched from the db, convert it to an array, add the incoming last watched, sort it, and use the lenght of the array as count_watched. The incoming watched time is converted to UTC for sanity
+    (front) Add watched history to the ui
+    (front) Fix control width
+
+
 Version 0.5.3 - 2016-01-14
     - Publish correct message
 
