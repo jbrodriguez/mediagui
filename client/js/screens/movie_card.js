@@ -49,10 +49,26 @@ export default class MovieCard extends React.Component {
 		}
 
 		var watched_ribbon;
+		let watched_history = null
 		if (movie.count_watched > 0) {
 			watched_ribbon = (
 				<div className="overlay__cover">
 					<span>watched</span>
+				</div>
+			)
+
+			const shows = movie.all_watched.split('|')
+			watched_history = (
+				<div>
+				History:
+				<span className="label success spacer">{movie.count_watched}</span>
+				<select value={shows[shows.length-1]} style={{width: 200px}}>
+					{ 
+						shows.map( (option, i) => {
+							return <option key={i} value={option}>{moment(option).format('MMM DD, YYYY')}</option>
+						})
+					}
+				</select>
 				</div>
 			)
 		}
@@ -112,12 +128,15 @@ export default class MovieCard extends React.Component {
 				</div>
 				<div className="col-xs-12 bottom-spacer-large">
 					<div className="row between-xs">
-						<div className="col-xs-12 col-sm-3 addon">
+						<div className="col-xs-12 col-sm-2 addon">
 							<input className="addon-field" type="text" defaultValue={movie.tmdb_id} onChange={this.setTmdbId}></input>
 							<button className="btn btn-default rspacer" onClick={this.fixMovie}>Fix</button>
 							{loading}
 						</div>
-						<div className="col-xs-12 col-sm-9 addon end-sm">
+						<div className="col-xs-12 col-sm-4 addon">
+							{ watched_history }
+						</div>
+						<div className="col-xs-12 col-sm-6 addon end-sm">
 							{score}
 							<IconRating
 								className="rspacer"
