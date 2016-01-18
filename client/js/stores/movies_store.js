@@ -26,7 +26,7 @@ const Movies = ffux.createStore({
 		}
 
 		function _watched(movie, watched) {
-			movie.last_watched = moment.utc(watched).format()
+			movie.last_watched = watched.format()
 			return api.setMovieWatched(movie)
 		}
 
