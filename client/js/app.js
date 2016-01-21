@@ -102,7 +102,8 @@ function getInitialOptions() {
         {value: 'title', label: 'Title'}, 
         {value: 'runtime', label: 'Runtime'}, 
         {value: 'added', label: 'Added'}, 
-        {value: 'last_watched', label: 'Watched'}, 
+        {value: 'last_watched', label: 'Watched W'}, 
+        {value: 'count_watched', label: 'Watched C'}, 
         {value: 'year', label: 'Year'}, 
         {value: 'imdb_rating', label: 'Rating'}
     ]
