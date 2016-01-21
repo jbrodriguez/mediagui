@@ -1,3 +1,7 @@
+Version 0.5.5 - 2016-01-21
+    (front) Add sorting by count watched
+
+
 Version 0.5.4 - 2016-01-18
     (front) Send the current time including timezone. The server does the conversion to UTC.
     (back) Close connections (to prevent too many open files)
