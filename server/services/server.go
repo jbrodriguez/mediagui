@@ -55,6 +55,7 @@ func (s *Server) Start() {
 	api := s.router.Group(apiVersion)
 	{
 		api.GET("/config", s.getConfig)
+		api.GET("/movies/single/:id", s.getMovie)
 		api.GET("/movies/cover", s.getMoviesCover)
 		api.GET("/movies", s.getMovies)
 		api.GET("/movies/duplicates", s.getDuplicates)
@@ -159,6 +160,22 @@ func (s *Server) getDuplicates(c *gin.Context) {
 	reply := <-msg.Reply
 	dto := reply.(*model.MoviesDTO)
 
+	c.JSON(200, dto)
+}
+
+func (s *Server) getMovie(c *gin.Context) {
+	id := c.Param("id")
+	// mlog.Info("server.getMovies.options: %+v", options)
+	// mlog.Info("request: ", c.Request)
+
+	msg := &pubsub.Message{Payload: id, Reply: make(chan interface{}, capacity)}
+	s.bus.Pub(msg, "/get/movie")
+
+	reply := <-msg.Reply
+	dto := reply.(*model.Movie)
+
+	// // mlog.Info("moviesDTO: %+v", dto)
+	// c.JSON(200, {dto})
 	c.JSON(200, dto)
 }
 
