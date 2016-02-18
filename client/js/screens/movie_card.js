@@ -116,6 +116,7 @@ export default class MovieCard extends React.Component {
 						<div className="col-xs-12 col-sm-9">
 							<span className="label">{movie.resolution}</span>
 							<span className="label secondary spacer">{movie.location}</span>
+							<span className="label">{movie.id}</span>
 						</div>
 						<div className="col-xs-12 col-sm-3 end-sm">
 							{watched}							
