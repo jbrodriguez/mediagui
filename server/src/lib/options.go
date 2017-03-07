@@ -1,5 +1,6 @@
 package lib
 
+// Options -
 type Options struct {
 	Query     string `form:"query"`
 	Offset    uint64 `form:"offset"`

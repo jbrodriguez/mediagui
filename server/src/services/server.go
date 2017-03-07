@@ -5,9 +5,9 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/jbrodriguez/mlog"
 	"github.com/jbrodriguez/pubsub"
-	"jbrodriguez/mediagui/server/dto"
-	"jbrodriguez/mediagui/server/lib"
-	"jbrodriguez/mediagui/server/model"
+	"jbrodriguez/mediagui/server/src/dto"
+	"jbrodriguez/mediagui/server/src/lib"
+	"jbrodriguez/mediagui/server/src/model"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -19,6 +19,7 @@ const (
 	bufferSize = 8192
 )
 
+// Server -
 type Server struct {
 	bus      *pubsub.PubSub
 	settings *lib.Settings
@@ -26,11 +27,13 @@ type Server struct {
 	// socket   *Socket
 }
 
+// NewServer -
 func NewServer(bus *pubsub.PubSub, settings *lib.Settings) *Server {
 	server := &Server{bus: bus, settings: settings}
 	return server
 }
 
+// Start -
 func (s *Server) Start() {
 	mlog.Info("Starting service Server ...")
 
@@ -74,10 +77,12 @@ func (s *Server) Start() {
 	mlog.Info("Listening on %s", port)
 }
 
+// Stop -
 func (s *Server) Stop() {
 	mlog.Info("Stopped service Server ...")
 }
 
+// Closer -
 func Closer() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.Header("Connection", "close")

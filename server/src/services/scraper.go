@@ -5,16 +5,16 @@ import (
 	"github.com/jbrodriguez/mlog"
 	"github.com/jbrodriguez/pubsub"
 	// "io/ioutil"
-	"errors"
 	"fmt"
-	"jbrodriguez/mediagui/server/dto"
-	"jbrodriguez/mediagui/server/lib"
-	"jbrodriguez/mediagui/server/model"
+	"jbrodriguez/mediagui/server/src/dto"
+	"jbrodriguez/mediagui/server/src/lib"
+	"jbrodriguez/mediagui/server/src/model"
 	"strconv"
 	"strings"
 	"time"
 )
 
+// Scraper -
 type Scraper struct {
 	Service
 
@@ -26,12 +26,14 @@ type Scraper struct {
 	mailbox chan *pubsub.Mailbox
 }
 
+// NewScraper -
 func NewScraper(bus *pubsub.PubSub, settings *lib.Settings) *Scraper {
 	scraper := &Scraper{bus: bus, settings: settings}
 	scraper.init()
 	return scraper
 }
 
+// Start -
 func (s *Scraper) Start() {
 	mlog.Info("Starting service Scraper ...")
 
@@ -50,6 +52,7 @@ func (s *Scraper) Start() {
 	go s.react()
 }
 
+// Stop -
 func (s *Scraper) Stop() {
 	mlog.Info("Stopped service Scraper ...")
 }
@@ -77,12 +80,14 @@ func (s *Scraper) scrapeMovie(msg *pubsub.Message) {
 	s.pool.Exec(scrape)
 }
 
+// Scrape -
 type Scrape struct {
 	bus  *pubsub.PubSub
 	tmdb *tmdb.Tmdb
 	dto  *dto.Scrape
 }
 
+// Execute -
 func (s *Scrape) Execute(wid int) {
 	movie := s.dto.Movie.(*model.Movie)
 
@@ -143,12 +148,14 @@ func (s *Scraper) reScrapeMovie(msg *pubsub.Message) {
 	s.pool.Exec(reScrape)
 }
 
+// ReScrape -
 type ReScrape struct {
 	bus  *pubsub.PubSub
 	tmdb *tmdb.Tmdb
 	dto  *dto.Scrape
 }
 
+// Execute -
 func (s *ReScrape) Execute(wid int) {
 	movie := s.dto.Movie.(*model.Movie)
 
@@ -184,7 +191,7 @@ func _scrape(wid int, tmdb *tmdb.Tmdb, id uint64, movie *model.Movie) error {
 	// mlog.Info("[%s] before getmovie [%s]", movie.Title)
 	gmr, err := tmdb.GetMovie(id)
 	if err != nil {
-		return errors.New(fmt.Sprintf("FAILED GETTING MOVIE (%d) [%s]", wid, movie.Title))
+		return fmt.Errorf("FAILED GETTING MOVIE (%d) [%s]", wid, movie.Title)
 	}
 
 	movie.Title = gmr.Title
@@ -233,21 +240,21 @@ func _scrape(wid int, tmdb *tmdb.Tmdb, id uint64, movie *model.Movie) error {
 	// lib.Notify(s.bus, "import:progress", fmt.Sprintf("STARTED OMDB [%s]", movie.Title))
 	err = lib.RestGet(fmt.Sprintf("http://www.omdbapi.com/?i=%s", movie.Imdb_Id), &omdb)
 	if err != nil {
-		return errors.New(fmt.Sprintf("OMDB Error: %s", err))
+		return fmt.Errorf("OMDB Error: %s", err)
 	}
 
 	// lib.Notify(s.bus, "import:progress", fmt.Sprintf("omdb: %+v", omdb))
 
 	vote := strings.Replace(omdb.Imdb_Vote, ",", "", -1)
-	imdb_vote, _ := strconv.ParseUint(vote, 0, 64)
-	imdb_rating, _ := strconv.ParseFloat(omdb.Imdb_Rating, 64)
+	imdbVote, _ := strconv.ParseUint(vote, 0, 64)
+	imdbRating, _ := strconv.ParseFloat(omdb.Imdb_Rating, 64)
 
 	movie.Director = omdb.Director
 	movie.Writer = omdb.Writer
 	movie.Actors = omdb.Actors
 	movie.Awards = omdb.Awards
-	movie.Imdb_Rating = imdb_rating
-	movie.Imdb_Votes = imdb_vote
+	movie.Imdb_Rating = imdbRating
+	movie.Imdb_Votes = imdbVote
 
 	return nil
 }

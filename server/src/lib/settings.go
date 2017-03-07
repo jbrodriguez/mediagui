@@ -10,6 +10,7 @@ import (
 	"strings"
 )
 
+// Config -
 type Config struct {
 	UnraidMode   bool     `json:"unraidMode"`
 	UnraidHosts  []string `json:"unraidHosts"`
@@ -17,6 +18,7 @@ type Config struct {
 	Version      string   `json:"version"`
 }
 
+// Settings -
 type Settings struct {
 	Config
 
@@ -26,7 +28,7 @@ type Settings struct {
 
 	Location   string
 	GinMode    string
-	CpuProfile string
+	CPUProfile string
 }
 
 func searchConfig(locations []string) string {
@@ -39,6 +41,7 @@ func searchConfig(locations []string) string {
 	return ""
 }
 
+// NewSettings -
 func NewSettings(version, home string, locations []string) (*Settings, error) {
 	location := searchConfig(locations)
 	if location == "" {
@@ -76,7 +79,7 @@ func NewSettings(version, home string, locations []string) (*Settings, error) {
 	s.LogDir = logDir
 	s.Location = location
 	s.GinMode = ginMode
-	s.CpuProfile = cpuprofile
+	s.CPUProfile = cpuprofile
 	s.UnraidMode = unraidMode
 	if unraidHosts == "" {
 		s.UnraidHosts = make([]string, 0)
@@ -87,6 +90,7 @@ func NewSettings(version, home string, locations []string) (*Settings, error) {
 	return s, nil
 }
 
+// Save -
 func (s *Settings) Save() error {
 	file, err := os.Create(s.Location)
 	defer file.Close()

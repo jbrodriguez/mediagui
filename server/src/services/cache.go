@@ -6,13 +6,14 @@ import (
 	// "io/ioutil"
 	"fmt"
 	// "image/jpeg"
-	"jbrodriguez/mediagui/server/dto"
-	"jbrodriguez/mediagui/server/lib"
-	"jbrodriguez/mediagui/server/model"
+	"jbrodriguez/mediagui/server/src/dto"
+	"jbrodriguez/mediagui/server/src/lib"
+	"jbrodriguez/mediagui/server/src/model"
 	"os"
 	"path/filepath"
 )
 
+// Cache -
 type Cache struct {
 	Service
 
@@ -23,12 +24,14 @@ type Cache struct {
 	mailbox chan *pubsub.Mailbox
 }
 
+// NewCache -
 func NewCache(bus *pubsub.PubSub, settings *lib.Settings) *Cache {
 	cache := &Cache{bus: bus, settings: settings}
 	cache.init()
 	return cache
 }
 
+// Start -
 func (c *Cache) Start() {
 	mlog.Info("Starting service Cache ...")
 
@@ -39,6 +42,7 @@ func (c *Cache) Start() {
 	go c.react()
 }
 
+// Stop -
 func (c *Cache) Stop() {
 	mlog.Info("Stopped service Cache")
 }
@@ -70,6 +74,7 @@ func (c *Cache) cacheMovie(msg *pubsub.Message) {
 	c.pool.Exec(caching)
 }
 
+// Caching -
 type Caching struct {
 	bus      *pubsub.PubSub
 	path     string
@@ -81,6 +86,7 @@ type Caching struct {
 	backdrop string
 }
 
+// Execute -
 func (c *Caching) Execute(wid int) {
 	defer c.bus.Pub(nil, "/event/workunit/done")
 

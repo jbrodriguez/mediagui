@@ -5,11 +5,12 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/jbrodriguez/mlog"
 	"github.com/jbrodriguez/pubsub"
-	"jbrodriguez/mediagui/server/dto"
-	"jbrodriguez/mediagui/server/lib"
-	"jbrodriguez/mediagui/server/ws"
+	"jbrodriguez/mediagui/server/src/dto"
+	"jbrodriguez/mediagui/server/src/lib"
+	"jbrodriguez/mediagui/server/src/ws"
 )
 
+// Socket -
 type Socket struct {
 	Service
 
@@ -20,6 +21,7 @@ type Socket struct {
 	mailbox chan *pubsub.Mailbox
 }
 
+// NewSocket -
 func NewSocket(bus *pubsub.PubSub, settings *lib.Settings) *Socket {
 	socket := &Socket{
 		bus:      bus,
@@ -31,6 +33,7 @@ func NewSocket(bus *pubsub.PubSub, settings *lib.Settings) *Socket {
 	return socket
 }
 
+// Start -
 func (s *Socket) Start() {
 	mlog.Info("Starting service Socket ...")
 
@@ -44,6 +47,7 @@ func (s *Socket) Start() {
 	go s.react()
 }
 
+// Stop -
 func (s *Socket) Stop() {
 	mlog.Info("Stopped service Socket ...")
 }

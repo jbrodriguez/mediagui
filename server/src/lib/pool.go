@@ -1,9 +1,11 @@
 package lib
 
+// Task -
 type Task interface {
 	Execute(id int)
 }
 
+// Pool -
 type Pool struct {
 	// mu    sync.Mutex
 	// size  int
@@ -12,6 +14,7 @@ type Pool struct {
 	// wg    sync.WaitGroup
 }
 
+// NewPool -
 func NewPool(size, queue int) *Pool {
 	pool := &Pool{
 		tasks: make(chan Task, queue),
@@ -55,6 +58,7 @@ func (p *Pool) worker(id int) {
 // 	}
 // }
 
+// Close -
 func (p *Pool) Close() {
 	close(p.tasks)
 }
@@ -63,6 +67,7 @@ func (p *Pool) Close() {
 // 	p.wg.Wait()
 // }
 
+// Exec -
 func (p *Pool) Exec(task Task) {
 	p.tasks <- task
 }

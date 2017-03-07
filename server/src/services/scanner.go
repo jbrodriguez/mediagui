@@ -6,8 +6,8 @@ import (
 	"github.com/myodc/go-micro/client"
 	// "github.com/myodc/go-micro/cmd"
 	"jbrodriguez/mediagui/proto"
-	"jbrodriguez/mediagui/server/lib"
-	"jbrodriguez/mediagui/server/model"
+	"jbrodriguez/mediagui/server/src/lib"
+	"jbrodriguez/mediagui/server/src/model"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -16,6 +16,7 @@ import (
 	"golang.org/x/net/context"
 )
 
+// Scanner -
 type Scanner struct {
 	Service
 
@@ -29,12 +30,14 @@ type Scanner struct {
 	includedMask string
 }
 
+// NewScanner -
 func NewScanner(bus *pubsub.PubSub, settings *lib.Settings) *Scanner {
 	scanner := &Scanner{bus: bus, settings: settings}
 	scanner.init()
 	return scanner
 }
 
+// Start -
 func (s *Scanner) Start() {
 	mlog.Info("Starting service Scanner ...")
 
@@ -63,6 +66,7 @@ func (s *Scanner) Start() {
 	go s.react()
 }
 
+// Stop -
 func (s *Scanner) Stop() {
 	mlog.Info("Stopped service Scanner ...")
 }

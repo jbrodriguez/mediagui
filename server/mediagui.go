@@ -3,8 +3,8 @@ package main
 import (
 	"github.com/jbrodriguez/mlog"
 	"github.com/jbrodriguez/pubsub"
-	"jbrodriguez/mediagui/server/lib"
-	"jbrodriguez/mediagui/server/services"
+	"jbrodriguez/mediagui/server/src/lib"
+	"jbrodriguez/mediagui/server/src/services"
 	"log"
 	"os"
 	"os/signal"
@@ -13,6 +13,7 @@ import (
 	"syscall"
 )
 
+// Version -
 var Version string
 
 func main() {
@@ -40,8 +41,8 @@ func main() {
 		os.Exit(2)
 	}
 
-	if settings.CpuProfile != "" {
-		f, err := os.Create(settings.CpuProfile)
+	if settings.CPUProfile != "" {
+		f, err := os.Create(settings.CPUProfile)
 		if err != nil {
 			log.Printf("Unable to set up profiling: %s", err)
 			os.Exit(3)

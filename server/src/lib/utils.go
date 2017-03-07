@@ -7,12 +7,12 @@ import (
 	"github.com/nfnt/resize"
 	"image/jpeg"
 	"io"
-	"jbrodriguez/mediagui/server/dto"
+	"jbrodriguez/mediagui/server/src/dto"
 	"net/http"
 	"os"
 )
 
-// Check if File / Directory Exists
+// Exists - Check if File / Directory Exists
 func Exists(path string) (bool, error) {
 	_, err := os.Stat(path)
 
@@ -27,6 +27,7 @@ func Exists(path string) (bool, error) {
 	return false, err
 }
 
+// RestGet -
 func RestGet(url string, reply interface{}) error {
 	resp, err := http.Get(url)
 	if err != nil {
@@ -40,6 +41,7 @@ func RestGet(url string, reply interface{}) error {
 	return err
 }
 
+// Download -
 func Download(url, dst string) (err error) {
 	out, err := os.Create(dst)
 	if err != nil {
@@ -64,6 +66,7 @@ func Download(url, dst string) (err error) {
 	return err
 }
 
+// Notify -
 func Notify(bus *pubsub.PubSub, topic, text string) {
 	mlog.Info(text)
 	payload := &dto.Packet{Topic: topic, Payload: text}
@@ -71,6 +74,7 @@ func Notify(bus *pubsub.PubSub, topic, text string) {
 	bus.Pub(&pubsub.Message{Payload: payload}, "socket:connections:broadcast")
 }
 
+// ResizeImage -
 func ResizeImage(src, dst string) (err error) {
 	// open "test.jpg"
 	file, err := os.Open(src)

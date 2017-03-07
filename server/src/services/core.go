@@ -8,9 +8,9 @@ import (
 	// "io/ioutil"
 	"fmt"
 	"jbrodriguez/mediagui/proto"
-	"jbrodriguez/mediagui/server/dto"
-	"jbrodriguez/mediagui/server/lib"
-	"jbrodriguez/mediagui/server/model"
+	"jbrodriguez/mediagui/server/src/dto"
+	"jbrodriguez/mediagui/server/src/lib"
+	"jbrodriguez/mediagui/server/src/model"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -21,6 +21,7 @@ import (
 	"golang.org/x/net/context"
 )
 
+// Core -
 type Core struct {
 	Service
 
@@ -35,12 +36,14 @@ type Core struct {
 	wg sync.WaitGroup
 }
 
+// NewCore -
 func NewCore(bus *pubsub.PubSub, settings *lib.Settings) *Core {
 	core := &Core{bus: bus, settings: settings}
 	core.init()
 	return core
 }
 
+// Start -
 func (c *Core) Start() {
 	mlog.Info("Starting service Core ...")
 
@@ -73,6 +76,7 @@ func (c *Core) Start() {
 	go c.react()
 }
 
+// Stop -
 func (c *Core) Stop() {
 	mlog.Info("Stopped service Core ...")
 }

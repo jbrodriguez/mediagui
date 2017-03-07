@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/jbrodriguez/mlog"
 	"github.com/jbrodriguez/pubsub"
-	_ "github.com/mattn/go-sqlite3"
-	"jbrodriguez/mediagui/server/lib"
-	"jbrodriguez/mediagui/server/model"
+	_ "github.com/mattn/go-sqlite3" // sqlite3 doesn't need to be named
+	"jbrodriguez/mediagui/server/src/lib"
+	"jbrodriguez/mediagui/server/src/model"
 	"path/filepath"
 	"sort"
 	"strconv"
@@ -15,8 +15,9 @@ import (
 	"time"
 )
 
-const DATETIME_LAYOUT = "2006-01-02T15:04:05-07:00"
+// const DATETIME_LAYOUT = "2006-01-02T15:04:05-07:00"
 
+// Dal -
 type Dal struct {
 	Service
 
@@ -40,12 +41,14 @@ type Dal struct {
 	// listMoviesToFix *sql.Stmt
 }
 
+// NewDal -
 func NewDal(bus *pubsub.PubSub, settings *lib.Settings) *Dal {
 	dal := &Dal{bus: bus, settings: settings}
 	dal.init()
 	return dal
 }
 
+// Start -
 func (d *Dal) Start() {
 	mlog.Info("Starting service Dal ...")
 
@@ -76,6 +79,7 @@ func (d *Dal) Start() {
 	go d.react()
 }
 
+// Stop -
 func (d *Dal) Stop() {
 	mlog.Info("Stopped service Dal ...")
 }
@@ -124,10 +128,10 @@ func (d *Dal) listMovies(options *lib.Options) (total uint64, movies []*model.Mo
 		mlog.Fatalf("listMovies:Unable to begin transaction: %s", err)
 	}
 
-	sql := fmt.Sprintf(`select rowid, title, original_title, file_title, year, runtime, tmdb_id, imdb_id, 
-				overview, tagline, resolution, filetype, location, cover, backdrop, genres, vote_average, 
-				vote_count, countries, added, modified, last_watched, all_watched, count_watched, score, 
-				director, writer, actors, awards, imdb_rating, imdb_votes 
+	sql := fmt.Sprintf(`select rowid, title, original_title, file_title, year, runtime, tmdb_id, imdb_id,
+				overview, tagline, resolution, filetype, location, cover, backdrop, genres, vote_average,
+				vote_count, countries, added, modified, last_watched, all_watched, count_watched, score,
+				director, writer, actors, awards, imdb_rating, imdb_votes
 				from movie order by %s %s, rowid desc limit ? offset ?`, options.SortBy, options.SortOrder)
 
 	stmt, err := tx.Prepare(sql)
@@ -187,7 +191,7 @@ func (d *Dal) searchMovies(options *lib.Options) (total uint64, movies []*model.
 
 func (d *Dal) searchByYear(options *lib.Options) (total uint64, movies []*model.Movie) {
 	var start, end, year uint64
-	var decade bool = false
+	decade := false
 
 	if strings.Contains(options.Query, "-") {
 		decade = true
@@ -228,13 +232,13 @@ func (d *Dal) searchByYear(options *lib.Options) (total uint64, movies []*model.
 			mlog.Fatalf("searchByYear:Unable to count rows: %s", err)
 		}
 
-		sql := fmt.Sprintf(`select rowid, title, original_title, file_title, year, runtime, tmdb_id, imdb_id, 
-					overview, tagline, resolution, filetype, location, cover, backdrop, genres, vote_average, 
-					vote_count, countries, added, modified, last_watched, all_watched, count_watched, score, 
-					director, writer, actors, awards, imdb_rating, imdb_votes 
+		sql := fmt.Sprintf(`select rowid, title, original_title, file_title, year, runtime, tmdb_id, imdb_id,
+					overview, tagline, resolution, filetype, location, cover, backdrop, genres, vote_average,
+					vote_count, countries, added, modified, last_watched, all_watched, count_watched, score,
+					director, writer, actors, awards, imdb_rating, imdb_votes
 					from movie where year between ? and ? order by %s %s, rowid desc limit ? offset ?`, options.SortBy, options.SortOrder)
 
-		stmt, err := tx.Prepare(sql)
+		stmt, err = tx.Prepare(sql)
 		if err != nil {
 			mlog.Fatalf("Unable to prepare transaction: %s", err)
 		}
@@ -250,10 +254,10 @@ func (d *Dal) searchByYear(options *lib.Options) (total uint64, movies []*model.
 			mlog.Fatalf("searchByYear:Unable to count rows: %s", err)
 		}
 
-		sql := fmt.Sprintf(`select rowid, title, original_title, file_title, year, runtime, tmdb_id, imdb_id, 
-					overview, tagline, resolution, filetype, location, cover, backdrop, genres, vote_average, 
-					vote_count, countries, added, modified, last_watched, all_watched, count_watched, score, 
-					director, writer, actors, awards, imdb_rating, imdb_votes 
+		sql := fmt.Sprintf(`select rowid, title, original_title, file_title, year, runtime, tmdb_id, imdb_id,
+					overview, tagline, resolution, filetype, location, cover, backdrop, genres, vote_average,
+					vote_count, countries, added, modified, last_watched, all_watched, count_watched, score,
+					director, writer, actors, awards, imdb_rating, imdb_votes
 					from movie where year = ? order by %s %s, rowid desc limit ? offset ?`, options.SortBy, options.SortOrder)
 
 		mlog.Info("sql.: %s", sql)
@@ -314,7 +318,7 @@ func (d *Dal) regularSearch(options *lib.Options) (total uint64, movies []*model
 	// if self.searchArgs != args {
 	// self.searchArgs = args
 
-	countQuery := fmt.Sprintf(`select count(*) from movie dt, %s vt 
+	countQuery := fmt.Sprintf(`select count(*) from movie dt, %s vt
 		where vt.%s match ? and dt.rowid = vt.docid;`,
 		"movie"+options.FilterBy, "movie"+options.FilterBy)
 
@@ -332,13 +336,13 @@ func (d *Dal) regularSearch(options *lib.Options) (total uint64, movies []*model
 		mlog.Fatalf("searchMovies:Unable to count rows: %s", err)
 	}
 
-	listQuery := fmt.Sprintf(`select dt.rowid, dt.title, dt.original_title, dt.year, dt.runtime, 
-			dt.tmdb_id, dt.imdb_id, dt.overview, dt.tagline, dt.resolution, 
-			dt.filetype, dt.location, dt.cover, dt.backdrop, dt.genres, dt.vote_average, 
-			dt.vote_count, dt.countries, dt.added, dt.modified, dt.last_watched, 
-			dt.all_watched, dt.count_watched, dt.score, dt.director, dt.writer, dt.actors, 
+	listQuery := fmt.Sprintf(`select dt.rowid, dt.title, dt.original_title, dt.year, dt.runtime,
+			dt.tmdb_id, dt.imdb_id, dt.overview, dt.tagline, dt.resolution,
+			dt.filetype, dt.location, dt.cover, dt.backdrop, dt.genres, dt.vote_average,
+			dt.vote_count, dt.countries, dt.added, dt.modified, dt.last_watched,
+			dt.all_watched, dt.count_watched, dt.score, dt.director, dt.writer, dt.actors,
 			dt.awards, dt.imdb_rating, dt.imdb_votes
-			from movie dt, %s vt 
+			from movie dt, %s vt
 			where vt.%s match ? and dt.rowid = vt.docid order by dt.%s %s limit ? offset ?`,
 		"movie"+options.FilterBy, "movie"+options.FilterBy, options.SortBy, options.SortOrder)
 
@@ -388,16 +392,16 @@ func (d *Dal) getDuplicates(msg *pubsub.Message) {
 	// }
 
 	// rows, err := self.db.Query("select rowid, title, original_title, file_title, year, runtime, tmdb_id, imdb_id, overview, tagline, resolution, filetype, location, cover, backdrop, genres, vote_average, vote_count, countries, added, modified, last_watched, all_watched, count_watched from movie where title in (select title from movie group by title having count(*) > 1);")
-	rows, err := d.db.Query(`select a.rowid, a.title, a.original_title, a.file_title, 
-				a.year, a.runtime, a.tmdb_id, a.imdb_id, a.overview, a.tagline, a.resolution, 
-				a.filetype, a.location, a.cover, a.backdrop, a.genres, a.vote_average, 
-				a.vote_count, a.countries, a.added, a.modified, a.last_watched, a.all_watched, 
-				a.count_watched, a.score, a.director, a.writer, a.actors, a.awards, a.imdb_rating, 
-				a.imdb_votes 
-				from 
-				movie a 
-				join 
-				(select title, year from movie group by title, year having count(*) > 1) b 
+	rows, err := d.db.Query(`select a.rowid, a.title, a.original_title, a.file_title,
+				a.year, a.runtime, a.tmdb_id, a.imdb_id, a.overview, a.tagline, a.resolution,
+				a.filetype, a.location, a.cover, a.backdrop, a.genres, a.vote_average,
+				a.vote_count, a.countries, a.added, a.modified, a.last_watched, a.all_watched,
+				a.count_watched, a.score, a.director, a.writer, a.actors, a.awards, a.imdb_rating,
+				a.imdb_votes
+				from
+				movie a
+				join
+				(select title, year from movie group by title, year having count(*) > 1) b
 				on a.title = b.title and a.year = b.year;`)
 	if err != nil {
 		mlog.Fatalf("Unable to prepare transaction: %s", err)
@@ -422,10 +426,10 @@ func (d *Dal) getDuplicates(msg *pubsub.Message) {
 func (d *Dal) getMovie(msg *pubsub.Message) {
 	id := msg.Payload.(string)
 
-	sql := `select rowid, title, original_title, file_title, year, runtime, tmdb_id, imdb_id, 
-				overview, tagline, resolution, filetype, location, cover, backdrop, genres, vote_average, 
-				vote_count, countries, added, modified, last_watched, all_watched, count_watched, score, 
-				director, writer, actors, awards, imdb_rating, imdb_votes 
+	sql := `select rowid, title, original_title, file_title, year, runtime, tmdb_id, imdb_id,
+				overview, tagline, resolution, filetype, location, cover, backdrop, genres, vote_average,
+				vote_count, countries, added, modified, last_watched, all_watched, count_watched, score,
+				director, writer, actors, awards, imdb_rating, imdb_votes
 				from movie where rowid = ?`
 
 	stmt, err := d.db.Prepare(sql)
@@ -495,13 +499,13 @@ func (d *Dal) storeMovie(msg *pubsub.Message) {
 		mlog.Fatalf("at begin: %s", err)
 	}
 
-	stmt, err := tx.Prepare(`insert into movie(title, original_title, file_title, 
-								year, runtime, tmdb_id, imdb_id, overview, tagline, 
-								resolution, filetype, location, cover, backdrop, genres, 
-								vote_average, vote_count, countries, added, modified, 
-								last_watched, all_watched, count_watched, score, director, 
-								writer, actors, awards, imdb_rating, imdb_votes) 
-								values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
+	stmt, err := tx.Prepare(`insert into movie(title, original_title, file_title,
+								year, runtime, tmdb_id, imdb_id, overview, tagline,
+								resolution, filetype, location, cover, backdrop, genres,
+								vote_average, vote_count, countries, added, modified,
+								last_watched, all_watched, count_watched, score, director,
+								writer, actors, awards, imdb_rating, imdb_votes)
+								values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
 									?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		tx.Rollback()
@@ -542,13 +546,13 @@ func (d *Dal) partialStoreMovie(msg *pubsub.Message) {
 		mlog.Fatalf("at begin: %s", err)
 	}
 
-	stmt, err := tx.Prepare(`insert into movie(title, original_title, file_title, 
-								year, runtime, tmdb_id, imdb_id, overview, tagline, 
-								resolution, filetype, location, cover, backdrop, genres, 
-								vote_average, vote_count, countries, added, modified, 
-								last_watched, all_watched, count_watched, score, director, 
-								writer, actors, awards, imdb_rating, imdb_votes) 
-								values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
+	stmt, err := tx.Prepare(`insert into movie(title, original_title, file_title,
+								year, runtime, tmdb_id, imdb_id, overview, tagline,
+								resolution, filetype, location, cover, backdrop, genres,
+								vote_average, vote_count, countries, added, modified,
+								last_watched, all_watched, count_watched, score, director,
+								writer, actors, awards, imdb_rating, imdb_votes)
+								values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
 									?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		tx.Rollback()
@@ -584,27 +588,27 @@ func (d *Dal) updateMovie(msg *pubsub.Message) {
 		mlog.Fatalf("at begin: %s", err)
 	}
 
-	stmt, err := tx.Prepare(`update movie set title = ?, 
-								original_title = ?, 
-								year = ?, 
-								runtime = ?, 
-								tmdb_id = ?, 
-								imdb_id = ?, 
-								overview = ?, 
-								tagline = ?, 
-								cover = ?, 
-								backdrop = ?, 
-								genres = ?, 
-								vote_average = ?, 
-								vote_count = ?, 
-								countries = ?, 
-								modified = ?, 
-								director = ?, 
-								writer = ?, 
-								actors = ?, 
-								awards = ?, 
-								imdb_rating = ?, 
-								imdb_votes = ? 
+	stmt, err := tx.Prepare(`update movie set title = ?,
+								original_title = ?,
+								year = ?,
+								runtime = ?,
+								tmdb_id = ?,
+								imdb_id = ?,
+								overview = ?,
+								tagline = ?,
+								cover = ?,
+								backdrop = ?,
+								genres = ?,
+								vote_average = ?,
+								vote_count = ?,
+								countries = ?,
+								modified = ?,
+								director = ?,
+								writer = ?,
+								actors = ?,
+								awards = ?,
+								imdb_rating = ?,
+								imdb_votes = ?
 								where rowid = ?`)
 	if err != nil {
 		tx.Rollback()
@@ -665,9 +669,9 @@ func (d *Dal) setScore(msg *pubsub.Message) {
 		mlog.Fatalf("at begin: %s", err)
 	}
 
-	stmt, err := tx.Prepare(`update movie set 
+	stmt, err := tx.Prepare(`update movie set
 								score = ?,
-								modified = ? 
+								modified = ?
 								where rowid = ?`)
 	if err != nil {
 		tx.Rollback()
@@ -709,9 +713,9 @@ func (d *Dal) setWatched(msg *pubsub.Message) {
 	}
 
 	// create an array with all watched times
-	var watched_times []string
+	var watchedTimes []string
 	if when != "" {
-		watched_times = strings.Split(when, "|")
+		watchedTimes = strings.Split(when, "|")
 	}
 
 	// convert incoming watched time to sane format
@@ -719,29 +723,29 @@ func (d *Dal) setWatched(msg *pubsub.Message) {
 	if err != nil {
 		mlog.Fatalf("at parseToday: %s", err)
 	}
-	last_watched := watched.UTC().Format(time.RFC3339)
+	lastWatched := watched.UTC().Format(time.RFC3339)
 
 	// add last watched to array, only if it doesn't already exist
-	if !strings.Contains(when, last_watched) {
-		watched_times = append(watched_times, last_watched)
+	if !strings.Contains(when, lastWatched) {
+		watchedTimes = append(watchedTimes, lastWatched)
 	}
 
 	// this sorts the dates in ascending order by default
-	sort.Strings(watched_times)
+	sort.Strings(watchedTimes)
 
 	// set final variables
-	last_watched = watched_times[len(watched_times)-1]
-	count_watched := uint64(len(watched_times))
-	all_watched := strings.Join(watched_times, "|")
+	lastWatched = watchedTimes[len(watchedTimes)-1]
+	countWatched := uint64(len(watchedTimes))
+	allWatched := strings.Join(watchedTimes, "|")
 
-	// var all_watched string
-	// count_watched := dto.Count_Watched
+	// var allWatched string
+	// countWatched := dto.Count_Watched
 	// if !strings.Contains(dto.All_Watched, dto.Last_Watched) {
-	// 	count_watched++
+	// 	countWatched++
 	// 	if dto.All_Watched == "" {
-	// 		all_watched = dto.Last_Watched
+	// 		allWatched = dto.Last_Watched
 	// 	} else {
-	// 		all_watched += "|" + dto.Last_Watched
+	// 		allWatched += "|" + dto.Last_Watched
 	// 	}
 	// }
 
@@ -750,11 +754,11 @@ func (d *Dal) setWatched(msg *pubsub.Message) {
 		mlog.Fatalf("at begin: %s", err)
 	}
 
-	stmt, err = tx.Prepare(`update movie set 
-								last_watched = ?, 
-								all_watched = ?, 
-								count_watched = ?, 
-								modified = ? 
+	stmt, err = tx.Prepare(`update movie set
+								last_watched = ?,
+								all_watched = ?,
+								count_watched = ?,
+								modified = ?
 								where rowid = ?`)
 	if err != nil {
 		tx.Rollback()
@@ -762,7 +766,7 @@ func (d *Dal) setWatched(msg *pubsub.Message) {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(last_watched, all_watched, count_watched, now, dto.Id)
+	_, err = stmt.Exec(lastWatched, allWatched, countWatched, now, dto.Id)
 	if err != nil {
 		tx.Rollback()
 		mlog.Fatalf("at exec: %s", err)
@@ -771,8 +775,8 @@ func (d *Dal) setWatched(msg *pubsub.Message) {
 	tx.Commit()
 	mlog.Info("FINISHED UPDATING MOVIE WATCHED DATE [%d] %s", dto.Id, dto.Title)
 
-	dto.All_Watched = all_watched
-	dto.Count_Watched = count_watched
+	dto.All_Watched = allWatched
+	dto.Count_Watched = countWatched
 	dto.Modified = now
 
 	msg.Reply <- dto
@@ -786,8 +790,8 @@ func (d *Dal) prepare(sql string) *sql.Stmt {
 	return stmt
 }
 
-func parseToday(client_today string) (today time.Time, err error) {
-	client, perr := time.Parse(time.RFC3339, client_today)
+func parseToday(clientToday string) (today time.Time, err error) {
+	client, perr := time.Parse(time.RFC3339, clientToday)
 	if perr != nil {
 		return today, perr
 	}

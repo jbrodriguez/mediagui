@@ -4,12 +4,15 @@ import (
 	"regexp"
 )
 
+// StringMap -
 type StringMap map[string]string
 
+// Rexp -
 type Rexp struct {
 	Exp *regexp.Regexp
 }
 
+// Match -
 func (r *Rexp) Match(s string) StringMap {
 	match := r.Exp.FindStringSubmatch(s)
 	if match == nil {
