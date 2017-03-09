@@ -1,16 +1,17 @@
 package services
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
-	"github.com/jbrodriguez/mlog"
-	"github.com/jbrodriguez/pubsub"
 	"jbrodriguez/mediagui/server/src/dto"
 	"jbrodriguez/mediagui/server/src/lib"
 	"jbrodriguez/mediagui/server/src/model"
 	"net/http"
 	"path/filepath"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gorilla/websocket"
+	"github.com/jbrodriguez/mlog"
+	"github.com/jbrodriguez/pubsub"
 )
 
 const (
@@ -54,6 +55,8 @@ func (s *Server) Start() {
 	s.router.GET("/ws", s.handleSocket)
 	s.router.Static("/app", filepath.Join(s.settings.WebDir, "app"))
 	s.router.Static("/img", filepath.Join(s.settings.WebDir, "img"))
+	s.router.Static("/js", filepath.Join(s.settings.WebDir, "js"))
+	s.router.Static("/css", filepath.Join(s.settings.WebDir, "css"))
 
 	api := s.router.Group(apiVersion)
 	{
