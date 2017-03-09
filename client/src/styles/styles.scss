@@ -1,15 +1,11 @@
-@import 'foundation';
+@import "./_foundation.scss";
+@import "./_settings.scss";
+@import "./_base.scss";
 
-@import 'settings';
-
-@import 'helpers';
-
-@import 'base';
-
-@import 'grid';
-
+/*
 @import 'components';
 
 @import 'custom';
 
 @import 'responsive';
+*/

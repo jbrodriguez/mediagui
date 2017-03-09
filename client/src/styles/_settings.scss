@@ -1,13 +1,13 @@
-// Fonts
+/* Fonts */
 @import url('http://fonts.googleapis.com/css?family=Lato');
 
-// Grid Variables
+/* Grid Variables */
 $screen-sm-min: 48em !default;
 $screen-md-min: 62em !default;
 $screen-lg-min: 75em !default;
-// $screen-xs-max: ($screen-sm-min - 1) !default;
-// $screen-sm-max: ($screen-md-min - 1) !default;
-// $screen-md-max: ($screen-lg-min - 1) !default;
+/* $screen-xs-max: ($screen-sm-min - 1) !default;
+ $screen-sm-max: ($screen-md-min - 1) !default;
+ $screen-md-max: ($screen-lg-min - 1) !default; */
 
 $grid-columns: 12 !default;
 $grid-gutter-width: 0.5em !default;
@@ -21,9 +21,10 @@ $container-lg: (73em + $grid-gutter-width) !default;
 $moviepage-sm-maxHeight: 10em;
 $moviepage-lg-maxHeight: 17em;
 
-// DatePicker Variables
+/* DatePicker Variables */
 $border-color: #aeaeae;
-$background-color: #f0f0f0;
+/*$background-color: #f0f0f0;*/
+$background-color: #216ba5;
 $selected-color: #216ba5;
 $muted-color: #ccc;
 $text-color: #000;
@@ -34,8 +35,8 @@ $day-margin: 2px;
 $triangle-size: 8px;
 $datepicker__margin: 5px;
 
-// Palette
-// $rose: #F26A9A;
+/* Palette */
+/* $rose: #F26A9A; */
 $white-gray: #f2f2f2;
 $light-gray: #F6F7F8;
 $lighter-gray: #e9edef;
@@ -62,25 +63,25 @@ $casual-green: #43ac6a;
 
 $pale-yellow: #FEF5C4;
 
-// Dimensions
-// $maxWidth: 1250px;
-// $pad: 1em;
+/* Dimensions
+/* $maxWidth: 1250px;
+/* $pad: 1em;
 
-// // Breakpoints
-// $breakpoint-1: 480px;
-// $breakpoint-2: 600px;
+/* /* Breakpoints
+/* $breakpoint-1: 480px;
+/* $breakpoint-2: 600px;
 
-// Colors
-//$bodyBackground: #FDF3E7;
+/* Colors
+/*$bodyBackground: #FDF3E7; */
 $bodyBackground: $light-gray;
 $primaryTextColor: #666;
 
-// $primaryAnchorColor: #333;
+/* $primaryAnchorColor: #333; */
 $primaryAnchorColor: $elegant-blue;
 $primaryHeaderColor: $elegant-blue;
 
 
-// ELEMENTS
+/* ELEMENTS */
 $padding-default: 0.5em;
 
 $label-default-bg: $cheerful-blue;
@@ -105,21 +106,21 @@ $form-element-padding-vertical: 0.3em;
 $form-element-padding-horizontal: 0.6em;
 
 
-// HEADER
-//$headerLegalColor: white;
-// $headerBackground: #DAD7CF;
-// $headerBackground: #C63D0F;
+/* HEADER
+/*$headerLegalColor: white;
+/* $headerBackground: #DAD7CF;
+/* $headerBackground: #C63D0F; */
 $headerLogoAnchorColor: white;
 $headerLogoBackground: $acre-red;
-//$headerLogoBackground: #609FA2;
-// $headerLogoBackground: #F26A9A;
+/*$headerLogoBackground: #609FA2;
+/* $headerLogoBackground: #F26A9A; */
 
 $headerMenuAnchorColor: $elegant-blue;
 $headerMenuBackground: $lighter-gray;
 
-// $headerMenuBackground: $cement-gray;
+/* $headerMenuBackground: $cement-gray; */
 
-// MAIN
+/* MAIN */
 $movie-cover-bg: $lighter-gray;
 $article-border-color: $white-gray;
 $director-color: $bright-orange;
@@ -133,13 +134,13 @@ $console-border: $light-gray;
 $console-color: white;
 $console-bg: $charcoal-blue;
 
-// FOOTER
+/* FOOTER */
 $footer-color: $headerLogoBackground;
 $footer-bg: $headerMenuBackground;
-//$footer-bg: transparent;
+/*$footer-bg: transparent; */
 $footer-anchor-color: $gray-blue;
 
-// $legalBackground: #7E8F7D;
-// $footer-legal-bg: $gray-blue;
+/* $legalBackground: #7E8F7D;
+/* $footer-legal-bg: $gray-blue; */
 
 
