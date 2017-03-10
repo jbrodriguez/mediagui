@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Cover from '@/components/Cover';
+import Covers from '@/components/Covers';
 
 Vue.use(Router);
 
@@ -8,8 +8,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Cover',
-      component: Cover,
+      name: 'Covers',
+      component: Covers,
     },
   ],
 });
