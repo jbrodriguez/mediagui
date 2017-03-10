@@ -7,16 +7,18 @@
       <router-view></router-view>
     </main>
     <footer class="pv2 ph0 mv2 mh0">
+      <footer-bar></footer-bar>
     </footer>
   </div>
 </template>
 
 <script>
 import HeaderBar from './components/HeaderBar';
+import FooterBar from './components/FooterBar';
 
 export default {
   name: 'app',
-  components: { HeaderBar },
+  components: { HeaderBar, FooterBar },
 };
 </script>
 
