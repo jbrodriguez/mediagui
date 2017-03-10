@@ -1,22 +1,12 @@
 /* Fonts */
 @import url('http://fonts.googleapis.com/css?family=Lato');
 
-/* Grid Variables */
-$screen-sm-min: 48em !default;
-$screen-md-min: 62em !default;
-$screen-lg-min: 75em !default;
-/* $screen-xs-max: ($screen-sm-min - 1) !default;
- $screen-sm-max: ($screen-md-min - 1) !default;
- $screen-md-max: ($screen-lg-min - 1) !default; */
-
-$grid-columns: 12 !default;
-$grid-gutter-width: 0.5em !default;
-
-$container-max-width: 78em;
-
-$container-sm: (46em + $grid-gutter-width) !default;
-$container-md: (64em + $grid-gutter-width) !default;
-$container-lg: (73em + $grid-gutter-width) !default;
+/* Flexbox Grid Sass overrides */
+$breakpoints:
+  sm 48em 49rem,
+  md 62em 65rem,
+  lg 75em 76rem;
+$flexboxgrid-max-width: 78rem;
 
 $moviepage-sm-maxHeight: 10em;
 $moviepage-lg-maxHeight: 17em;
