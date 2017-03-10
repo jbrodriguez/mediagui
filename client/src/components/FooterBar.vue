@@ -26,7 +26,7 @@ export default {
 
   computed: {
     version() {
-      return '1.0.0';
+      return this.$store.getters.version;
     },
   },
 };

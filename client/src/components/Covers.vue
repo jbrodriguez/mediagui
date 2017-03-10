@@ -8,7 +8,6 @@
 
 <script>
 import Cover from './Cover';
-import * as types from '../store/types';
 
 export default {
   name: 'covers',
@@ -27,10 +26,6 @@ export default {
     movies() {
       return this.$store.getters.getMovies;
     },
-  },
-
-  created() {
-    this.$store.dispatch(types.FETCH_COVER);
   },
 };
 </script>

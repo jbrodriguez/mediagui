@@ -15,10 +15,15 @@
 <script>
 import HeaderBar from './components/HeaderBar';
 import FooterBar from './components/FooterBar';
+import * as types from './store/types';
 
 export default {
   name: 'app',
   components: { HeaderBar, FooterBar },
+  created() {
+    this.$store.dispatch(types.FETCH_CONFIG);
+    this.$store.dispatch(types.FETCH_COVER);
+  },
 };
 </script>
 
