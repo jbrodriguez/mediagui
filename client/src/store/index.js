@@ -86,6 +86,10 @@ const store = new Vuex.Store({
       state.options.filterBy = filterBy; // eslint-disable-line
       storage.set('filterBy', filterBy);
     },
+
+    [types.SET_QUERY]: (state, query) => {
+      state.options.query = query; // eslint-disable-line
+    },
   },
 
   getters: {

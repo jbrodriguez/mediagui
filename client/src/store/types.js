@@ -4,3 +4,4 @@ export const FETCH_MOVIES = 'FETCH_MOVIES';
 export const RECEIVE_MOVIES = 'RECEIVE_MOVIES';
 export const RECEIVE_CONFIG = 'RECEIVE_CONFIG';
 export const SET_FILTER = 'SET_FILTER';
+export const SET_QUERY = 'SET_QUERY';

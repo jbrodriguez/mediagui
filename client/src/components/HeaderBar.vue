@@ -15,6 +15,8 @@
               <select v-model="selected" @change="changeFilter">
                 <option v-for="option in filters" :value="option.value">{{option.label}}</option>
               </select>
+
+              <input type="search" placeholder="Enter search string" :value="query" @input="updateQuery">
             </div>
           </div>
         </div>
@@ -24,6 +26,8 @@
 </template>
 
 <script>
+import debounce from 'lodash.debounce';
+
 import * as types from '../store/types';
 
 export default {
@@ -40,11 +44,19 @@ export default {
       this.selected = e.target.value;
       this.$store.commit(types.SET_FILTER, e.target.value);
     },
+
+    updateQuery: debounce(function handle(e) {
+      this.$store.commit(types.SET_QUERY, e.target.value);
+    }, 750),
   },
 
   computed: {
     filters() {
       return this.$store.state.options.filterByOptions;
+    },
+
+    query() {
+      return this.$store.state.options.query;
     },
   },
 };
