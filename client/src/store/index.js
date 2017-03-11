@@ -4,8 +4,20 @@ import Vuex from 'vuex';
 import pick from 'lodash.pick';
 
 import api from './api';
+import socket from './socket';
 import * as types from './types';
 import storage from '../lib/storage';
+
+const socketPlugin = (store) => {
+  socket.receive((message) => {
+    const packet = message.data;
+    store.commit(packet.topic, packet.payload);
+  });
+
+  store.subscribe((mutation) => {
+    socket.send({ topic: mutation.type, payload: mutation.payload });
+  });
+};
 
 Vue.use(Vuex);
 
@@ -113,6 +125,8 @@ const store = new Vuex.Store({
       return state.config ? state.config.version : '';
     },
   },
+
+  plugins: [socketPlugin],
 });
 
 export default store;
