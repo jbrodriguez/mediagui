@@ -9,7 +9,9 @@
       <li class="pv2 ph0 c-hmenu">
         <div class="row between-xs">
           <div class="col-xs-12 col-sm-8">
-            <span class="mh3">MOVIES</span>
+            <div class="c-hmenusection">
+              <router-link to="/movies" class="mv0 mh3">MOVIES</router-link>
+            </div>
           </div>
         </div>
       </li>
@@ -36,5 +38,19 @@ export default {
 
 .c-hmenu {
 	background-color: $headerMenuBackground;
+}
+
+.c-hmenusection {
+	// background-color: $headerMenuBackground;
+
+	a {
+		font-size: 0.9em;
+		// color: $headerMenuAnchorColor;
+
+		&.router-link-active {
+			padding-bottom: 3px;
+			border-bottom: 2px solid $headerMenuAnchorColor;
+		}
+	}
 }
 </style>
