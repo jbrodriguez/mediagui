@@ -81,6 +81,11 @@ const store = new Vuex.Store({
         Vue.set(state.movies, movie.id, movie);
       });
     },
+
+    [types.SET_FILTER]: (state, filterBy) => {
+      state.options.filterBy = filterBy; // eslint-disable-line
+      storage.set('filterBy', filterBy);
+    },
   },
 
   getters: {

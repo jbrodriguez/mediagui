@@ -11,6 +11,10 @@
           <div class="col-xs-12 col-sm-8">
             <div class="c-hmenusection">
               <router-link to="/movies" class="mv0 mh3">MOVIES</router-link>
+
+              <select v-model="selected" @change="changeFilter">
+                <option v-for="option in filters" :value="option.value">{{option.label}}</option>
+              </select>
             </div>
           </div>
         </div>
@@ -20,8 +24,29 @@
 </template>
 
 <script>
+import * as types from '../store/types';
+
 export default {
   name: 'header-bar',
+
+  data() {
+    return {
+      selected: this.$store.state.options.filterBy,
+    };
+  },
+
+  methods: {
+    changeFilter(e) {
+      this.selected = e.target.value;
+      this.$store.commit(types.SET_FILTER, e.target.value);
+    },
+  },
+
+  computed: {
+    filters() {
+      return this.$store.state.options.filterByOptions;
+    },
+  },
 };
 </script>
 

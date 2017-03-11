@@ -1,5 +1,5 @@
 <template>
-  <article class="row top-xs c-minfo" :style="{ backgroundImage: 'url(' + background + ')' }">
+  <article class="row top-xs c-minfo cover" :style="{ backgroundImage: 'url(' + background + ')' }">
     <div class="col-xs-12">
       <div class="row">
         <h2 class="col-xs-12 c-text">{{movie.title}} ({{movie.year}})</h2>
@@ -73,7 +73,7 @@ export default {
 	border-bottom: 1px solid $article-border-color;
 
   height: 765px;
-  background-size: cover;
+  // background-size: cover;
 
 	.director {
 		color: $director-color;
