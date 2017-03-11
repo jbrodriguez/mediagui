@@ -1,7 +1,39 @@
-@import 'header';
+input,
+select {
+	font-size: 0.9em;
+	padding: 0.25em;
+	border: 1px solid $form-element-border;
+	min-width: 95px;
 
-@import 'main';
+	&:focus {
+		outline: none;
+		border-color: $border-color;
+		box-shadow: inset 0 2px 2px #e9e9e9, 0 0 10px 0 rgba(73, 107, 125, .3);
+	}
 
-@import 'datepicker';
+}
 
-@import 'footer';
+select {
+	-webkit-appearance: none !important;
+	-webkit-border-radius: 0px;
+	background-color: #fafafa;
+	background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeD0iMTJweCIgeT0iMHB4IiB3aWR0aD0iMjRweCIgaGVpZ2h0PSIzcHgiIHZpZXdCb3g9IjAgMCA2IDMiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDYgMyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PHBvbHlnb24gcG9pbnRzPSI1Ljk5MiwwIDIuOTkyLDMgLTAuMDA4LDAgIi8+PC9zdmc+);
+	background-position: 100% center;
+	background-repeat: no-repeat;
+	// border: 1px solid #cccccc;
+	border: none;
+	// font-size: 0.875rem;
+	color: rgba(0, 0, 0, 0.75);
+	// line-height: normal;
+	// height: 2.3125rem;
+
+	&:hover {
+		background-color: #f3f3f3;
+		border-color: #999999;
+	}
+
+	&:disabled {
+		background-color: #dddddd;
+		cursor: default;
+	}
+}
