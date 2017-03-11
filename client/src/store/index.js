@@ -90,6 +90,16 @@ const store = new Vuex.Store({
     [types.SET_QUERY]: (state, query) => {
       state.options.query = query; // eslint-disable-line
     },
+
+    [types.SET_SORT]: (state, sortBy) => {
+      state.options.sortBy = sortBy; // eslint-disable-line
+      storage.set('sortBy', sortBy);
+    },
+
+    [types.FLIP_ORDER]: (state) => {
+      state.options.sortOrder = state.options.sortOrder === 'asc' ? 'desc' : 'asc'; // eslint-disable-line
+      storage.set('sortOrder', state.options.sortOrder);
+    },
   },
 
   getters: {

@@ -17,6 +17,12 @@
               </select>
 
               <input type="search" placeholder="Enter search string" :value="query" @input="updateQuery">
+
+              <select v-model="sortBy" @change="changeSort">
+                <option v-for="sort in sorts" :value="sort.value">{{sort.label}}</option>
+              </select>
+
+              <i class="fa mv0 mh2" :class="chevron" @click="changeOrder"></i>
             </div>
           </div>
         </div>
@@ -36,6 +42,7 @@ export default {
   data() {
     return {
       selected: this.$store.state.options.filterBy,
+      sortBy: this.$store.state.options.sortBy,
     };
   },
 
@@ -43,11 +50,27 @@ export default {
     changeFilter(e) {
       this.selected = e.target.value;
       this.$store.commit(types.SET_FILTER, e.target.value);
+      this.$store.dispatch(types.FETCH_MOVIES);
     },
 
-    updateQuery: debounce(function handle(e) {
-      this.$store.commit(types.SET_QUERY, e.target.value);
-    }, 750),
+    changeSort(e) {
+      this.sortBy = e.target.value;
+      this.$store.commit(types.SET_SORT, e.target.value);
+      this.$store.dispatch(types.FETCH_MOVIES);
+    },
+
+    updateQuery: debounce(
+      function handle(e) {
+        this.$store.commit(types.SET_QUERY, e.target.value);
+        this.$store.dispatch(types.FETCH_MOVIES);
+      },
+      750,
+    ),
+
+    changeOrder() {
+      this.$store.commit(types.FLIP_ORDER);
+      this.$store.dispatch(types.FETCH_MOVIES);
+    },
   },
 
   computed: {
@@ -55,8 +78,16 @@ export default {
       return this.$store.state.options.filterByOptions;
     },
 
+    sorts() {
+      return this.$store.state.options.sortByOptions;
+    },
+
     query() {
       return this.$store.state.options.query;
+    },
+
+    chevron() {
+      return this.$store.state.options.sortOrder === 'asc' ? 'fa-chevron-circle-up' : 'fa-chevron-circle-down';
     },
   },
 };

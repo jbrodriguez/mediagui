@@ -5,3 +5,5 @@ export const RECEIVE_MOVIES = 'RECEIVE_MOVIES';
 export const RECEIVE_CONFIG = 'RECEIVE_CONFIG';
 export const SET_FILTER = 'SET_FILTER';
 export const SET_QUERY = 'SET_QUERY';
+export const SET_SORT = 'SET_SORT';
+export const FLIP_ORDER = 'FLIP_ORDER';

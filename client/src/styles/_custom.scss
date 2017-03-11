@@ -1,3 +1,17 @@
+i {
+	color: $headerMenuAnchorColor;
+
+	&:hover {
+		color: $headerLogoBackground;
+		cursor: pointer;
+	}
+
+	&:disabled {
+		background-color: #dddddd;
+		cursor: default;
+	}
+}
+
 input,
 select {
 	font-size: 0.9em;
