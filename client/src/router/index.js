@@ -5,6 +5,7 @@ import Covers from '@/components/Covers';
 import Movies from '@/components/Movies';
 import Import from '@/components/Import';
 import Settings from '@/components/Settings';
+import Duplicates from '@/components/Duplicates';
 import Prune from '@/components/Prune';
 
 Vue.use(Router);
@@ -30,6 +31,11 @@ export default new Router({
       path: '/settings',
       name: 'Settings',
       component: Settings,
+    },
+    {
+      path: '/duplicates',
+      name: 'Duplicates',
+      component: Duplicates,
     },
     {
       path: '/prune',

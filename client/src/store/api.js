@@ -44,6 +44,12 @@ class Api {
   pruneMovies() {
     return fetch(`${this.host}/prune`, { method: 'POST' });
   }
+
+  getDuplicates(cb) {
+    return fetch(`${this.host}/movies/duplicates`)
+          .then(resp => resp.json())
+          .then(data => cb(data));
+  }
 }
 
 const api = new Api();

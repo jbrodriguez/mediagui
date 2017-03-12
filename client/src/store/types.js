@@ -17,3 +17,4 @@ export const PRUNE_BEGIN = 'prune:begin';
 export const PRUNE_SELECTED = 'prune:selected';
 export const PRUNE_DELETE = 'prune:delete';
 export const PRUNE_END = 'prune:end';
+export const FETCH_DUPLICATES = 'FETCH_DUPLICATES';

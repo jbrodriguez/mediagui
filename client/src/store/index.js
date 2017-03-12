@@ -89,6 +89,10 @@ const store = new Vuex.Store({
     [types.ADD_FOLDER]: folder => api.addFolder(folder),
 
     [types.RUN_PRUNE]: () => api.pruneMovies(),
+
+    [types.FETCH_DUPLICATES]: ({ commit }) => {
+      api.getDuplicates(movies => commit(types.RECEIVE_MOVIES, movies));
+    },
   },
 
   mutations: {
@@ -98,7 +102,7 @@ const store = new Vuex.Store({
 
     [types.RECEIVE_MOVIES]: (state, movies) => {
       // console.log(`state-${JSON.stringify(state)}`); // eslint-disable-line
-      // console.log(`context-${movies.total}`);  // eslint-disable-line
+      console.log(`total(${movies.total})-items(${movies.items.length})`);  // eslint-disable-line
       state.itemsOrder = []; // eslint-disable-line
       movies.items.forEach((movie) => {
         state.itemsOrder.push(movie.id);
