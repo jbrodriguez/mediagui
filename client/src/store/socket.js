@@ -1,9 +1,9 @@
 class Socket {
   constructor() {
-    this.host = `ws://${document.location.host}/skt`;
-    this.skt = new WebSocket(this.host);
-    skt.onopen = () => console.log('Connection opened'); // eslint-disable-line
-    skt.onclose = () => console.log('Connection is closed...'); // eslint-disable-line
+    const host = `ws://${document.location.host}/ws`;
+    this.skt = new WebSocket(host);
+    this.skt.onopen = () => console.log('Connection opened'); // eslint-disable-line
+    this.skt.onclose = () => console.log('Connection is closed...'); // eslint-disable-line
   }
 
   receive(fn) {
