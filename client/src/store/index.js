@@ -87,6 +87,8 @@ const store = new Vuex.Store({
     [types.RUN_IMPORT]: () => api.importMovies(),
 
     [types.ADD_FOLDER]: folder => api.addFolder(folder),
+
+    [types.RUN_PRUNE]: () => api.pruneMovies(),
   },
 
   mutations: {
@@ -132,6 +134,22 @@ const store = new Vuex.Store({
     },
 
     [types.IMPORT_END]: (state, line) => {
+      state.lines.push(line);
+    },
+
+    [types.PRUNE_BEGIN]: (state, line) => {
+      state.lines = [line]; // eslint-disable-line
+    },
+
+    [types.PRUNE_SELECTED]: (state, line) => {
+      state.lines.push(line);
+    },
+
+    [types.PRUNE_DELETE]: (state, line) => {
+      state.lines.push(line);
+    },
+
+    [types.PRUNE_END]: (state, line) => {
       state.lines.push(line);
     },
   },

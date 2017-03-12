@@ -40,6 +40,10 @@ class Api {
     .then(resp => resp.json())
     .then(data => cb(data));
   }
+
+  pruneMovies() {
+    return fetch(`${this.host}/prune`, { method: 'POST' });
+  }
 }
 
 const api = new Api();
