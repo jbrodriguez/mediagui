@@ -1,3 +1,33 @@
+/* mixin */
+@mixin button-variant($color: $button-default-color, $background: $button-default-bg) {
+	color: $color;
+	background-color: $background;
+	border-color: darken($background, 5%);
+
+	&:focus,
+	&.focus {
+		background-color: darken($background, 5%);
+		border-color: darken($background, 12%);
+	}
+
+	&:hover {
+		background-color: darken($background, 5%);
+		border-color: darken($background, 7%);
+	}
+}
+
+@mixin bg-variant($color) {
+	background-color: $color;
+	border: 1px solid darken($color, 10%);
+	padding: 0.5em;
+
+	&:hover,
+	&:focus {
+		background-color: darken($color, 10%);
+	}
+}
+
+/* GENERAL */
 i {
 	color: $headerMenuAnchorColor;
 
@@ -50,4 +80,33 @@ select {
 		background-color: #dddddd;
 		cursor: default;
 	}
+}
+
+/* BUTTON */
+.button {
+	// padding: 0.1em 1em 0.3em 1em;
+	padding: 0.25em 2em;
+	background: $button-default-bg;
+	color: white;
+}
+
+.btn {
+	cursor: pointer;
+	background-image: none; // Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
+	border: 1px solid transparent;
+	white-space: nowrap;
+	padding: $button-padding-vertical $button-padding-horizontal;
+	font-size: 0.75em;
+
+	&.disabled,
+	&[disabled],
+	fieldset[disabled] & {
+		cursor: not-allowed;
+		opacity: .65;
+		box-shadow: none;
+	}
+}
+
+.btn-default {
+	@include button-variant($button-default-color, $button-default-bg);
 }

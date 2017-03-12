@@ -27,6 +27,10 @@ class Api {
           .then(resp => resp.json())
           .then(data => cb(data));
   }
+
+  importMovies() {
+    return fetch(`${this.host}/import`, { method: 'POST' });
+  }
 }
 
 const api = new Api();

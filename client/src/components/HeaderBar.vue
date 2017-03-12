@@ -23,6 +23,10 @@
               </select>
 
               <i class="fa mv0 mh2" :class="chevron" @click="changeOrder"></i>
+
+							<span class="mv0 mh2">|</span>
+
+              <router-link to="/import" class="mv0 mh3">IMPORT</router-link>
             </div>
           </div>
         </div>

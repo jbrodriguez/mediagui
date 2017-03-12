@@ -10,12 +10,20 @@ import storage from '../lib/storage';
 
 const socketPlugin = (store) => {
   socket.receive((message) => {
-    const packet = message.data;
-    store.commit(packet.topic, packet.payload);
+    const packet = JSON.parse(message.data);
+    console.log(`packet-${JSON.stringify(packet)}`); // eslint-disable-line
+    if (typeof packet.topic === 'string' && packet.topic.length > 0) {
+      console.log(`second-packet-${JSON.stringify(packet)}`); // eslint-disable-line
+      store.commit(packet.topic, packet.payload);
+    }
   });
 
   store.subscribe((mutation) => {
-    socket.send({ topic: mutation.type, payload: mutation.payload });
+    console.log(`readystate-${socket.readyState}-mutation(${mutation.type})`); // eslint-disable-line
+
+    if (mutation.type.startsWith('skt')) {
+      socket.send({ topic: mutation.type, payload: mutation.payload });
+    }
   });
 };
 
@@ -53,6 +61,7 @@ const store = new Vuex.Store({
       offset: 0,
     },
     itemsOrder: [],
+    lines: [],
   },
 
   actions: {
@@ -77,6 +86,8 @@ const store = new Vuex.Store({
         commit(types.RECEIVE_MOVIES, movies);
       });
     },
+
+    [types.RUN_IMPORT]: () => api.importMovies(),
   },
 
   mutations: {
@@ -111,6 +122,18 @@ const store = new Vuex.Store({
     [types.FLIP_ORDER]: (state) => {
       state.options.sortOrder = state.options.sortOrder === 'asc' ? 'desc' : 'asc'; // eslint-disable-line
       storage.set('sortOrder', state.options.sortOrder);
+    },
+
+    [types.IMPORT_BEGIN]: (state, line) => {
+      state.lines = [line]; // eslint-disable-line
+    },
+
+    [types.IMPORT_PROGRESS]: (state, line) => {
+      state.lines.push(line);
+    },
+
+    [types.IMPORT_END]: (state, line) => {
+      state.lines.push(line);
     },
   },
 

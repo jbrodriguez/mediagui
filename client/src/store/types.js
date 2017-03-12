@@ -7,3 +7,7 @@ export const SET_FILTER = 'SET_FILTER';
 export const SET_QUERY = 'SET_QUERY';
 export const SET_SORT = 'SET_SORT';
 export const FLIP_ORDER = 'FLIP_ORDER';
+export const RUN_IMPORT = 'RUN_IMPORT';
+export const IMPORT_BEGIN = 'import:begin';
+export const IMPORT_PROGRESS = 'import:progress';
+export const IMPORT_END = 'import:end';
