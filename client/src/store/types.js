@@ -11,3 +11,4 @@ export const RUN_IMPORT = 'RUN_IMPORT';
 export const IMPORT_BEGIN = 'import:begin';
 export const IMPORT_PROGRESS = 'import:progress';
 export const IMPORT_END = 'import:end';
+export const ADD_FOLDER = 'ADD_FOLDER';

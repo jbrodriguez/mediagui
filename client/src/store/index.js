@@ -8,19 +8,16 @@ import socket from './socket';
 import * as types from './types';
 import storage from '../lib/storage';
 
+// websocket handler
 const socketPlugin = (store) => {
   socket.receive((message) => {
     const packet = JSON.parse(message.data);
-    console.log(`packet-${JSON.stringify(packet)}`); // eslint-disable-line
     if (typeof packet.topic === 'string' && packet.topic.length > 0) {
-      console.log(`second-packet-${JSON.stringify(packet)}`); // eslint-disable-line
       store.commit(packet.topic, packet.payload);
     }
   });
 
   store.subscribe((mutation) => {
-    console.log(`readystate-${socket.readyState}-mutation(${mutation.type})`); // eslint-disable-line
-
     if (mutation.type.startsWith('skt')) {
       socket.send({ topic: mutation.type, payload: mutation.payload });
     }
@@ -88,6 +85,8 @@ const store = new Vuex.Store({
     },
 
     [types.RUN_IMPORT]: () => api.importMovies(),
+
+    [types.ADD_FOLDER]: folder => api.addFolder(folder),
   },
 
   mutations: {

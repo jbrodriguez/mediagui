@@ -110,3 +110,73 @@ select {
 .btn-default {
 	@include button-variant($button-default-color, $button-default-bg);
 }
+
+// FORMS
+fieldset {
+    margin: 0;
+    padding: 0.35em 0 0.75em;
+    border: 0;
+}
+
+legend {
+    width: 100%;
+    padding: $padding-default 0;
+    margin-bottom: $padding-default;
+    border-bottom: 1px solid $form-element-border;
+}
+
+.addon {
+	display: flex;
+}
+
+.addon-field {
+	flex: 1;
+
+	&:not(:first-child) {
+		border-left: 0;
+	}
+
+	&:not(:last-child) {
+		border-right: 0;
+	}
+}
+
+.addon-item {
+	background-color: $form-addon-bg;
+}
+
+.addon-field,
+.addon-item {
+  border: 1px solid darken($form-addon-bg, 10%);
+  padding: $form-element-padding-vertical $form-element-padding-horizontal;
+}
+
+// TABLES
+// TABLES
+table {
+	background: white;
+	border: 1px solid $form-element-border;
+	table-layout: fixed;
+	width: 100%;
+}
+
+thead,
+tr,
+th,
+td {
+	padding: $padding-default;
+	font-size: 0.9em;
+}
+
+tr,
+th {
+	text-align: left;
+}
+
+tr:nth-of-type(even) {
+	background-color: $white-gray;
+}
+
+th {
+	background-color: $cement-gray;
+}

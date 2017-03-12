@@ -31,6 +31,15 @@ class Api {
   importMovies() {
     return fetch(`${this.host}/import`, { method: 'POST' });
   }
+
+  addFolder(folder, cb) {
+    return fetch(`${this.host}/config/folder`, {
+      method: 'PUT',
+      body: JSON.stringify({ topic: '', payload: folder }),
+    })
+    .then(resp => resp.json())
+    .then(data => cb(data));
+  }
 }
 
 const api = new Api();
