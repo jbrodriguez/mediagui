@@ -10,7 +10,7 @@
         <div class="row between-xs">
           <div class="col-xs-12 col-sm-8">
             <div class="c-hmenusection">
-              <router-link to="/movies" class="mv0 mh3">MOVIES</router-link>
+              <router-link to="/movies" class="mv0 mh2">MOVIES</router-link>
 
               <select v-model="selected" @change="changeFilter">
                 <option v-for="option in filters" :value="option.value">{{option.label}}</option>
@@ -27,6 +27,14 @@
 							<span class="mv0 mh2">|</span>
 
               <router-link to="/import" class="mv0">IMPORT</router-link>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-4 end-xs">
+            <div class="c-hmenusection">
+              <router-link to="/settings">SETTINGS</router-link>
+							<span class="mv0 mh2">|</span>
+              <router-link to="/duplicates">DUPLICATES</router-link>
+              <router-link to="/prune" class="mv0 mh2">PRUNE</router-link>
             </div>
           </div>
         </div>
