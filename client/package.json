@@ -1,7 +1,7 @@
 {
   "name": "client",
   "version": "1.0.0",
-  "description": "A Vue.js project",
+  "description": "mediaGUI",
   "author": "Juan B. Rodriguez <jbrodriguez@gmail.com>",
   "private": true,
   "scripts": {
@@ -13,6 +13,7 @@
     "lint": "eslint --ext .js,.vue src test/unit/specs test/e2e/specs"
   },
   "dependencies": {
+    "date-fns": "^1.28.0",
     "flexboxgrid-sass": "^8.0.5",
     "font-awesome": "^4.7.0",
     "lodash.debounce": "^4.0.8",
@@ -20,6 +21,7 @@
     "tachyons": "^4.6.2",
     "tachyons-sass": "^4.7.1",
     "vue": "^2.2.1",
+    "vue-flatpickr": "^2.3.0",
     "vue-router": "^2.2.0",
     "vuex": "^2.2.1",
     "vuex-router-sync": "^4.1.2"
