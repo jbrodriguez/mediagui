@@ -5,14 +5,6 @@
           <h2 class="col-xs-12 col-sm-10 c-title pt2">{{movie.title}} ({{movie.year}})</h2>
           <h2 class="col-xs-12 col-sm-2 c-title end-xs pt2">{{runtime}} | {{movie.imdb_rating}}</h2>
         </div>
-        <div class="row between-xs">
-          <span class="col-xs-12 col-sm-6 c-text">{{movie.director}}</span>
-          <span class="col-xs-12 col-sm-6 end-sm c-text">{{movie.production_countries}}</span>
-        </div>
-        <div class="row between-xs">
-          <span class="col-xs-12 col-sm-6 c-text">{{movie.actors}}</span>
-          <span class="col-xs-12 col-sm-6 end-sm c-text">{{movie.genres}}</span>
-        </div>
     </div>
 
     <div class="col-xs-12">
@@ -24,52 +16,62 @@
         </div>
     </div>
 
-    <div class="col-xs-12 mb2">
-      <div class="row between-xs">
-        <div class="col-xs-12 col-sm-9">
-          <span class="label">{{movie.resolution}}</span>
-          <span class="label secondary spacer">{{movie.location}}</span>
-          <span class="label">{{movie.id}}</span>
+    <div class="col-xs-12 ph2 pv2">
+      <div class="c-shaded ph2 pv2">
+        <div class="row">
+          <span class="col-xs-12 col-sm-6 c-text director">{{movie.director}}</span>
+          <span class="col-xs-12 col-sm-6 end-sm c-text">{{movie.production_countries}}</span>
         </div>
-        <div class="col-xs-12 col-sm-3 end-sm">
-          <span v-if="watched" class="label success mv0 mh2"><i class="fa fa-binoculars mh1"></i>&nbsp;{{lastWatched}}</span>
-          <span class="label"><i class="fa fa-plus mh1"></i>&nbsp;{{added}}</span>
+        <div class="row between-xs mb2">
+          <span class="col-xs-12 col-sm-6 c-text">{{movie.actors}}</span>
+          <span class="col-xs-12 col-sm-6 end-sm c-text">{{movie.genres}}</span>
         </div>
-      </div>
-      <div class="row between-xs ph2 mt2">
-        <div class="col-xs-12 c-text c-shaded">
-          <span>{{movie.overview}}</span>
-        </div>
-        </span>
-      </div>
-					<div class="row between-xs middle-xs mt2">
-						<div class="col-xs-12 col-sm-2 addon">
-							<input class="addon-field" type="number" min="0" step="1" v-model.number="tmdb" />
-							<button class="btn btn-default mr2" @click="fixMovie">Fix</button>
-							<div v-if="loading" class="loading middle-xs">
-                <div class="loading-bar"></div>
-                <div class="loading-bar"></div>
-                <div class="loading-bar"></div>
-                <div class="loading-bar"></div>
-							</div>
-						</div>
-						<div class="col-xs-12 col-sm-4 addon end-xs">
-							<div v-if="watched">
-                <span class="c-text">History:</span>
-                <span class="label success mv0 mh2 ">{{movie.count_watched}}</span>
-                <select :value="shows[shows.length-1]" class="c-select">
-                  <option v-for="show in shows" :value="show">{{show}}</option>
-                </select>
-							</div>
-						</div>
-						<div class="col-xs-12 col-sm-6 addon end-sm">
-							<span v-if="hasRating" class="label success mv0 mr2">{{movie.score}}</span>
-							<Rating :max="10" :value="movie.score" @rating-selected="setScore" class="mr2" />
-              <!--<datepicker v-model="seen" monday-first @selected="setWatched"></datepicker>>-->
-              <VueFlatpickr v-model="seen" :options="fpOptions" />
-						</div>
-					</div>
 
+        <div class="row between-xs">
+          <div class="col-xs-12 col-sm-9">
+            <span class="label">{{movie.resolution}}</span>
+            <span class="label secondary spacer">{{movie.location}}</span>
+            <span class="label">{{movie.id}}</span>
+          </div>
+          <div class="col-xs-12 col-sm-3 end-sm">
+            <span v-if="watched" class="label success mv0 mh2"><i class="fa fa-binoculars mh1"></i>&nbsp;{{lastWatched}}</span>
+            <span class="label"><i class="fa fa-plus mh1"></i>&nbsp;{{added}}</span>
+          </div>
+        </div>
+        <div class="row mt2">
+          <div class="col-xs-12 c-text">
+            <span>{{overview}}</span>
+          </div>
+          </span>
+        </div>
+        <div class="row between-xs mt2">
+          <div class="col-xs-12 col-sm-2 addon">
+            <input class="addon-field" type="number" min="0" step="1" v-model.number="tmdb" />
+            <button class="btn btn-default mr2" @click="fixMovie">Fix</button>
+            <div v-if="loading" class="loading middle-xs">
+              <div class="loading-bar"></div>
+              <div class="loading-bar"></div>
+              <div class="loading-bar"></div>
+              <div class="loading-bar"></div>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-4 addon end-xs">
+            <div v-if="watched">
+              <span class="c-text">History:</span>
+              <span class="label success mv0 mh2 ">{{movie.count_watched}}</span>
+              <select :value="shows[shows.length-1]" class="c-select">
+                <option v-for="show in shows" :value="show">{{show}}</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-xs-12 col-sm-6 addon end-sm">
+            <span v-if="hasRating" class="label success mv0 mr2">{{movie.score}}</span>
+            <Rating :max="10" :value="movie.score" @rating-selected="setScore" class="mr2" />
+            <!--<datepicker v-model="seen" monday-first @selected="setWatched"></datepicker>>-->
+            <VueFlatpickr v-model="seen" :options="fpOptions" />
+          </div>
+        </div>
+      </div>
     </div>
   </article>
 </template>
@@ -198,6 +200,10 @@ export default {
       return `/img/b${this.movie.backdrop}`;
     },
 
+    overview() {
+      return this.movie.overview.length > 675 ? `${this.movie.overview.slice(0, 675)} ...` : this.movie.overview;
+    },
+
     shows() {
       return this.movie.all_watched.split('|').map(show => format(show, 'MMM DD, YYYY'));
     },
@@ -216,10 +222,10 @@ export default {
   height: 765px;
   background-size: cover;
 
-	// .director {
-	// 	color: $director-color;
-	// 	font-weight: bold;
-	// }
+	.director {
+		color: $director-color;
+		font-weight: bold;
+	}
 }
 
 .c-align {
@@ -240,8 +246,8 @@ export default {
 .c-shaded {
 	// font-size: 1.25em;
 	color: white;
-	background-color: rgba(0, 0, 0, 0.4);
-	padding: 0.25em 1em;
+	background-color: rgba(0, 0, 0, 0.5);
+	// padding: 0.25em 1em;
 }
 
 .c-cover {
