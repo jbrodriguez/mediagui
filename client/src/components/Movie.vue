@@ -141,6 +141,10 @@ export default {
     };
   },
 
+  updated() {
+    this.loading = false;
+  },
+
   props: {
     movie: {
       type: Object,
@@ -164,9 +168,10 @@ export default {
 
     fixMovie() {
       // console.log(`typeof(${typeof this.tmdb})`); // eslint-disable-line
-      if (this.tmdb !== this.movie.tmdb_id) {
-        this.$store.dispatch(types.FIX_MOVIE, { id: this.movie.id, tmdb: this.tmdb });
-      }
+      // if (this.tmdb !== this.movie.tmdb_id) {
+      this.loading = true;
+      this.$store.dispatch(types.FIX_MOVIE, { id: this.movie.id, tmdb: this.tmdb });
+      // }
     },
   },
 
