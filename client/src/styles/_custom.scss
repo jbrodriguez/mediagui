@@ -263,11 +263,7 @@ th {
 // PAGINATION
 ul.pagination {
 	font-size: 0.9em;
-	padding: 0.5em 0 1em 0;
-	margin-bottom: 0.5em;
-	border-bottom: 1px solid $pagination-border-color;
-
-	display: inline-block;
+	display: flex;
 
 	li {
 		display: inline-block;

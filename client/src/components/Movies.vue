@@ -1,29 +1,35 @@
 <template>
-	<section>
-    <div class="row">
-      <pager
-        ref="paginator1"
-        :pageCount="pageCount"
-        :pageRange="5"
-        :marginPages="3"
-        :forcePage="forcePage"
-        :containerClass="'pagination col-xs-12'"
-        :clickHandler="onPaginationClick"
-      />
+	<section v-if="total > 0">
+    <div class="row between-xs middle-xs mb2">
+      <div class="col-xs-12 col-sm-10 middle-xs">
+        <pager
+          :pageCount="pageCount"
+          :pageRange="5"
+          :marginPages="3"
+          :forcePage="forcePage"
+          :containerClass="'pagination'"
+          :clickHandler="onPaginationClick"
+        />
+      </div>
+      <div class="col-xs-12 col-sm-2 end-xs">
+        <span>TOTAL </span>
+        <span class="c-total">{{ total }}</span>
+      </div>
     </div>
 
     <movie v-for="movie in movies" :movie="movie" :key="movie.id"></movie>
 
     <div class="row">
-      <pager
-        ref="paginator2"
-        :pageCount="pageCount"
-        :pageRange="5"
-        :marginPages="3"
-        :forcePage="forcePage"
-        :containerClass="'pagination col-xs-12'"
-        :clickHandler="onPaginationClick"
-      />
+      <div class="col-xs-12 middle-xs">
+        <pager
+          :pageCount="pageCount"
+          :pageRange="5"
+          :marginPages="3"
+          :forcePage="forcePage"
+          :containerClass="'pagination'"
+          :clickHandler="onPaginationClick"
+        />
+      </div>
     </div>
 	</section>
 </template>
@@ -76,6 +82,14 @@ export default {
     forcePage() {
       return this.$store.state.options.offset / this.$store.state.options.limit;
     },
+
+    total() {
+      return this.$store.state.total;
+    },
+
+    visible() {
+      return this.$store.state.total > 0;
+    },
   },
 
   created() {
@@ -104,5 +118,11 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
+@import "../styles/_settings.scss";
+
+.c-total {
+  color: $primaryHeaderColor;
+}
+
 </style>
