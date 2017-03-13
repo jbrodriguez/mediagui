@@ -93,6 +93,25 @@ const store = new Vuex.Store({
     [types.FETCH_DUPLICATES]: ({ commit }) => {
       api.getDuplicates(movies => commit(types.RECEIVE_MOVIES, movies));
     },
+
+    [types.SET_SCORE]: ({ commit, state }, { id, score }) => {
+      console.log(`score(${score})`); // eslint-disable-line
+      const movie = Object.assign({}, state.movies[id], { score });
+      console.log(`id(${movie.id})-score(${movie.score})`); // eslint-disable-line
+      api.setMovieScore(movie, changed => commit(types.SET_MOVIE, changed));
+    },
+
+    [types.SET_WATCHED]: ({ commit, state }, { id, watched }) => {
+      const movie = Object.assign({}, state.movies[id], { last_watched: watched });
+      console.log(`id(${movie.id})-last_watched(${movie.last_watched})`); // eslint-disable-line
+      api.setMovieWatched(movie, changed => commit(types.SET_MOVIE, changed));
+    },
+
+    [types.FIX_MOVIE]: ({ commit, state }, { id, tmdb }) => {
+      const movie = Object.assign({}, state.movies[id], { tmdb_id: tmdb });
+      console.log(`id(${movie.id})-last_watched(${movie.tmdb_id})`); // eslint-disable-line
+      api.fixMovie(movie, changed => commit(types.SET_MOVIE, changed));
+    },
   },
 
   mutations: {
@@ -127,6 +146,10 @@ const store = new Vuex.Store({
     [types.FLIP_ORDER]: (state) => {
       state.options.sortOrder = state.options.sortOrder === 'asc' ? 'desc' : 'asc'; // eslint-disable-line
       storage.set('sortOrder', state.options.sortOrder);
+    },
+
+    [types.SET_MOVIE]: (state, movie) => {
+      Vue.set(state.movies, movie.id, movie);
     },
 
     [types.IMPORT_BEGIN]: (state, line) => {

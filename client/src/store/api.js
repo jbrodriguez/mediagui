@@ -50,6 +50,33 @@ class Api {
           .then(resp => resp.json())
           .then(data => cb(data));
   }
+
+  setMovieScore(movie, cb) {
+    return fetch(`${this.host}/movies/${movie.id}/score`, {
+      method: 'PUT',
+      body: JSON.stringify(movie),
+    })
+    .then(resp => resp.json())
+    .then(data => cb(data));
+  }
+
+  setMovieWatched(movie, cb) {
+    return fetch(`${this.host}/movies/${movie.id}/watched`, {
+      method: 'PUT',
+      body: JSON.stringify(movie),
+    })
+    .then(resp => resp.json())
+    .then(data => cb(data));
+  }
+
+  fixMovie(movie, cb) {
+    return fetch(`${this.host}/movies/${movie.id}/fix`, {
+      method: 'PUT',
+      body: JSON.stringify(movie),
+    })
+    .then(resp => resp.json())
+    .then(data => cb(data));
+  }
 }
 
 const api = new Api();

@@ -18,3 +18,7 @@ export const PRUNE_SELECTED = 'prune:selected';
 export const PRUNE_DELETE = 'prune:delete';
 export const PRUNE_END = 'prune:end';
 export const FETCH_DUPLICATES = 'FETCH_DUPLICATES';
+export const SET_SCORE = 'SET_SCORE';
+export const SET_MOVIE = 'SET_MOVIE';
+export const SET_WATCHED = 'SET_WATCHED';
+export const FIX_MOVIE = 'FIX_MOVIE';
