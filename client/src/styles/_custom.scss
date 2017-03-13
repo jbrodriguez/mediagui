@@ -259,3 +259,47 @@ th {
     transform: scale(1);
   }
 }
+
+// PAGINATION
+ul.pagination {
+	font-size: 0.9em;
+	padding: 0.5em 0 1em 0;
+	margin-bottom: 0.5em;
+	border-bottom: 1px solid $pagination-border-color;
+
+	display: inline-block;
+
+	li {
+		display: inline-block;
+
+		a {
+			padding: 0.5em 1em;
+			transition: background-color 300ms ease-out;
+		}
+
+		&:hover a {
+			background-color: $pagination-hover-bg;
+		}
+
+		&.active a {
+			background: $pagination-active-bg;
+			color: white;
+			font-weight: bold;
+			cursor: default;
+		}
+
+	}
+
+	.pages {
+		display: inline;
+	}
+
+	.pages > li {
+		margin: 0 0.25em;
+	}
+
+	ul.pages li.selected {
+		margin: 0 0.25em;
+		background-color: $pagination-hover-bg;
+	}
+}

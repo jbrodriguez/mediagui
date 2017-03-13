@@ -29,6 +29,7 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
   state: {
     movies: { /* [id: number] Movie */ },
+    total: 0,
     config: {},
     options: {
       query: '',
@@ -123,6 +124,7 @@ const store = new Vuex.Store({
       // console.log(`state-${JSON.stringify(state)}`); // eslint-disable-line
       console.log(`total(${movies.total})-items(${movies.items.length})`);  // eslint-disable-line
       state.itemsOrder = []; // eslint-disable-line
+      state.total = movies.total; // eslint-disable-line
       movies.items.forEach((movie) => {
         state.itemsOrder.push(movie.id);
         Vue.set(state.movies, movie.id, movie);
@@ -131,16 +133,22 @@ const store = new Vuex.Store({
 
     [types.SET_FILTER]: (state, filterBy) => {
       state.options.filterBy = filterBy; // eslint-disable-line
+      state.options.offset = 0; // eslint-disable-line
       storage.set('filterBy', filterBy);
     },
 
     [types.SET_QUERY]: (state, query) => {
       state.options.query = query; // eslint-disable-line
+      state.options.offset = 0; // eslint-disable-line
     },
 
     [types.SET_SORT]: (state, sortBy) => {
       state.options.sortBy = sortBy; // eslint-disable-line
       storage.set('sortBy', sortBy);
+    },
+
+    [types.SET_OFFSET]: (state, offset) => {
+      state.options.offset = offset; // eslint-disable-line
     },
 
     [types.FLIP_ORDER]: (state) => {
@@ -190,6 +198,10 @@ const store = new Vuex.Store({
 
     version(state) {
       return state.config ? state.config.version : '';
+    },
+
+    offset(state) {
+      return state.options ? state.options.offset : 0;
     },
   },
 
