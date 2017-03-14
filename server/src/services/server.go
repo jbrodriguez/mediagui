@@ -4,14 +4,19 @@ import (
 	"jbrodriguez/mediagui/server/src/dto"
 	"jbrodriguez/mediagui/server/src/lib"
 	"jbrodriguez/mediagui/server/src/model"
+	"jbrodriguez/mediagui/server/src/net"
+
+	"fmt"
 	"net/http"
 	"path/filepath"
 	"strconv"
 
-	"github.com/gin-gonic/gin"
-	"github.com/gorilla/websocket"
+	"golang.org/x/net/websocket"
+
 	"github.com/jbrodriguez/mlog"
 	"github.com/jbrodriguez/pubsub"
+	"github.com/labstack/echo"
+	mw "github.com/labstack/echo/middleware"
 )
 
 const (
@@ -24,8 +29,8 @@ const (
 type Server struct {
 	bus      *pubsub.PubSub
 	settings *lib.Settings
-	router   *gin.Engine
-	// socket   *Socket
+	router   *echo.Echo
+	pool     map[*net.Connection]bool
 }
 
 // NewServer -
@@ -38,45 +43,86 @@ func NewServer(bus *pubsub.PubSub, settings *lib.Settings) *Server {
 func (s *Server) Start() {
 	mlog.Info("Starting service Server ...")
 
-	html := filepath.Join(s.settings.WebDir, "index.html")
-	mlog.Info("html is %s", html)
-	if b, _ := lib.Exists(html); !b {
-		mlog.Fatalf("Looked for index.html in %s, but didn't find it", s.settings.WebDir)
+	// html := filepath.Join(s.settings.WebDir, "index.html")
+	// mlog.Info("html is %s", html)
+	// if b, _ := lib.Exists(html); !b {
+	// 	mlog.Fatalf("Looked for index.html in %s, but didn't find it", s.settings.WebDir)
+	// }
+
+	// mlog.Info("Serving files from %s", s.settings.WebDir)
+
+	// gin.SetMode(s.settings.GinMode)
+
+	locations := []string{
+		s.settings.WebDir,
+		"/usr/local/share/mediagui",
+		".",
 	}
 
-	mlog.Info("Serving files from %s", s.settings.WebDir)
+	location := lib.SearchFile("index.html", locations)
+	if location == "" {
+		msg := ""
+		for _, loc := range locations {
+			msg += fmt.Sprintf("%s, ", loc)
+		}
+		mlog.Fatalf("Unable to find index.html. Exiting now. (searched in %s)", msg)
+	}
 
-	gin.SetMode(s.settings.GinMode)
+	mlog.Info("Serving files from %s", location)
 
-	s.router = gin.Default()
-	s.router.Use(Closer())
+	s.router = echo.New()
+	s.router.Use(mw.Logger())
+	s.router.Use(mw.Recover())
 
-	s.router.GET("/", s.index)
-	s.router.GET("/ws", s.handleSocket)
-	s.router.Static("/app", filepath.Join(s.settings.WebDir, "app"))
-	s.router.Static("/img", filepath.Join(s.settings.WebDir, "img"))
-	s.router.Static("/js", filepath.Join(s.settings.WebDir, "js"))
-	s.router.Static("/css", filepath.Join(s.settings.WebDir, "css"))
+	s.router.Static("/", filepath.Join(location, "index.html"))
+	s.router.Static("/app", filepath.Join(location, "app"))
+	s.router.Static("/img", filepath.Join(location, "img"))
+	s.router.Static("/js", filepath.Join(location, "js"))
+	s.router.Static("/css", filepath.Join(location, "css"))
+
+	// s.router.GET("/", s.index)
+	// s.router.GET("/ws", s.handleSocket)
+
+	// s.router.Static("/app", filepath.Join(s.settings.WebDir, "app"))
+	// s.router.Static("/img", filepath.Join(s.settings.WebDir, "img"))
+	// s.router.Static("/js", filepath.Join(s.settings.WebDir, "js"))
+	// s.router.Static("/css", filepath.Join(s.settings.WebDir, "css"))
 
 	api := s.router.Group(apiVersion)
-	{
-		api.GET("/config", s.getConfig)
-		api.GET("/movies/single/:id", s.getMovie)
-		api.GET("/movies/cover", s.getMoviesCover)
-		api.GET("/movies", s.getMovies)
-		api.GET("/movies/duplicates", s.getDuplicates)
+	api.GET("/config", s.getConfig)
+	api.GET("/movies/single/:id", s.getMovie)
+	api.GET("/movies/cover", s.getMoviesCover)
+	api.GET("/movies", s.getMovies)
+	api.GET("/movies/duplicates", s.getDuplicates)
 
-		api.POST("/import", s.importMovies)
-		api.POST("/prune", s.pruneMovies)
+	api.POST("/import", s.importMovies)
+	api.POST("/prune", s.pruneMovies)
 
-		api.PUT("/config/folder", s.addMediaFolder)
-		api.PUT("/movies/:id/score", s.setMovieScore)
-		api.PUT("/movies/:id/watched", s.setMovieWatched)
-		api.PUT("/movies/:id/fix", s.fixMovie)
-	}
+	api.PUT("/config/folder", s.addMediaFolder)
+	api.PUT("/movies/:id/score", s.setMovieScore)
+	api.PUT("/movies/:id/watched", s.setMovieWatched)
+	api.PUT("/movies/:id/fix", s.fixMovie)
+
+	// api := s.router.Group(apiVersion)
+	// {
+	// 	api.GET("/config", s.getConfig)
+	// 	api.GET("/movies/single/:id", s.getMovie)
+	// 	api.GET("/movies/cover", s.getMoviesCover)
+	// 	api.GET("/movies", s.getMovies)
+	// 	api.GET("/movies/duplicates", s.getDuplicates)
+
+	// 	api.POST("/import", s.importMovies)
+	// 	api.POST("/prune", s.pruneMovies)
+
+	// 	api.PUT("/config/folder", s.addMediaFolder)
+	// 	api.PUT("/movies/:id/score", s.setMovieScore)
+	// 	api.PUT("/movies/:id/watched", s.setMovieWatched)
+	// 	api.PUT("/movies/:id/fix", s.fixMovie)
+	// }
 
 	port := ":7623"
-	go s.router.Run(port)
+	go s.router.Start(port)
+
 	mlog.Info("Listening on %s", port)
 }
 
@@ -85,42 +131,25 @@ func (s *Server) Stop() {
 	mlog.Info("Stopped service Server ...")
 }
 
-// Closer -
-func Closer() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Header("Connection", "close")
-	}
-}
+// // Closer -
+// func Closer() gin.HandlerFunc {
+// 	return func(c echo.Context) {
+// 		c.Header("Connection", "close")
+// 	}
+// }
 
-func (s *Server) index(c *gin.Context) {
-	c.File(filepath.Join(s.settings.WebDir, "index.html"))
-}
-
-func (s *Server) handleSocket(c *gin.Context) {
-	ws, err := websocket.Upgrade(c.Writer, c.Request, nil, bufferSize, bufferSize)
-	if _, ok := err.(websocket.HandshakeError); ok {
-		http.Error(c.Writer, "Not a websocket handshake", 400)
-		return
-	} else if err != nil {
-		mlog.Error(err)
-		return
-	}
-
-	msg := &pubsub.Message{Payload: ws}
-	s.bus.Pub(msg, "socket:connections:new")
-}
-
-func (s *Server) getConfig(c *gin.Context) {
+func (s *Server) getConfig(c echo.Context) error {
 	msg := &pubsub.Message{Reply: make(chan interface{}, capacity)}
 	s.bus.Pub(msg, "/get/config")
 
 	reply := <-msg.Reply
 	resp := reply.(*lib.Config)
 	mlog.Info("config: %+v", resp)
-	c.JSON(200, &resp)
+
+	return c.JSON(http.StatusOK, &resp)
 }
 
-func (s *Server) getMoviesCover(c *gin.Context) {
+func (s *Server) getMoviesCover(c echo.Context) error {
 	msg := &pubsub.Message{Reply: make(chan interface{}, capacity)}
 	s.bus.Pub(msg, "/get/movies/cover")
 
@@ -140,10 +169,10 @@ func (s *Server) getMoviesCover(c *gin.Context) {
 	// }
 
 	// mlog.Info("moviesDTO: %+v", dto)
-	c.JSON(200, dto)
+	return c.JSON(http.StatusOK, dto)
 }
 
-func (s *Server) getMovies(c *gin.Context) {
+func (s *Server) getMovies(c echo.Context) error {
 	var options lib.Options
 	c.Bind(&options) // You can also specify which binder to use. We support binding.Form, binding.JSON and binding.XML.
 
@@ -157,21 +186,21 @@ func (s *Server) getMovies(c *gin.Context) {
 	dto := reply.(*model.MoviesDTO)
 
 	// // mlog.Info("moviesDTO: %+v", dto)
-	// c.JSON(200, {dto})
-	c.JSON(200, dto)
+	// return c.JSON(http.StatusOK, {dto})
+	return c.JSON(http.StatusOK, dto)
 }
 
-func (s *Server) getDuplicates(c *gin.Context) {
+func (s *Server) getDuplicates(c echo.Context) error {
 	msg := &pubsub.Message{Reply: make(chan interface{}, capacity)}
 	s.bus.Pub(msg, "/get/movies/duplicates")
 
 	reply := <-msg.Reply
 	dto := reply.(*model.MoviesDTO)
 
-	c.JSON(200, dto)
+	return c.JSON(http.StatusOK, dto)
 }
 
-func (s *Server) getMovie(c *gin.Context) {
+func (s *Server) getMovie(c echo.Context) error {
 	id := c.Param("id")
 	// mlog.Info("server.getMovies.options: %+v", options)
 	// mlog.Info("request: ", c.Request)
@@ -183,21 +212,25 @@ func (s *Server) getMovie(c *gin.Context) {
 	dto := reply.(*model.Movie)
 
 	// // mlog.Info("moviesDTO: %+v", dto)
-	// c.JSON(200, {dto})
-	c.JSON(200, dto)
+	// return c.JSON(http.StatusOK, {dto})
+	return c.JSON(http.StatusOK, dto)
 }
 
-func (s *Server) importMovies(c *gin.Context) {
+func (s *Server) importMovies(c echo.Context) error {
 	s.bus.Pub(nil, "/post/import")
+
+	return nil
 }
 
-func (s *Server) pruneMovies(c *gin.Context) {
+func (s *Server) pruneMovies(c echo.Context) error {
 	s.bus.Pub(nil, "/post/prune")
+
+	return nil
 }
 
-func (s *Server) addMediaFolder(c *gin.Context) {
+func (s *Server) addMediaFolder(c echo.Context) error {
 	var pkt dto.Packet
-	if err := c.BindJSON(&pkt); err != nil {
+	if err := c.Bind(&pkt); err != nil {
 		mlog.Warning("Unable to obtain folder: %s", err.Error())
 	}
 
@@ -206,12 +239,13 @@ func (s *Server) addMediaFolder(c *gin.Context) {
 
 	reply := <-msg.Reply
 	resp := reply.(*lib.Config)
-	c.JSON(200, &resp)
+
+	return c.JSON(http.StatusOK, &resp)
 }
 
-func (s *Server) setMovieScore(c *gin.Context) {
+func (s *Server) setMovieScore(c echo.Context) error {
 	var movie model.Movie
-	if err := c.BindJSON(&movie); err != nil {
+	if err := c.Bind(&movie); err != nil {
 		mlog.Warning("Unable to obtain score: %s", err.Error())
 	}
 
@@ -222,12 +256,13 @@ func (s *Server) setMovieScore(c *gin.Context) {
 
 	reply := <-msg.Reply
 	resp := reply.(*model.Movie)
-	c.JSON(200, &resp)
+
+	return c.JSON(http.StatusOK, &resp)
 }
 
-func (s *Server) setMovieWatched(c *gin.Context) {
+func (s *Server) setMovieWatched(c echo.Context) error {
 	var movie model.Movie
-	if err := c.BindJSON(&movie); err != nil {
+	if err := c.Bind(&movie); err != nil {
 		mlog.Warning("Unable to obtain score: %s", err.Error())
 	}
 
@@ -238,12 +273,13 @@ func (s *Server) setMovieWatched(c *gin.Context) {
 
 	reply := <-msg.Reply
 	resp := reply.(*model.Movie)
-	c.JSON(200, &resp)
+
+	return c.JSON(http.StatusOK, &resp)
 }
 
-func (s *Server) fixMovie(c *gin.Context) {
+func (s *Server) fixMovie(c echo.Context) error {
 	var movie model.Movie
-	if err := c.BindJSON(&movie); err != nil {
+	if err := c.Bind(&movie); err != nil {
 		mlog.Warning("Unable to obtain score: %s", err.Error())
 	}
 
@@ -254,5 +290,32 @@ func (s *Server) fixMovie(c *gin.Context) {
 
 	reply := <-msg.Reply
 	resp := reply.(*model.Movie)
-	c.JSON(200, &resp)
+
+	return c.JSON(http.StatusOK, &resp)
+}
+
+func (s *Server) handleWs(ws *websocket.Conn) {
+	conn := net.NewConnection(ws, s.onMessage, s.onClose)
+	s.pool[conn] = true
+	conn.Read()
+}
+
+func (s *Server) onMessage(packet *dto.Packet) {
+	mlog.Info("topic(%s)-payload(%+v)", packet.Topic, packet.Payload)
+	s.bus.Pub(&pubsub.Message{Payload: packet.Payload}, packet.Topic)
+}
+
+func (s *Server) onClose(c *net.Connection, err error) {
+	mlog.Warning("closing socket (%+v): %s", c, err)
+	if _, ok := s.pool[c]; ok {
+		delete(s.pool, c)
+	}
+}
+
+func (s *Server) broadcast(msg *pubsub.Message) {
+	packet := msg.Payload.(*dto.Packet)
+	mlog.Info("paylod-%+v", packet.Payload)
+	for conn := range s.pool {
+		conn.Write(packet)
+	}
 }

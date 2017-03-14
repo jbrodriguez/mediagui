@@ -71,7 +71,6 @@ func (a *App) Run(settings *lib.Settings) {
 	bus := pubsub.New(8623)
 
 	dal := services.NewDal(bus, settings)
-	socket := services.NewSocket(bus, settings)
 	server := services.NewServer(bus, settings)
 	scanner := services.NewScanner(bus, settings)
 	scraper := services.NewScraper(bus, settings)
@@ -79,7 +78,6 @@ func (a *App) Run(settings *lib.Settings) {
 	core := services.NewCore(bus, settings)
 
 	dal.Start()
-	socket.Start()
 	server.Start()
 	scanner.Start()
 	scraper.Start()
@@ -97,7 +95,6 @@ func (a *App) Run(settings *lib.Settings) {
 	scraper.Stop()
 	scanner.Stop()
 	server.Stop()
-	socket.Stop()
 	dal.Stop()
 
 	mlog.Stop()
