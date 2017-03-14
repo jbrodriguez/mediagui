@@ -6,11 +6,11 @@ mediaGUI
 ## Screenshots
 Cover View
 
-![Screenshot](mediagui1.jpg)
+![Screenshot](metadata/img/mediagui1.jpg)
 
 Movies View
 
-![Screenshot](mediagui2.jpg)
+![Screenshot](metadata/img/mediagui2.jpg)
 
 
 ## Rationale
@@ -96,4 +96,3 @@ ReactJS is definitely here to stay.
 Its sibling, React Native is extremely powerful and lowers the entry barrier for javascript developers who want to do iOS apps (soon Android as well).
 
 ffux offers one of the simplest conceptual understandings of the flux architecture, I hope it becomes more popular going forward.
-
