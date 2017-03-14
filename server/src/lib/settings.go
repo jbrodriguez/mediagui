@@ -1,13 +1,13 @@
 package lib
 
 import (
-	"errors"
 	"fmt"
-	"github.com/namsral/flag"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/namsral/flag"
 )
 
 // Config -
@@ -31,26 +31,13 @@ type Settings struct {
 	CPUProfile string
 }
 
-func searchConfig(locations []string) string {
-	for _, location := range locations {
-		if b, _ := Exists(location); b {
-			return location
-		}
-	}
-
-	return ""
-}
-
 // NewSettings -
-func NewSettings(version, home string, locations []string) (*Settings, error) {
-	location := searchConfig(locations)
-	if location == "" {
-		msg := "Unable to find mediagui.conf\nIt should be placed at any these locations:\n$HOME/.mediagui/\n/usr/local/etc\n<app directory>"
-		return nil, errors.New(msg)
-	}
-
+func NewSettings(name, version, home string, locations []string) (*Settings, error) {
 	var config, dataDir, webDir, logDir, mediaFolders, ginMode, cpuprofile, unraidHosts string
 	var logtostderr, unraidMode bool
+
+	location := SearchFile(name, locations)
+
 	flag.BoolVar(&logtostderr, "logtostderr", true, "true/false log to stderr")
 	flag.StringVar(&config, "config", "", "config location")
 	flag.StringVar(&dataDir, "datadir", filepath.Join(home, ".mediagui/db"), "folder containing the database files")
@@ -62,7 +49,9 @@ func NewSettings(version, home string, locations []string) (*Settings, error) {
 	flag.BoolVar(&unraidMode, "unraid_mode", true, "if true the app will work distributed with a service running on the unraid host")
 	flag.StringVar(&unraidHosts, unraidHosts, "wopr|hal", "specify which unraid hosts will be scanned for movies. the service agent must be running in that host")
 
-	flag.Set("config", location)
+	if found, _ := Exists(location); found {
+		flag.Set("config", location)
+	}
 	flag.Parse()
 
 	// fmt.Printf("mediaFolders: %s\n", mediaFolders)

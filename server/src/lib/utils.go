@@ -2,14 +2,16 @@ package lib
 
 import (
 	"encoding/json"
-	"github.com/jbrodriguez/mlog"
-	"github.com/jbrodriguez/pubsub"
-	"github.com/nfnt/resize"
 	"image/jpeg"
 	"io"
 	"jbrodriguez/mediagui/server/src/dto"
 	"net/http"
 	"os"
+	"path/filepath"
+
+	"github.com/jbrodriguez/mlog"
+	"github.com/jbrodriguez/pubsub"
+	"github.com/nfnt/resize"
 )
 
 // Exists - Check if File / Directory Exists
@@ -25,6 +27,17 @@ func Exists(path string) (bool, error) {
 	}
 
 	return false, err
+}
+
+// SearchFile - look for file in the specified locations
+func SearchFile(name string, locations []string) string {
+	for _, location := range locations {
+		if b, _ := Exists(filepath.Join(location, name)); b {
+			return location
+		}
+	}
+
+	return ""
 }
 
 // RestGet -
