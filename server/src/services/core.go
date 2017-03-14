@@ -27,7 +27,6 @@ type Core struct {
 
 	bus      *pubsub.PubSub
 	settings *lib.Settings
-	// socket   *Socket
 
 	mailbox chan *pubsub.Mailbox
 	re      *regexp.Regexp
