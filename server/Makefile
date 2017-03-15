@@ -36,6 +36,14 @@ build: dependencies clean
 buildx: dependencies clean
 	go build fmt
 	env GOOS=linux GOARCH=amd64 go build -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v -o ${PROG}
+
+agent: dependencies clean
+	env GOOS=linux GOARCH=amd64 go build -tags agent -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v -o agent agent.go
+
+release: dependencies clean
+	go build fmt
+	go build -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v -o ${PROG}
+	env GOOS=linux GOARCH=amd64 go build -tags agent -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v -o agent agent.go
  
 # run unit tests with code coverage
 test: dependencies

@@ -34,10 +34,6 @@ pushd server
 GOPATH="$CURRENT_DIR" gom install -v
 popd
 
-pushd agent
-GOPATH="$CURRENT_DIR" gom install -v
-popd
-
 # compile with a temp gopath
 GOPATH="$CURRENT_DIR" scripts/bundle
 
