@@ -1,3 +1,2 @@
-gom 'github.com/jbrodriguez/mlog', :commit => 'aba49db95e5770b3299d4a98279ba90087a0689c'
+gom 'github.com/jbrodriguez/mlog', :commit => '006dc6db226a30dddd9e8eab3cce1e44f651ed8a'
 gom 'github.com/micro/go-micro', :commit => '0c2c53e9af6c5318780434cff876763dc3103075'
-gom 'github.com/golang/glog', :commit => 'fca8c8854093a154ff1eb580aae10276ad6b1b5f'
