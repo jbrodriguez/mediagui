@@ -1,98 +1,62 @@
 mediaGUI
 ========
 
-*tl;dr* **mediaGUI** is a rewrite of [Mediabase](http://www.apertoire.net/introducing-mediabase) (code can be found [here](https://github.com/jbrodriguez/mediabase)), in order to learn [ReactJS](http://facebook.github.io/react/).
+*tl;dr* **mediaGUI** is a web based app to catalogue a movie library. It scans the folders you choose looking for movies, then fetch metadata from [themoviedb.org](www.themoviedb.org) and [The OMDB API](www.omdbapi.com).
 
 ## Screenshots
 Cover View
 
-![Screenshot](metadata/img/mediagui1.jpg)
+![Screenshot](metadata/img/cover.png)
 
 Movies View
 
-![Screenshot](metadata/img/mediagui2.jpg)
+![Screenshot](metadata/img/movies.png)
 
+## Introduction
+**mediaGUI**'s main objective is to be rewritten whenever I want to learn a new technology.
 
-## Rationale
+- 1st Iteration [(code)](https://github.com/jbrodriguez/mediabase/)<br /> 
+The project's first name was [mediabase](http://www.apertoire.net/introducing-mediabase)  <br />
+To learn:
+	- [go](https://golang.org/)
+	- [AngularJS 1](https://angularjs.org/)
 
-AngularJS is a great framework that lends itself to rapid development.
+- 2nd Iteration [(code)](https://github.com/jbrodriguez/mediagui/tree/0.5.8/) <br />
+I renamed the project to **mediaGUI** <br />
+To learn:
+	- [go-micro](https://github.com/micro/go-micro/): microservices in go
+	- [react](http://facebook.github.io/react/)
+	- [ffux](https://github.com/milankinen/ffux/): A functional approach to state management
+	- [flexboxgrid-sass](https://github.com/hugeinc/flexboxgrid-sass/)
 
-When I started reading more and more about ReactJS, I looked at the sample code, thought it was a messy intermixing of css, javascript, html and went on my own Angular way.
+- 3rd Iteration [(https://github.com/jbrodriguez/mediagui/)] <br />
+To learn:
+	- [vuejs](https://vuejs.org/)
+	- [tachyons-sass](https://github.com/tachyons-css/tachyons-sass)
 
-But at some point, it all made sense.
+## Summary
+vuejs is a pleasure to work with.
 
-In a common MVC architecture, ReactJS is the View.
+Its main assets are:
+- [vue-cli](https://github.com/vuejs/vue-cli): creates a starter project, you just need to start coding and not worry about tooling
+- [vuex](https://github.com/vuejs/vuex): opinionated and easy state management
 
-React views are, for the most part, just smart enough to know **how** to display themselves, while other model-like components obtain and manipulate **what** shall be displayed.
+The combination of vue-cli/vuex takes away a lot of the guess work that you generally find in redux (how to structure the app, etc.).
 
-In the end, this gives a far stronger separation of concerns and is a much simpler conceptual model for an application.
+Although vuex has some boilerplate, it still feels less than redux's.
 
-## Flux framework
-
-In order to support the views, Facebook also defined the [Flux architecture](https://facebook.github.io/flux/).
-
-Since it's more like a blueprint, many implementations were created, to try and improve upon it.
-
-Some of the most interesting, currently, are:
-
-- [Relay](https://facebook.github.io/relay/): Facebook's own re-invention of Flux
-- [Redux](http://rackt.github.io/redux/): Has been gaining lot of traction recently
-- [Refluxjs](https://github.com/reflux/refluxjs): One of the first in the arena
-- [Cycle](http://cycle.js.org/): Based on a human/computer interaction, fully reactive
-- [reactive approach](http://www.aryweb.nl/2015/02/16/Reactive-React-using-reactive-streams/): a very simple implementation based on [Bacon.js](https://baconjs.github.io/)
-- [ffux](https://github.com/milankinen/ffux): A complete functional approach also based on Bacon.js
-
-I went with ffux.
-
-## ffux
-
-ffux is based on the original stores and actions concepts, but dispenses with the dispatcher.
-
-The powerful thing is that, while lowering complexity, you get to use a functional paradigm (via Bacon.js, but RxJX is also supported), to react to the typical stages/events of an application's lifetime.
-
-Please read the [github page](https://github.com/milankinen/ffux) for a more detailed explanation.
-
-## Installation/Development
-
+## App Structure
 The docs folder contains the schema for the sqlite db that supports the application.
 
-### Folders
 By default, the app will build/look for the following structure
 
 ~ (home folder)<br>
-|_ /.mediagui (config file)<br>
-|_ _ db (sqlite db)<br>
-|_ _ web (index.html) <br>
-|_ _ _ app (app bundle, css, fonts, etc)<br>
-|_ _ _ img (storage for movie covers, backdrops, etc)<br>
-
-
-### Client code
-In the code's root folder, an `npm install` will download dependencies.
-
-### Server code
-A makefile in the server folder has different targets to build and serve the Go based back-end.
-
-- `make build` build the binary
-- `make serve` hot reload on code change for Go ;)
-
-Pointing your browser to `localhost:7326` should do the trick.
-
-
-## CSS/Flexbox
-
-Just a quick note on the CSS code, as it is based on [flexbox](https://css-tricks.com/snippets/css/a-guide-to-flexbox/).
-
-I used a slightly modified version of [flex-grid](https://github.com/VladShcherbin/flex-grid).
-
-Simple yet highly expressive.
-
-Very nice stuff.
-
-
-## Final comments
-ReactJS is definitely here to stay.
-
-Its sibling, React Native is extremely powerful and lowers the entry barrier for javascript developers who want to do iOS apps (soon Android as well).
-
-ffux offers one of the simplest conceptual understandings of the flux architecture, I hope it becomes more popular going forward.
+|_ .mediagui<br>
+|____ mediagui.conf (if required)<br>
+|____ db (sqlite db)<br>
+|____ web<br>
+|______ index.html <br>
+|______ js<br>
+|______ css<br>
+|______ fonts<br>
+|______ img (storage for movie covers, backdrops, etc)<br>
