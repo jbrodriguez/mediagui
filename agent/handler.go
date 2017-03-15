@@ -3,11 +3,10 @@ package main
 import (
 	"jbrodriguez/mediagui/agent/proto"
 
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
-
-	log "github.com/golang/glog"
 
 	"golang.org/x/net/context"
 )
@@ -19,7 +18,7 @@ type Agent struct {
 
 // Scan -
 func (s *Agent) Scan(ctx context.Context, req *agent.ScanReq, rsp *agent.ScanRsp) error {
-	log.Infof("Received Agent.Scan request: %v", req)
+	log.Printf("Received Agent.Scan request: %v\n", req)
 
 	// var files []string
 
@@ -37,7 +36,7 @@ func (s *Agent) Scan(ctx context.Context, req *agent.ScanReq, rsp *agent.ScanRsp
 	// 	rsp.Filenames = append(rsp.Filenames, f)
 	// }
 
-	log.Infof("Sent back %d files", len(rsp.Filenames))
+	log.Printf("Sent back %d files\n", len(rsp.Filenames))
 
 	return nil
 }
@@ -51,7 +50,7 @@ func (s *Agent) walk(folder, mask string) []string {
 
 	filepath.Walk(folder, func(path string, f os.FileInfo, err error) error {
 		if err != nil {
-			log.Infof("Agent.Scan.walk: %s (%s) - [%+v]", err, path, f)
+			log.Printf("Agent.Scan.walk: %s (%s) - [%+v]\n", err, path, f)
 		}
 
 		if f.IsDir() {
@@ -83,7 +82,7 @@ func (s *Agent) Exists(ctx context.Context, req *agent.ExistsReq, rsp *agent.Exi
 	}
 
 	if !rsp.Exists {
-		log.Infof("Location %s doesn't exist", req.Location)
+		log.Printf("Location %s doesn't exist\n", req.Location)
 	}
 
 	return nil
