@@ -1,10 +1,10 @@
 package services
 
 import (
-	"jbrodriguez/mediagui/proto"
 	"jbrodriguez/mediagui/server/src/dto"
 	"jbrodriguez/mediagui/server/src/lib"
 	"jbrodriguez/mediagui/server/src/model"
+	"jbrodriguez/mediagui/server/src/proto"
 
 	"fmt"
 	"os"
