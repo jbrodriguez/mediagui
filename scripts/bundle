@@ -51,5 +51,4 @@ cp README.md $APP_RELEASE
 
 pushd release
 tar czvf ./$APP_FILE $PROG
-mv ./$APP_FILE ..
 popd

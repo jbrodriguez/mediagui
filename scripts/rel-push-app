@@ -34,7 +34,7 @@ if [ $? -ne 0 ]; then
 	error "Unable to push branch ${BRANCH} to github"
 fi
 
-BINARY="${PROG}-${VERSION}.tgz"
+BINARY="release/${PROG}-${VERSION}.tgz"
 DESCRIPTION=`cat metadata/changes/${VERSION}.txt`
 
 github-release --verbose release \
