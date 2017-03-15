@@ -27,15 +27,24 @@ const (
 
 // Server -
 type Server struct {
+	Service
+
 	bus      *pubsub.PubSub
 	settings *lib.Settings
 	router   *echo.Echo
-	pool     map[*net.Connection]bool
+	mailbox  chan *pubsub.Mailbox
+
+	pool map[*net.Connection]bool
 }
 
 // NewServer -
 func NewServer(bus *pubsub.PubSub, settings *lib.Settings) *Server {
-	server := &Server{bus: bus, settings: settings}
+	server := &Server{
+		bus:      bus,
+		settings: settings,
+		pool:     make(map[*net.Connection]bool),
+	}
+	server.init()
 	return server
 }
 
@@ -80,6 +89,8 @@ func (s *Server) Start() {
 	s.router.Static("/js", filepath.Join(location, "js"))
 	s.router.Static("/css", filepath.Join(location, "css"))
 
+	s.router.GET("/ws", echo.WrapHandler(websocket.Handler(s.handleWs)))
+
 	// s.router.GET("/", s.index)
 	// s.router.GET("/ws", s.handleSocket)
 
@@ -123,12 +134,22 @@ func (s *Server) Start() {
 	port := ":7623"
 	go s.router.Start(port)
 
+	s.mailbox = s.register(s.bus, "socket:broadcast", s.broadcast)
+	go s.react()
+
 	mlog.Info("Listening on %s", port)
 }
 
 // Stop -
 func (s *Server) Stop() {
 	mlog.Info("Stopped service Server ...")
+}
+
+func (s *Server) react() {
+	for mbox := range s.mailbox {
+		// mlog.Info("Core:Topic: %s", mbox.Topic)
+		s.dispatch(mbox.Topic, mbox.Content)
+	}
 }
 
 // // Closer -
@@ -295,6 +316,21 @@ func (s *Server) fixMovie(c echo.Context) error {
 }
 
 func (s *Server) handleWs(ws *websocket.Conn) {
+	// for {
+	// 	// Write
+	// 	err := websocket.Message.Send(ws, "Hello, Client!")
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
+
+	// 	// Read
+	// 	msg := ""
+	// 	err = websocket.Message.Receive(ws, &msg)
+	// 	if err != nil {
+	// 		log.Fatal(err)
+	// 	}
+	// 	fmt.Printf("%s\n", msg)
+	// }
 	conn := net.NewConnection(ws, s.onMessage, s.onClose)
 	s.pool[conn] = true
 	conn.Read()
@@ -314,7 +350,7 @@ func (s *Server) onClose(c *net.Connection, err error) {
 
 func (s *Server) broadcast(msg *pubsub.Message) {
 	packet := msg.Payload.(*dto.Packet)
-	mlog.Info("paylod-%+v", packet.Payload)
+	mlog.Info("paylod-%+v", packet)
 	for conn := range s.pool {
 		conn.Write(packet)
 	}

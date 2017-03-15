@@ -84,7 +84,7 @@ func Notify(bus *pubsub.PubSub, topic, text string) {
 	mlog.Info(text)
 	payload := &dto.Packet{Topic: topic, Payload: text}
 	// payload := &dto.Packet{Topic: topic, Payload: text}
-	bus.Pub(&pubsub.Message{Payload: payload}, "socket:connections:broadcast")
+	bus.Pub(&pubsub.Message{Payload: payload}, "socket:broadcast")
 }
 
 // ResizeImage -

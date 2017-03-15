@@ -1,12 +1,11 @@
 package main
 
 import (
-	log "github.com/golang/glog"
-	"github.com/myodc/go-micro/cmd"
-	// "github.com/myodc/go-micro/examples/server/handler"
-	// "github.com/myodc/go-micro/examples/server/subscriber"
-	"github.com/myodc/go-micro/server"
+	"log"
 	"os"
+
+	"github.com/micro/go-micro/cmd"
+	"github.com/micro/go-micro/server"
 )
 
 func main() {
@@ -31,11 +30,9 @@ func main() {
 		),
 	)
 
-	log.Info("Agent started ")
-
 	// Run server
 	if err := server.Run(); err != nil {
-		log.Info(err)
+		log.Printf("%s", err)
 	}
 
 }
