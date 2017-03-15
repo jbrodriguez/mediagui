@@ -1,7 +1,7 @@
 package main
 
 import (
-	"jbrodriguez/mediagui/proto"
+	"jbrodriguez/mediagui/agent/proto"
 
 	"os"
 	"path/filepath"
