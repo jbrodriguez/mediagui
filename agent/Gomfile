@@ -1,2 +1,0 @@
-gom 'github.com/jbrodriguez/mlog', :commit => '006dc6db226a30dddd9e8eab3cce1e44f651ed8a'
-gom 'github.com/micro/go-micro', :commit => '0c2c53e9af6c5318780434cff876763dc3103075'

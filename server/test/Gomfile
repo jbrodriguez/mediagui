@@ -1,0 +1,6 @@
+gom 'github.com/jbrodriguez/mlog', :commit => 'aba49db95e5770b3299d4a98279ba90087a0689c'
+gom 'github.com/MichaelTJones/walk', :commit => '3af09438b0ab0e8f296410bfa646a7e635ea1fc0'
+gom 'github.com/golang/protobuf/proto', :commit => 'fb5d8f484732ab045605ecc5ab388726a554a5eb'
+gom 'github.com/myodc/go-micro/server', :commit => '42c0c91df74574a95e05030dadcb72f18ab4c408'
+gom 'github.com/myodc/go-micro/cmd', :commit => '42c0c91df74574a95e05030dadcb72f18ab4c408'
+gom 'github.com/golang/glog', :commit => 'fca8c8854093a154ff1eb580aae10276ad6b1b5f'
