@@ -8,3 +8,4 @@ gom 'github.com/nfnt/resize', :commit => 'dc93e1b98c579d90ee2fa15c1fd6dac34f6e78
 gom 'github.com/MichaelTJones/walk', :commit => '3af09438b0ab0e8f296410bfa646a7e635ea1fc0'
 gom 'github.com/micro/go-micro', :commit => '0c2c53e9af6c5318780434cff876763dc3103075'
 gom 'github.com/labstack/echo', :tag => 'v3.0.3'
+gom 'github.com/golang/protobuf', :commit => 'c9c7427a2a70d2eb3bafa0ab2dc163e45f143317'
