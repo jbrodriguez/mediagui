@@ -1,22 +1,22 @@
 package services
 
 import (
-	// sc "bitbucket.org/jdpalmer/statecraft"
-	"github.com/jbrodriguez/mlog"
-	"github.com/jbrodriguez/pubsub"
-	"github.com/myodc/go-micro/client"
-	// "io/ioutil"
-	"fmt"
 	"jbrodriguez/mediagui/proto"
 	"jbrodriguez/mediagui/server/src/dto"
 	"jbrodriguez/mediagui/server/src/lib"
 	"jbrodriguez/mediagui/server/src/model"
+
+	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/jbrodriguez/mlog"
+	"github.com/jbrodriguez/pubsub"
+	"github.com/micro/go-micro/client"
 
 	"golang.org/x/net/context"
 )

@@ -1,17 +1,19 @@
 package services
 
 import (
-	"github.com/jbrodriguez/mlog"
-	"github.com/jbrodriguez/pubsub"
-	"github.com/myodc/go-micro/client"
-	// "github.com/myodc/go-micro/cmd"
 	"jbrodriguez/mediagui/proto"
 	"jbrodriguez/mediagui/server/src/lib"
 	"jbrodriguez/mediagui/server/src/model"
+	"time"
+
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/jbrodriguez/mlog"
+	"github.com/jbrodriguez/pubsub"
+	"github.com/micro/go-micro/client"
 
 	"golang.org/x/net/context"
 )
@@ -137,7 +139,7 @@ func (s *Scanner) scanMovies(msg *pubsub.Message) {
 			rsp := &agent.ScanRsp{}
 
 			// Call service
-			if err := client.Call(context.Background(), req, rsp); err != nil {
+			if err := client.Call(context.Background(), req, rsp, client.WithRequestTimeout(time.Duration(5)*time.Minute)); err != nil {
 				mlog.Warning("Unable to connect to service (%s): %s", "io.jbrodriguez.mediagui.agent."+host, err)
 				lib.Notify(s.bus, "import:progress", "Unable to connect to host "+host)
 				// lib.Notify(s.bus, "import:end", "Import process finished")

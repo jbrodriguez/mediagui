@@ -1,20 +1,23 @@
 package main
 
 import (
-	// "github.com/MichaelTJones/walk"
-	log "github.com/golang/glog"
 	"jbrodriguez/mediagui/proto"
+
 	"os"
 	"path/filepath"
 	"strings"
 
+	log "github.com/golang/glog"
+
 	"golang.org/x/net/context"
 )
 
+// Agent -
 type Agent struct {
 	host string
 }
 
+// Scan -
 func (s *Agent) Scan(ctx context.Context, req *agent.ScanReq, rsp *agent.ScanRsp) error {
 	log.Infof("Received Agent.Scan request: %v", req)
 
@@ -70,6 +73,7 @@ func (s *Agent) walk(folder, mask string) []string {
 	return files
 }
 
+// Exists -
 func (s *Agent) Exists(ctx context.Context, req *agent.ExistsReq, rsp *agent.ExistsRsp) error {
 	// log.Infof("Received Agent.Exists request: %v", req)
 

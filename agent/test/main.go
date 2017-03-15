@@ -1,14 +1,16 @@
 package main
 
 import (
-	log "github.com/golang/glog"
-	"github.com/myodc/go-micro/client"
-	"github.com/myodc/go-micro/cmd"
 	"jbrodriguez/mediagui/proto"
+
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	log "github.com/golang/glog"
+	"github.com/micro/go-micro/client"
+	"github.com/micro/go-micro/cmd"
 
 	"golang.org/x/net/context"
 )
@@ -21,14 +23,14 @@ func main() {
 	}
 
 	// Create new request to service go.micro.srv.example, method Example.Call
-	req := client.NewRequest("io.jbrodriguez.mediagui.scanner", "Scanner.Scan", &scan.Request{
+	req := client.NewRequest("io.jbrodriguez.mediagui.agent", "Scanner.Scan", &agent.ScanReq{
 		// Folders: s.settings.MediaFolders,
 		Folders: folders,
 	})
 
 	log.Infof("req=%+v", req)
 
-	rsp := &scan.Response{}
+	rsp := &agent.ScanRsp{}
 
 	t0 := time.Now()
 
