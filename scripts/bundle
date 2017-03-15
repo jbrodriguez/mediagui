@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+function error {
+  echo -e "$1" >&2
+  exit 1
+}
+
+PROG="mediagui"
+APP_RELEASE="release/$PROG"
+APP_VERSION=$(cat VERSION)
+APP_FILE="$PROG-$APP_VERSION.tgz"
+echo $APP_FILE
+
+if [ -f "$APP_FILE" ]; then
+	echo -e "Bundle $APP_FILE already exists. No further actions will be taken." >&2
+	exit 0
+fi
+
+# if ! git diff --quiet; then
+# 	error "There are unsaved changes in your current branch. Please commit changes and try again."
+# fi
+
+rm -rf ./dist
+
+echo "Building client"
+pushd client
+npm run build
+if [ $? -ne 0 ]; then
+	popd
+	error "Unable to build client. Please check and try again"
+fi
+popd
+
+echo "Building server"
+pushd server
+make build
+if [ $? -ne 0 ]; then
+	popd
+	error "Unable to build server. Please check and try again"
+fi
+popd
+
+echo "Building agent"
+pushd agent
+make build
+if [ $? -ne 0 ]; then
+	popd
+	error "Unable to build agent. Please check and try again"
+fi
+popd
+
+
+echo "Generating release ..."
+rm -rf release && mkdir -p $APP_RELEASE/{client,server,agent}
+cp -r client/dist/* $APP_RELEASE/client
+cp -r server/${PROG} ${APP_RELEASE}/server
+cp -r agent/agent ${APP_RELEASE}/agent
+cp LICENSE $APP_RELEASE
+cp VERSION $APP_RELEASE
+cp README.md $APP_RELEASE
+
+pushd release
+tar czvf ./$APP_FILE $PROG
+mv ./$APP_FILE ..
+popd
+
+echo "Successfully generated $PROG-$APP_VERSION.tgz"

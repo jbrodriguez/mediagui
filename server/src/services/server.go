@@ -84,10 +84,10 @@ func (s *Server) Start() {
 	s.router.Use(mw.Recover())
 
 	s.router.Static("/", filepath.Join(location, "index.html"))
-	s.router.Static("/app", filepath.Join(location, "app"))
 	s.router.Static("/img", filepath.Join(location, "img"))
 	s.router.Static("/js", filepath.Join(location, "js"))
 	s.router.Static("/css", filepath.Join(location, "css"))
+	s.router.Static("/fonts", filepath.Join(location, "fonts"))
 
 	s.router.GET("/ws", echo.WrapHandler(websocket.Handler(s.handleWs)))
 
