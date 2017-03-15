@@ -1,0 +1,13 @@
+test:
+    script:
+        - scripts/rel-create
+        # - scripts/rel-push-app
+    only:
+        - /^wrk.*$/
+
+deploy:
+    script:
+        - scripts/rel-create
+        - scripts/rel-push-app
+    only:
+        - /^rel.*$/
