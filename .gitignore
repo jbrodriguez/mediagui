@@ -2,6 +2,8 @@
 
 art
 target
+release
+dist
 
 node_modules
 
@@ -11,6 +13,7 @@ node_modules
 *.a
 *.prof
 *.out
+*.tgz
 
 **/_vendor/pkg/
 **/vendor
