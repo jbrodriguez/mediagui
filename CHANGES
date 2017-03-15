@@ -1,0 +1,60 @@
+Version 3.0.0 - 2017-03-15
+- Initial code reorganization
+- Refactor server code
+- Initial vuejs code foundation
+- Add vuex package
+- Initial integrated loop
+- Override flexboxgrid-sass variables
+- Rename component (Cover -> Covers)
+- Implement single style import
+- Create Cover card component
+- Implement FooterBar component
+- Implement getConfig api call
+- Proxy endpoints
+- Fix lint errors
+- Add pick package
+- Implement getMovies api call
+- Implement Movies/Movie components
+- Add tachyons-sass package
+- Use tachyons-sass variant
+- Create styles to customize html5 elements
+- Implement filterBy feature (ui)
+- Add lodash.debounce package
+- Implement set query feature (ui)
+- Add font-awesome support
+- Fix localStorage access logic
+- Add sortBy/sortOrder feature (ui)
+- Add websocket transport layer
+- Fix socket creation
+- Proxy websocket properly
+- Implement importMovies feature
+- Fix spacing in header components
+- Complete HeaderBar component
+- Implement Settings component
+- Factor Console into its own component
+- Implement Prune component
+- Implement Duplicates component
+- Add date-fns & vue-flatpickr packages
+- Complete Movie component
+- Implement Pager component
+- Implement pagination feature
+- Improve look & feel of the Movie component
+- Improve pagination UI
+- Fix logic for fixMovie feature
+- Use new app setup logic
+- Replace gin with echo
+- Upgrade go-micro
+- Fix production readiness issues
+- Add bundle script
+- Update README
+- Update README
+- Implement CI
+- Add missing dependency
+- Revert "Add missing dependency"
+- Fix protobuf go package location
+- Upgrade go dependencies
+- Refactor agent code
+- Improve build script
+
+
+

@@ -1,0 +1,15 @@
+2017-03-15 - 3.0.0
+
+This release marks the third iteration of the mediaGUI project. Check the
+README for additional details.
+
+The main change has been a complete rewrite of the client code, replacing
+react/ffux with vue/vuex.
+
+The server code was changed a bit as well, mainly replacing gin with echo.
+
+Also in this release:
+- Improve overall app folder structure
+- Revamped Movies view
+- Implement automated build pipeline
+- Other bug fixes and general improvements
