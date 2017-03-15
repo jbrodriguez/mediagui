@@ -29,7 +29,7 @@ To learn:
 	- [ffux](https://github.com/milankinen/ffux/): A functional approach to state management
 	- [flexboxgrid-sass](https://github.com/hugeinc/flexboxgrid-sass/)
 
-- 3rd Iteration [(https://github.com/jbrodriguez/mediagui/)] <br />
+- 3rd Iteration [(code)](https://github.com/jbrodriguez/mediagui/) <br />
 To learn:
 	- [vuejs](https://vuejs.org/)
 	- [tachyons-sass](https://github.com/tachyons-css/tachyons-sass)
