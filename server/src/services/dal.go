@@ -3,9 +3,6 @@ package services
 import (
 	"database/sql"
 	"fmt"
-	"github.com/jbrodriguez/mlog"
-	"github.com/jbrodriguez/pubsub"
-	_ "github.com/mattn/go-sqlite3" // sqlite3 doesn't need to be named
 	"jbrodriguez/mediagui/server/src/lib"
 	"jbrodriguez/mediagui/server/src/model"
 	"path/filepath"
@@ -13,6 +10,10 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/jbrodriguez/mlog"
+	"github.com/jbrodriguez/pubsub"
+	_ "github.com/mattn/go-sqlite3" // sqlite3 doesn't need to be named
 )
 
 // const DATETIME_LAYOUT = "2006-01-02T15:04:05-07:00"
@@ -71,6 +72,7 @@ func (d *Dal) Start() {
 	d.registerAdditional(d.bus, "/command/movie/delete", d.deleteMovie, d.mailbox)
 	d.registerAdditional(d.bus, "/put/movies/score", d.setScore, d.mailbox)
 	d.registerAdditional(d.bus, "/put/movies/watched", d.setWatched, d.mailbox)
+	d.registerAdditional(d.bus, "/put/movies/duplicate", d.setDuplicate, d.mailbox)
 
 	d.countRows = d.prepare("select count(*) from movie;")
 
@@ -131,7 +133,7 @@ func (d *Dal) listMovies(options *lib.Options) (total uint64, movies []*model.Mo
 	sql := fmt.Sprintf(`select rowid, title, original_title, file_title, year, runtime, tmdb_id, imdb_id,
 				overview, tagline, resolution, filetype, location, cover, backdrop, genres, vote_average,
 				vote_count, countries, added, modified, last_watched, all_watched, count_watched, score,
-				director, writer, actors, awards, imdb_rating, imdb_votes
+				director, writer, actors, awards, imdb_rating, imdb_votes, show_if_duplicate
 				from movie order by %s %s, rowid desc limit ? offset ?`, options.SortBy, options.SortOrder)
 
 	stmt, err := tx.Prepare(sql)
@@ -166,7 +168,7 @@ func (d *Dal) listMovies(options *lib.Options) (total uint64, movies []*model.Mo
 			&movie.Genres, &movie.Vote_Average, &movie.Vote_Count, &movie.Production_Countries,
 			&movie.Added, &movie.Modified, &movie.Last_Watched, &movie.All_Watched,
 			&movie.Count_Watched, &movie.Score, &movie.Director, &movie.Writer, &movie.Actors,
-			&movie.Awards, &movie.Imdb_Rating, &movie.Imdb_Votes,
+			&movie.Awards, &movie.Imdb_Rating, &movie.Imdb_Votes, &movie.ShowIfDuplicate,
 		)
 		items = append(items, &movie)
 	}
@@ -235,7 +237,7 @@ func (d *Dal) searchByYear(options *lib.Options) (total uint64, movies []*model.
 		sql := fmt.Sprintf(`select rowid, title, original_title, file_title, year, runtime, tmdb_id, imdb_id,
 					overview, tagline, resolution, filetype, location, cover, backdrop, genres, vote_average,
 					vote_count, countries, added, modified, last_watched, all_watched, count_watched, score,
-					director, writer, actors, awards, imdb_rating, imdb_votes
+					director, writer, actors, awards, imdb_rating, imdb_votes, show_if_duplicate
 					from movie where year between ? and ? order by %s %s, rowid desc limit ? offset ?`, options.SortBy, options.SortOrder)
 
 		stmt, err = tx.Prepare(sql)
@@ -257,7 +259,7 @@ func (d *Dal) searchByYear(options *lib.Options) (total uint64, movies []*model.
 		sql := fmt.Sprintf(`select rowid, title, original_title, file_title, year, runtime, tmdb_id, imdb_id,
 					overview, tagline, resolution, filetype, location, cover, backdrop, genres, vote_average,
 					vote_count, countries, added, modified, last_watched, all_watched, count_watched, score,
-					director, writer, actors, awards, imdb_rating, imdb_votes
+					director, writer, actors, awards, imdb_rating, imdb_votes, show_if_duplicate
 					from movie where year = ? order by %s %s, rowid desc limit ? offset ?`, options.SortBy, options.SortOrder)
 
 		mlog.Info("sql.: %s", sql)
@@ -285,13 +287,12 @@ func (d *Dal) searchByYear(options *lib.Options) (total uint64, movies []*model.
 			&movie.Genres, &movie.Vote_Average, &movie.Vote_Count, &movie.Production_Countries,
 			&movie.Added, &movie.Modified, &movie.Last_Watched, &movie.All_Watched,
 			&movie.Count_Watched, &movie.Score, &movie.Director, &movie.Writer, &movie.Actors,
-			&movie.Awards, &movie.Imdb_Rating, &movie.Imdb_Votes,
+			&movie.Awards, &movie.Imdb_Rating, &movie.Imdb_Votes, &movie.ShowIfDuplicate,
 		)
 		// movie := &model.Movie{}
 		// rows.Scan(movie.Id, movie.Title, movie.Original_Title, movie.Year, movie.Runtime, movie.Tmdb_Id, movie.Imdb_Id, movie.Overview, movie.Tagline, movie.Resolution, movie.FileType, movie.Location, movie.Cover, movie.Backdrop)
 		// mlog.Info("title: (%s)", movie.Title)
 		items = append(items, &movie)
-		// mlog.Info("movie: %+v:", movie)
 	}
 	rows.Close()
 
@@ -341,7 +342,7 @@ func (d *Dal) regularSearch(options *lib.Options) (total uint64, movies []*model
 			dt.filetype, dt.location, dt.cover, dt.backdrop, dt.genres, dt.vote_average,
 			dt.vote_count, dt.countries, dt.added, dt.modified, dt.last_watched,
 			dt.all_watched, dt.count_watched, dt.score, dt.director, dt.writer, dt.actors,
-			dt.awards, dt.imdb_rating, dt.imdb_votes
+			dt.awards, dt.imdb_rating, dt.imdb_votes, dt.show_if_duplicate
 			from movie dt, %s vt
 			where vt.%s match ? and dt.rowid = vt.docid order by dt.%s %s limit ? offset ?`,
 		"movie"+options.FilterBy, "movie"+options.FilterBy, options.SortBy, options.SortOrder)
@@ -363,7 +364,7 @@ func (d *Dal) regularSearch(options *lib.Options) (total uint64, movies []*model
 
 	for rows.Next() {
 		movie := model.Movie{}
-		rows.Scan(&movie.Id, &movie.Title, &movie.Original_Title, &movie.Year, &movie.Runtime, &movie.Tmdb_Id, &movie.Imdb_Id, &movie.Overview, &movie.Tagline, &movie.Resolution, &movie.FileType, &movie.Location, &movie.Cover, &movie.Backdrop, &movie.Genres, &movie.Vote_Average, &movie.Vote_Count, &movie.Production_Countries, &movie.Added, &movie.Modified, &movie.Last_Watched, &movie.All_Watched, &movie.Count_Watched, &movie.Score, &movie.Director, &movie.Writer, &movie.Actors, &movie.Awards, &movie.Imdb_Rating, &movie.Imdb_Votes)
+		rows.Scan(&movie.Id, &movie.Title, &movie.Original_Title, &movie.Year, &movie.Runtime, &movie.Tmdb_Id, &movie.Imdb_Id, &movie.Overview, &movie.Tagline, &movie.Resolution, &movie.FileType, &movie.Location, &movie.Cover, &movie.Backdrop, &movie.Genres, &movie.Vote_Average, &movie.Vote_Count, &movie.Production_Countries, &movie.Added, &movie.Modified, &movie.Last_Watched, &movie.All_Watched, &movie.Count_Watched, &movie.Score, &movie.Director, &movie.Writer, &movie.Actors, &movie.Awards, &movie.Imdb_Rating, &movie.Imdb_Votes, &movie.ShowIfDuplicate)
 		// movie := &model.Movie{}
 		// rows.Scan(movie.Id, movie.Title, movie.Original_Title, movie.Year, movie.Runtime, movie.Tmdb_Id, movie.Imdb_Id, movie.Overview, movie.Tagline, movie.Resolution, movie.FileType, movie.Location, movie.Cover, movie.Backdrop)
 		// mlog.Info("title: (%s)", movie.Title)
@@ -397,12 +398,12 @@ func (d *Dal) getDuplicates(msg *pubsub.Message) {
 				a.filetype, a.location, a.cover, a.backdrop, a.genres, a.vote_average,
 				a.vote_count, a.countries, a.added, a.modified, a.last_watched, a.all_watched,
 				a.count_watched, a.score, a.director, a.writer, a.actors, a.awards, a.imdb_rating,
-				a.imdb_votes
+				a.imdb_votes, a.show_if_duplicate
 				from
 				movie a
 				join
-				(select title, year from movie group by title, year having count(*) > 1) b
-				on a.title = b.title and a.year = b.year;`)
+				(select title, show_if_duplicate from movie where show_if_duplicate = 1 group by title having count(*) > 1) b
+				on a.title = b.title;`)
 	if err != nil {
 		mlog.Fatalf("Unable to prepare transaction: %s", err)
 	}
@@ -411,7 +412,7 @@ func (d *Dal) getDuplicates(msg *pubsub.Message) {
 
 	for rows.Next() {
 		movie := model.Movie{}
-		rows.Scan(&movie.Id, &movie.Title, &movie.Original_Title, &movie.File_Title, &movie.Year, &movie.Runtime, &movie.Tmdb_Id, &movie.Imdb_Id, &movie.Overview, &movie.Tagline, &movie.Resolution, &movie.FileType, &movie.Location, &movie.Cover, &movie.Backdrop, &movie.Genres, &movie.Vote_Average, &movie.Vote_Count, &movie.Production_Countries, &movie.Added, &movie.Modified, &movie.Last_Watched, &movie.All_Watched, &movie.Count_Watched, &movie.Score, &movie.Director, &movie.Writer, &movie.Actors, &movie.Awards, &movie.Imdb_Rating, &movie.Imdb_Votes)
+		rows.Scan(&movie.Id, &movie.Title, &movie.Original_Title, &movie.File_Title, &movie.Year, &movie.Runtime, &movie.Tmdb_Id, &movie.Imdb_Id, &movie.Overview, &movie.Tagline, &movie.Resolution, &movie.FileType, &movie.Location, &movie.Cover, &movie.Backdrop, &movie.Genres, &movie.Vote_Average, &movie.Vote_Count, &movie.Production_Countries, &movie.Added, &movie.Modified, &movie.Last_Watched, &movie.All_Watched, &movie.Count_Watched, &movie.Score, &movie.Director, &movie.Writer, &movie.Actors, &movie.Awards, &movie.Imdb_Rating, &movie.Imdb_Votes, &movie.ShowIfDuplicate)
 		items = append(items, &movie)
 	}
 	rows.Close()
@@ -429,7 +430,7 @@ func (d *Dal) getMovie(msg *pubsub.Message) {
 	sql := `select rowid, title, original_title, file_title, year, runtime, tmdb_id, imdb_id,
 				overview, tagline, resolution, filetype, location, cover, backdrop, genres, vote_average,
 				vote_count, countries, added, modified, last_watched, all_watched, count_watched, score,
-				director, writer, actors, awards, imdb_rating, imdb_votes
+				director, writer, actors, awards, imdb_rating, imdb_votes, show_if_duplicate
 				from movie where rowid = ?`
 
 	stmt, err := d.db.Prepare(sql)
@@ -442,7 +443,7 @@ func (d *Dal) getMovie(msg *pubsub.Message) {
 
 	err = stmt.
 		QueryRow(id).
-		Scan(&movie.Id, &movie.Title, &movie.Original_Title, &movie.File_Title, &movie.Year, &movie.Runtime, &movie.Tmdb_Id, &movie.Imdb_Id, &movie.Overview, &movie.Tagline, &movie.Resolution, &movie.FileType, &movie.Location, &movie.Cover, &movie.Backdrop, &movie.Genres, &movie.Vote_Average, &movie.Vote_Count, &movie.Production_Countries, &movie.Added, &movie.Modified, &movie.Last_Watched, &movie.All_Watched, &movie.Count_Watched, &movie.Score, &movie.Director, &movie.Writer, &movie.Actors, &movie.Awards, &movie.Imdb_Rating, &movie.Imdb_Votes)
+		Scan(&movie.Id, &movie.Title, &movie.Original_Title, &movie.File_Title, &movie.Year, &movie.Runtime, &movie.Tmdb_Id, &movie.Imdb_Id, &movie.Overview, &movie.Tagline, &movie.Resolution, &movie.FileType, &movie.Location, &movie.Cover, &movie.Backdrop, &movie.Genres, &movie.Vote_Average, &movie.Vote_Count, &movie.Production_Countries, &movie.Added, &movie.Modified, &movie.Last_Watched, &movie.All_Watched, &movie.Count_Watched, &movie.Score, &movie.Director, &movie.Writer, &movie.Actors, &movie.Awards, &movie.Imdb_Rating, &movie.Imdb_Votes, &movie.ShowIfDuplicate)
 	if err != nil {
 		mlog.Fatalf("Unable to prepare transaction: %s", err)
 	}
@@ -504,9 +505,9 @@ func (d *Dal) storeMovie(msg *pubsub.Message) {
 								resolution, filetype, location, cover, backdrop, genres,
 								vote_average, vote_count, countries, added, modified,
 								last_watched, all_watched, count_watched, score, director,
-								writer, actors, awards, imdb_rating, imdb_votes)
+								writer, actors, awards, imdb_rating, imdb_votes, show_if_duplicate)
 								values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-									?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+									?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		tx.Rollback()
 		mlog.Fatalf("at prepare: %s", err)
@@ -519,7 +520,7 @@ func (d *Dal) storeMovie(msg *pubsub.Message) {
 		movie.Genres, movie.Vote_Average, movie.Vote_Count, movie.Production_Countries,
 		movie.Added, movie.Modified, movie.Last_Watched, movie.All_Watched, movie.Count_Watched,
 		movie.Score, movie.Director, movie.Writer, movie.Actors, movie.Awards, movie.Imdb_Rating,
-		movie.Imdb_Votes)
+		movie.Imdb_Votes, movie.ShowIfDuplicate)
 	if err != nil {
 		tx.Rollback()
 		mlog.Fatalf("at exec: %s", err)
@@ -538,6 +539,7 @@ func (d *Dal) partialStoreMovie(msg *pubsub.Message) {
 	now := time.Now().UTC().Format(time.RFC3339)
 	movie.Added = now
 	movie.Modified = now
+	movie.ShowIfDuplicate = 1
 
 	mlog.Info("STARTED PARTIAL SAVING %s", movie.Title)
 
@@ -551,7 +553,7 @@ func (d *Dal) partialStoreMovie(msg *pubsub.Message) {
 								resolution, filetype, location, cover, backdrop, genres,
 								vote_average, vote_count, countries, added, modified,
 								last_watched, all_watched, count_watched, score, director,
-								writer, actors, awards, imdb_rating, imdb_votes)
+								writer, actors, awards, imdb_rating, imdb_votes, show_if_duplicate)
 								values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
 									?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
@@ -566,7 +568,7 @@ func (d *Dal) partialStoreMovie(msg *pubsub.Message) {
 		movie.Genres, movie.Vote_Average, movie.Vote_Count, movie.Production_Countries,
 		movie.Added, movie.Modified, movie.Last_Watched, movie.All_Watched, movie.Count_Watched,
 		movie.Score, movie.Director, movie.Writer, movie.Actors, movie.Awards, movie.Imdb_Rating,
-		movie.Imdb_Votes)
+		movie.Imdb_Votes, movie.ShowIfDuplicate)
 	if err != nil {
 		tx.Rollback()
 		mlog.Fatalf("at exec: %s", err)
@@ -608,7 +610,8 @@ func (d *Dal) updateMovie(msg *pubsub.Message) {
 								actors = ?,
 								awards = ?,
 								imdb_rating = ?,
-								imdb_votes = ?
+								imdb_votes = ?,
+								show_if_duplicate = ?
 								where rowid = ?`)
 	if err != nil {
 		tx.Rollback()
@@ -616,7 +619,7 @@ func (d *Dal) updateMovie(msg *pubsub.Message) {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(movie.Title, movie.Original_Title, movie.Year, movie.Runtime, movie.Tmdb_Id, movie.Imdb_Id, movie.Overview, movie.Tagline, movie.Cover, movie.Backdrop, movie.Genres, movie.Vote_Average, movie.Vote_Count, movie.Production_Countries, movie.Modified, movie.Director, movie.Writer, movie.Actors, movie.Awards, movie.Imdb_Rating, movie.Imdb_Votes, movie.Id)
+	_, err = stmt.Exec(movie.Title, movie.Original_Title, movie.Year, movie.Runtime, movie.Tmdb_Id, movie.Imdb_Id, movie.Overview, movie.Tagline, movie.Cover, movie.Backdrop, movie.Genres, movie.Vote_Average, movie.Vote_Count, movie.Production_Countries, movie.Modified, movie.Director, movie.Writer, movie.Actors, movie.Awards, movie.Imdb_Rating, movie.Imdb_Votes, movie.ShowIfDuplicate, movie.Id)
 	if err != nil {
 		tx.Rollback()
 		mlog.Fatalf("at exec: %s", err)
@@ -780,6 +783,40 @@ func (d *Dal) setWatched(msg *pubsub.Message) {
 	dto.Modified = now
 
 	msg.Reply <- dto
+}
+
+func (d *Dal) setDuplicate(msg *pubsub.Message) {
+	movie := msg.Payload.(*model.Movie)
+
+	mlog.Info("STARTED UPDATING MOVIE DUPLICATE STATUS [%d] %s (%d)", movie.Id, movie.Title, movie.ShowIfDuplicate)
+
+	tx, err := d.db.Begin()
+	if err != nil {
+		mlog.Fatalf("at begin: %s", err)
+	}
+
+	stmt, err := tx.Prepare(`update movie set
+								show_if_duplicate = ?,
+								modified = ?
+								where rowid = ?`)
+	if err != nil {
+		tx.Rollback()
+		mlog.Fatalf("at prepare: %s", err)
+	}
+	defer stmt.Close()
+
+	now := time.Now().UTC().Format(time.RFC3339)
+
+	_, err = stmt.Exec(movie.ShowIfDuplicate, now, movie.Id)
+	if err != nil {
+		tx.Rollback()
+		mlog.Fatalf("at exec: %s", err)
+	}
+
+	tx.Commit()
+	mlog.Info("FINISHED UPDATING MOVIE DUPLICATE STATUS [%d] %s", movie.Id, movie.Title)
+
+	msg.Reply <- movie
 }
 
 func (d *Dal) prepare(sql string) *sql.Stmt {

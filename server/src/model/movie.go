@@ -1,10 +1,12 @@
 package model
 
+// MoviesDTO -
 type MoviesDTO struct {
 	Total uint64   `json:"total"`
 	Items []*Movie `json:"items"`
 }
 
+// Movie -
 type Movie struct {
 	Id                   uint64  `json:"id"`
 	Title                string  `json:"title"`
@@ -37,4 +39,5 @@ type Movie struct {
 	Awards               string  `json:"awards"`
 	Imdb_Rating          float64 `json:"imdb_rating"`
 	Imdb_Votes           uint64  `json:"imdb_votes"`
+	ShowIfDuplicate      uint64  `json:"showIfDuplicate"`
 }

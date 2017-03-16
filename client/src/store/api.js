@@ -81,6 +81,16 @@ class Api {
     .then(resp => resp.json())
     .then(data => cb(data));
   }
+
+  setMovieDuplicate(movie, cb) {
+    return fetch(`${this.host}/movies/${movie.id}/duplicate`, {
+      method: 'PUT',
+      headers: new Headers({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify(movie),
+    })
+    .then(resp => resp.json())
+    .then(data => cb(data));
+  }
 }
 
 const api = new Api();
