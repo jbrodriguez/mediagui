@@ -197,7 +197,7 @@ func (s *Server) getMovies(c echo.Context) error {
 	var options lib.Options
 	c.Bind(&options) // You can also specify which binder to use. We support binding.Form, binding.JSON and binding.XML.
 
-	// mlog.Info("server.getMovies.options: %+v", options)
+	mlog.Info("server.getMovies.options: %+v", options)
 	// mlog.Info("request: ", c.Request)
 
 	msg := &pubsub.Message{Payload: &options, Reply: make(chan interface{}, capacity)}
@@ -267,7 +267,8 @@ func (s *Server) addMediaFolder(c echo.Context) error {
 func (s *Server) setMovieScore(c echo.Context) error {
 	var movie model.Movie
 	if err := c.Bind(&movie); err != nil {
-		mlog.Warning("Unable to obtain score: %s", err.Error())
+		mlog.Warning("Unable to obtain setMovieScore: %s", err.Error())
+		return c.JSON(http.StatusBadRequest, nil)
 	}
 
 	movie.Id, _ = strconv.ParseUint(c.Param("id"), 0, 64)
@@ -284,7 +285,8 @@ func (s *Server) setMovieScore(c echo.Context) error {
 func (s *Server) setMovieWatched(c echo.Context) error {
 	var movie model.Movie
 	if err := c.Bind(&movie); err != nil {
-		mlog.Warning("Unable to obtain score: %s", err.Error())
+		mlog.Warning("Unable to obtain setMovieWatched: %s", err.Error())
+		return c.JSON(http.StatusBadRequest, nil)
 	}
 
 	movie.Id, _ = strconv.ParseUint(c.Param("id"), 0, 64)
@@ -301,7 +303,8 @@ func (s *Server) setMovieWatched(c echo.Context) error {
 func (s *Server) fixMovie(c echo.Context) error {
 	var movie model.Movie
 	if err := c.Bind(&movie); err != nil {
-		mlog.Warning("Unable to obtain score: %s", err.Error())
+		mlog.Warning("Unable to bind fixMovie body: %s", err.Error())
+		return c.JSON(http.StatusBadRequest, nil)
 	}
 
 	movie.Id, _ = strconv.ParseUint(c.Param("id"), 0, 64)
@@ -316,28 +319,13 @@ func (s *Server) fixMovie(c echo.Context) error {
 }
 
 func (s *Server) handleWs(ws *websocket.Conn) {
-	// for {
-	// 	// Write
-	// 	err := websocket.Message.Send(ws, "Hello, Client!")
-	// 	if err != nil {
-	// 		log.Fatal(err)
-	// 	}
-
-	// 	// Read
-	// 	msg := ""
-	// 	err = websocket.Message.Receive(ws, &msg)
-	// 	if err != nil {
-	// 		log.Fatal(err)
-	// 	}
-	// 	fmt.Printf("%s\n", msg)
-	// }
 	conn := net.NewConnection(ws, s.onMessage, s.onClose)
 	s.pool[conn] = true
 	conn.Read()
 }
 
 func (s *Server) onMessage(packet *dto.Packet) {
-	mlog.Info("topic(%s)-payload(%+v)", packet.Topic, packet.Payload)
+	// mlog.Info("topic(%s)-payload(%+v)", packet.Topic, packet.Payload)
 	s.bus.Pub(&pubsub.Message{Payload: packet.Payload}, packet.Topic)
 }
 
@@ -350,7 +338,7 @@ func (s *Server) onClose(c *net.Connection, err error) {
 
 func (s *Server) broadcast(msg *pubsub.Message) {
 	packet := msg.Payload.(*dto.Packet)
-	mlog.Info("paylod-%+v", packet)
+	// mlog.Info("paylod-%+v", packet)
 	for conn := range s.pool {
 		conn.Write(packet)
 	}
