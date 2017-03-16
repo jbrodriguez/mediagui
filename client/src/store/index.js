@@ -113,6 +113,12 @@ const store = new Vuex.Store({
       console.log(`id(${movie.id})-last_watched(${movie.tmdb_id})`); // eslint-disable-line
       api.fixMovie(movie, changed => commit(types.SET_MOVIE, changed));
     },
+
+    [types.SET_DUPLICATE]: ({ commit, state }, { id, showIfDuplicate }) => {
+      // console.log(`showIfDuplicate(${showIfDuplicate})`); // eslint-disable-line
+      const movie = Object.assign({}, state.movies[id], { showIfDuplicate });
+      api.setMovieDuplicate(movie, changed => commit(types.SET_MOVIE, changed));
+    },
   },
 
   mutations: {

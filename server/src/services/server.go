@@ -113,6 +113,7 @@ func (s *Server) Start() {
 	api.PUT("/movies/:id/score", s.setMovieScore)
 	api.PUT("/movies/:id/watched", s.setMovieWatched)
 	api.PUT("/movies/:id/fix", s.fixMovie)
+	api.PUT("/movies/:id/duplicate", s.setDuplicate)
 
 	// api := s.router.Group(apiVersion)
 	// {
@@ -311,6 +312,24 @@ func (s *Server) fixMovie(c echo.Context) error {
 
 	msg := &pubsub.Message{Payload: &movie, Reply: make(chan interface{}, capacity)}
 	s.bus.Pub(msg, "/put/movies/fix")
+
+	reply := <-msg.Reply
+	resp := reply.(*model.Movie)
+
+	return c.JSON(http.StatusOK, &resp)
+}
+
+func (s *Server) setDuplicate(c echo.Context) error {
+	var movie model.Movie
+	if err := c.Bind(&movie); err != nil {
+		mlog.Warning("Unable to bind setDuplicate body: %s", err.Error())
+		return c.JSON(http.StatusBadRequest, nil)
+	}
+
+	movie.Id, _ = strconv.ParseUint(c.Param("id"), 0, 64)
+
+	msg := &pubsub.Message{Payload: &movie, Reply: make(chan interface{}, capacity)}
+	s.bus.Pub(msg, "/put/movies/duplicate")
 
 	reply := <-msg.Reply
 	resp := reply.(*model.Movie)

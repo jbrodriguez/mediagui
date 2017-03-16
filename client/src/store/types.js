@@ -23,3 +23,4 @@ export const SET_SCORE = 'SET_SCORE';
 export const SET_MOVIE = 'SET_MOVIE';
 export const SET_WATCHED = 'SET_WATCHED';
 export const FIX_MOVIE = 'FIX_MOVIE';
+export const SET_DUPLICATE = 'SET_DUPLICATE';

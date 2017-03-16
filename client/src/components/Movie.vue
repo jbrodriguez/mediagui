@@ -45,9 +45,13 @@
           </span>
         </div>
         <div class="row between-xs mt2">
-          <div class="col-xs-12 col-sm-2 addon">
+          <div class="col-xs-12 col-sm-4 addon">
             <input class="addon-field" type="number" min="0" step="1" v-model.number="tmdb" />
             <button class="btn btn-default mr2" @click="fixMovie">Fix</button>
+            <div class="mr2">
+              <label for="cbox">Not Dup ?</label>
+              <input type="checkbox" id="cbox" v-model="duplicate" @change="setDuplicate">
+            </div>
             <div v-if="loading" class="loading middle-xs">
               <div class="loading-bar"></div>
               <div class="loading-bar"></div>
@@ -55,7 +59,7 @@
               <div class="loading-bar"></div>
             </div>
           </div>
-          <div class="col-xs-12 col-sm-4 addon end-xs">
+          <div class="col-xs-12 col-sm-4 addon center-xs">
             <div v-if="watched">
               <span class="c-text">History:</span>
               <span class="label success mv0 mh2 ">{{movie.count_watched}}</span>
@@ -64,7 +68,7 @@
               </select>
             </div>
           </div>
-          <div class="col-xs-12 col-sm-6 addon end-sm">
+          <div class="col-xs-12 col-sm-4 addon end-sm">
             <span v-if="hasRating" class="label success mv0 mr2">{{movie.score}}</span>
             <Rating :max="10" :value="movie.score" @rating-selected="setScore" class="mr2" />
             <!--<datepicker v-model="seen" monday-first @selected="setWatched"></datepicker>>-->
@@ -131,6 +135,7 @@ export default {
   data() {
     return {
       tmdb: this.movie.tmdb_id,
+      duplicate: this.movie.showIfDuplicate === 0,
       seen: new Date().toString(),
       fpOptions: {
         onValueUpdate: null,
@@ -172,6 +177,15 @@ export default {
       this.loading = true;
       this.$store.dispatch(types.FIX_MOVIE, { id: this.movie.id, tmdb: this.tmdb });
       // }
+    },
+
+    setDuplicate() {
+      this.loading = true;
+      console.log(`this.duplicate(${this.duplicate})`); // eslint-disable-line
+      this.$store.dispatch(types.SET_DUPLICATE, {
+        id: this.movie.id,
+        showIfDuplicate: this.duplicate ? 0 : 1,
+      });
     },
   },
 

@@ -98,6 +98,7 @@ func (s *Scrape) Execute(wid int) {
 	movie.Modified = now
 
 	movie.Score = 0
+	movie.ShowIfDuplicate = 1
 
 	lib.Notify(s.bus, "import:progress", fmt.Sprintf("STARTED TMDB (%d) [%s]", wid, movie.Title))
 	movies, err := s.tmdb.SearchMovie(movie.Title)
