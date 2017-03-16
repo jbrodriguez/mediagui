@@ -21,4 +21,4 @@ node_modules
 server/server
 server/mediagui
 scanner/scanner
-agent/agent
+server/agent
