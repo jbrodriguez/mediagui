@@ -1,0 +1,18 @@
+2017-03-16 - 3.1.0
+
+The duplicate movies logic was modified to be more accurate. It now
+checks by title only, which picks up duplicates where the year was
+wrongly set on one of the copies.
+
+This also raises false positives: movies that share the same name, but are
+really completely different.
+
+To handle this, I added a not duplicate functionality to manually mark these
+rightful movies and have them not show up as duplicates
+
+Also in this release:
+- Fix build script
+- Display agent version on startup
+- Fix app title in browser tab
+- Fetch data when entering a route
+- Other bug fixes and general improvement
