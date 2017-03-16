@@ -12,7 +12,12 @@ import (
 	"github.com/micro/go-micro/server"
 )
 
+// Version - plugin version
+var Version string
+
 func main() {
+	log.Printf("Started agent v%s", Version)
+
 	// optionally setup command line usage
 	cmd.Init()
 
