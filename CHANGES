@@ -1,3 +1,12 @@
+Version 3.1.0 - 2017-03-16
+- Fix build script
+- Display agent version on startup
+- Fix app title in browser tab
+- Fix POST/PUT logic
+- Modify duplicate movies logic
+- Fetch data when entering a route
+
+
 Version 3.0.0 - 2017-03-15
 - Initial code reorganization
 - Refactor server code
@@ -55,6 +64,3 @@ Version 3.0.0 - 2017-03-15
 - Upgrade go dependencies
 - Refactor agent code
 - Improve build script
-
-
-
