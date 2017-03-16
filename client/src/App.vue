@@ -24,7 +24,6 @@ export default {
 
   created() {
     this.$store.dispatch(types.FETCH_CONFIG);
-    this.$store.dispatch(types.FETCH_COVER);
   },
 };
 </script>

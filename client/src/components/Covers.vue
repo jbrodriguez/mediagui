@@ -8,18 +8,15 @@
 
 <script>
 import Cover from './Cover';
+import * as types from '../store/types';
 
 export default {
   name: 'covers',
 
   components: { Cover },
 
-  data() {
-    const data = {
-      // movies: this.$store.getters.getMovies,
-    };
-
-    return data;
+  created() {
+    this.$store.dispatch(types.FETCH_COVER);
   },
 
   computed: {
