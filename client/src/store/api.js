@@ -35,6 +35,7 @@ class Api {
   addFolder(folder, cb) {
     return fetch(`${this.host}/config/folder`, {
       method: 'PUT',
+      headers: new Headers({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({ topic: '', payload: folder }),
     })
     .then(resp => resp.json())
@@ -54,6 +55,7 @@ class Api {
   setMovieScore(movie, cb) {
     return fetch(`${this.host}/movies/${movie.id}/score`, {
       method: 'PUT',
+      headers: new Headers({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(movie),
     })
     .then(resp => resp.json())
@@ -63,6 +65,7 @@ class Api {
   setMovieWatched(movie, cb) {
     return fetch(`${this.host}/movies/${movie.id}/watched`, {
       method: 'PUT',
+      headers: new Headers({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(movie),
     })
     .then(resp => resp.json())
@@ -72,6 +75,7 @@ class Api {
   fixMovie(movie, cb) {
     return fetch(`${this.host}/movies/${movie.id}/fix`, {
       method: 'PUT',
+      headers: new Headers({ 'Content-Type': 'application/json' }),
       body: JSON.stringify(movie),
     })
     .then(resp => resp.json())
