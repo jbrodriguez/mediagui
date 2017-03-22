@@ -44,65 +44,65 @@
 </template>
 
 <script>
-import debounce from 'lodash.debounce';
+import debounce from 'lodash.debounce'
 
-import * as types from '../store/types';
+import * as types from '../store/types'
 
 export default {
   name: 'header-bar',
 
-  data() {
+  data () {
     return {
       selected: this.$store.state.options.filterBy,
-      sortBy: this.$store.state.options.sortBy,
-    };
+      sortBy: this.$store.state.options.sortBy
+    }
   },
 
   methods: {
-    changeFilter(e) {
-      this.selected = e.target.value;
-      this.$store.commit(types.SET_FILTER, e.target.value);
-      this.$store.dispatch(types.FETCH_MOVIES);
+    changeFilter (e) {
+      this.selected = e.target.value
+      this.$store.commit(types.SET_FILTER, e.target.value)
+      this.$store.dispatch(types.FETCH_MOVIES)
     },
 
-    changeSort(e) {
-      this.sortBy = e.target.value;
-      this.$store.commit(types.SET_SORT, e.target.value);
-      this.$store.dispatch(types.FETCH_MOVIES);
+    changeSort (e) {
+      this.sortBy = e.target.value
+      this.$store.commit(types.SET_SORT, e.target.value)
+      this.$store.dispatch(types.FETCH_MOVIES)
     },
 
     updateQuery: debounce(
-      function handle(e) {
-        this.$store.commit(types.SET_QUERY, e.target.value);
-        this.$store.dispatch(types.FETCH_MOVIES);
+      function handle (e) {
+        this.$store.commit(types.SET_QUERY, e.target.value)
+        this.$store.dispatch(types.FETCH_MOVIES)
       },
       750,
     ),
 
-    changeOrder() {
-      this.$store.commit(types.FLIP_ORDER);
-      this.$store.dispatch(types.FETCH_MOVIES);
-    },
+    changeOrder () {
+      this.$store.commit(types.FLIP_ORDER)
+      this.$store.dispatch(types.FETCH_MOVIES)
+    }
   },
 
   computed: {
-    filters() {
-      return this.$store.state.options.filterByOptions;
+    filters () {
+      return this.$store.state.options.filterByOptions
     },
 
-    sorts() {
-      return this.$store.state.options.sortByOptions;
+    sorts () {
+      return this.$store.state.options.sortByOptions
     },
 
-    query() {
-      return this.$store.state.options.query;
+    query () {
+      return this.$store.state.options.query
     },
 
-    chevron() {
-      return this.$store.state.options.sortOrder === 'asc' ? 'fa-chevron-circle-up' : 'fa-chevron-circle-down';
-    },
-  },
-};
+    chevron () {
+      return this.$store.state.options.sortOrder === 'asc' ? 'fa-chevron-circle-up' : 'fa-chevron-circle-down'
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

@@ -7,16 +7,6 @@ function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
 
-// use: [
-//   { loader: 'style-loader'},
-//   { loader: 'css-loader',
-// 	options: {
-// 		modules: true,
-// 	},
-//   },
-// ]
-
-
 module.exports = {
   entry: {
     app: './src/main.js'

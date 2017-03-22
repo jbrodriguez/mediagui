@@ -37,68 +37,68 @@
 <script>
 // import Paginate from 'vuejs-paginate';
 
-import Movie from './Movie';
-import Pager from './Pager';
-import * as types from '../store/types';
+import Movie from './Movie'
+import Pager from './Pager'
+import * as types from '../store/types'
 
 export default {
   name: 'movies',
 
   components: { Pager, Movie },
 
-  data() {
+  data () {
     return {
-      shouldScroll: false,
-    };
+      shouldScroll: false
+    }
   },
 
   methods: {
-    onPaginationClick(pageNum) {
-      this.shouldScroll = true;
+    onPaginationClick (pageNum) {
+      this.shouldScroll = true
 
       // let's keep both paginators in sync, they're zero-based
       // this.$refs.paginator1.selected = pageNum - 1;
       // this.$refs.paginator2.selected = pageNum - 1;
 
-      const offset = Math.ceil((pageNum - 1) * this.$store.state.options.limit);
-      this.$store.commit(types.SET_OFFSET, offset);
-      this.$store.dispatch(types.FETCH_MOVIES);
-    },
+      const offset = Math.ceil((pageNum - 1) * this.$store.state.options.limit)
+      this.$store.commit(types.SET_OFFSET, offset)
+      this.$store.dispatch(types.FETCH_MOVIES)
+    }
   },
 
   computed: {
-    movies() {
-      return this.$store.getters.getMovies;
+    movies () {
+      return this.$store.getters.getMovies
     },
 
-    pageCount() {
-      return Math.ceil(this.$store.state.total / this.$store.state.options.limit);
+    pageCount () {
+      return Math.ceil(this.$store.state.total / this.$store.state.options.limit)
     },
 
-    forcePage() {
-      return this.$store.state.options.offset / this.$store.state.options.limit;
+    forcePage () {
+      return this.$store.state.options.offset / this.$store.state.options.limit
     },
 
-    total() {
-      return this.$store.state.total;
+    total () {
+      return this.$store.state.total
     },
 
-    visible() {
-      return this.$store.state.total > 0;
-    },
-  },
-
-  created() {
-    this.$store.dispatch(types.FETCH_MOVIES);
-  },
-
-  updated() {
-    if (this.shouldScroll) {
-      window.scrollTo(0, 0);
-      this.shouldScroll = false;
+    visible () {
+      return this.$store.state.total > 0
     }
   },
-};
+
+  created () {
+    this.$store.dispatch(types.FETCH_MOVIES)
+  },
+
+  updated () {
+    if (this.shouldScroll) {
+      window.scrollTo(0, 0)
+      this.shouldScroll = false
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

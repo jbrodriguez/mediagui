@@ -25,11 +25,11 @@ export default {
   name: 'footer-bar',
 
   computed: {
-    version() {
-      return this.$store.getters.version;
-    },
-  },
-};
+    version () {
+      return this.$store.getters.version
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

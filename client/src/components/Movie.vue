@@ -81,58 +81,57 @@
 </template>
 
 <script>
-import format from 'date-fns/format';
-// import Datepicker from 'vuejs-datepicker';
-import VueFlatpickr from 'vue-flatpickr';
-import 'vue-flatpickr/theme/base16_flat.css';
+import format from 'date-fns/format'
+// import Datepicker from 'vuejs-datepicker'
+import VueFlatpickr from 'vue-flatpickr'
+import 'vue-flatpickr/theme/base16_flat.css'
 
-import * as types from '../store/types';
-import { hourMinute } from '../lib/utils';
-import Rating from './Rating';
+import * as types from '../store/types'
+import { hourMinute } from '../lib/utils'
+import Rating from './Rating'
 
 const en = {
   weekdays: {
     shorthand: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
     longhand: [
       'Sunday', 'Monday', 'Tuesday', 'Wednesday',
-      'Thursday', 'Friday', 'Saturday',
-    ],
+      'Thursday', 'Friday', 'Saturday'
+    ]
   },
   months: {
     shorthand: [
       'Jan', 'Feb', 'Mar', 'Apr',
       'May', 'Jun', 'Jul', 'Aug',
-      'Sep', 'Oct', 'Nov', 'Dec',
+      'Sep', 'Oct', 'Nov', 'Dec'
     ],
     longhand: [
       'January', 'February', 'March', 'April',
       'May', 'June', 'July', 'August',
-      'September', 'October', 'November', 'December',
-    ],
+      'September', 'October', 'November', 'December'
+    ]
   },
   daysInMonth: [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31],
   firstDayOfWeek: 1,
   ordinal: (nth) => {
-    const s = nth % 100;
-    if (s > 3 && s < 21) return 'th';
+    const s = nth % 100
+    if (s > 3 && s < 21) return 'th'
     switch (s % 10) {
-      case 1: return 'st';
-      case 2: return 'nd';
-      case 3: return 'rd';
-      default: return 'th';
+      case 1: return 'st'
+      case 2: return 'nd'
+      case 3: return 'rd'
+      default: return 'th'
     }
   },
   rangeSeparator: ' to ',
   weekAbbreviation: 'Wk',
   scrollTitle: 'Scroll to increment',
-  toggleTitle: 'Click to toggle',
-};
-
+  toggleTitle: 'Click to toggle'
+}
 
 export default {
   name: 'movie',
 
-  data() {
+  data () {
     return {
       tmdb: this.movie.tmdb_id,
       duplicate: this.movie.showIfDuplicate === 0,
@@ -140,94 +139,94 @@ export default {
       fpOptions: {
         onValueUpdate: null,
         onChange: (selectedDates, dateStr, instance) => this.setWatched(selectedDates, dateStr, instance), // eslint-disable-line
-        locale: en,
+        locale: en
       },
-      loading: false,
-    };
+      loading: false
+    }
   },
 
-  updated() {
-    this.loading = false;
+  updated () {
+    this.loading = false
   },
 
   props: {
     movie: {
       type: Object,
-      required: true,
-    },
+      required: true
+    }
   },
 
   components: { Rating, VueFlatpickr },
 
   methods: {
-    setScore(score) {
-      this.$store.dispatch(types.SET_SCORE, { id: this.movie.id, score });
+    setScore (score) {
+      this.$store.dispatch(types.SET_SCORE, { id: this.movie.id, score })
     },
 
-    setWatched() {
-      // console.log(`seen(${this.seen})`); // eslint-disable-line
-      const watched = format(this.seen, 'YYYY-MM-DDTHH:mm:ssZ');
-      // console.log(`seen(${lastWatched})`); // eslint-disable-line
-      this.$store.dispatch(types.SET_WATCHED, { id: this.movie.id, watched });
+    setWatched () {
+      // console.log(`seen(${this.seen})`)
+      const watched = format(this.seen, 'YYYY-MM-DDTHH:mm:ssZ')
+      // console.log(`seen(${lastWatched})`)
+      this.$store.dispatch(types.SET_WATCHED, { id: this.movie.id, watched })
     },
 
-    fixMovie() {
-      // console.log(`typeof(${typeof this.tmdb})`); // eslint-disable-line
+    fixMovie () {
+      // console.log(`typeof(${typeof this.tmdb})`)
       // if (this.tmdb !== this.movie.tmdb_id) {
-      this.loading = true;
-      this.$store.dispatch(types.FIX_MOVIE, { id: this.movie.id, tmdb: this.tmdb });
+      this.loading = true
+      this.$store.dispatch(types.FIX_MOVIE, { id: this.movie.id, tmdb: this.tmdb })
       // }
     },
 
-    setDuplicate() {
-      this.loading = true;
-      console.log(`this.duplicate(${this.duplicate})`); // eslint-disable-line
+    setDuplicate () {
+      this.loading = true
+      console.log(`this.duplicate(${this.duplicate})`)
       this.$store.dispatch(types.SET_DUPLICATE, {
         id: this.movie.id,
-        showIfDuplicate: this.duplicate ? 0 : 1,
-      });
-    },
+        showIfDuplicate: this.duplicate ? 0 : 1
+      })
+    }
   },
 
   computed: {
-    watched() {
-      return this.movie.count_watched > 0;
+    watched () {
+      return this.movie.count_watched > 0
     },
 
-    runtime() {
-      return hourMinute(this.movie.runtime);
+    runtime () {
+      return hourMinute(this.movie.runtime)
     },
 
-    added() {
+    added () {
       // const added = parse(this.movie.added);
-      return format(this.movie.added, 'MMM DD, YYYY H:mm');
+      return format(this.movie.added, 'MMM DD, YYYY H:mm')
     },
 
-    hasRating() {
-      return this.movie.score !== 0;
+    hasRating () {
+      return this.movie.score !== 0
     },
 
-    lastWatched() {
-      return format(this.movie.last_watched, 'MMM DD, YYYY');
+    lastWatched () {
+      return format(this.movie.last_watched, 'MMM DD, YYYY')
     },
 
-    cover() {
-      return `img/p${this.movie.cover}`;
+    cover () {
+      return `img/p${this.movie.cover}`
     },
 
-    background() {
-      return `/img/b${this.movie.backdrop}`;
+    background () {
+      return `/img/b${this.movie.backdrop}`
     },
 
-    overview() {
-      return this.movie.overview.length > 675 ? `${this.movie.overview.slice(0, 675)} ...` : this.movie.overview;
+    overview () {
+      return this.movie.overview.length > 675 ? `${this.movie.overview.slice(0, 675)} ...` : this.movie.overview
     },
 
-    shows() {
-      return this.movie.all_watched.split('|').map(show => format(show, 'MMM DD, YYYY'));
-    },
-  },
-};
+    shows () {
+      return this.movie.all_watched.split('|').map(show => format(show, 'MMM DD, YYYY'))
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

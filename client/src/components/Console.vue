@@ -13,15 +13,15 @@ export default {
   name: 'console',
 
   computed: {
-    lines() {
-      return this.$store.state.lines;
-    },
+    lines () {
+      return this.$store.state.lines
+    }
   },
 
-  updated() {
-    this.$el.scrollTop = this.$el.scrollHeight;
-  },
-};
+  updated () {
+    this.$el.scrollTop = this.$el.scrollHeight
+  }
+}
 </script>
 
 <style lang="scss" scoped>
