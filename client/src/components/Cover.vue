@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { hourMinute } from '../lib/utils';
+import { hourMinute } from '../lib/utils'
 
 export default {
   name: 'cover',
@@ -34,20 +34,20 @@ export default {
   props: {
     movie: {
       type: Object,
-      required: true,
-    },
+      required: true
+    }
   },
 
   computed: {
-    runtime() {
-      return hourMinute(this.movie.runtime);
+    runtime () {
+      return hourMinute(this.movie.runtime)
     },
 
-    watched() {
-      return this.movie.count_watched > 0;
-    },
-  },
-};
+    watched () {
+      return this.movie.count_watched > 0
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

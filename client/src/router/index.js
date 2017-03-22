@@ -1,46 +1,46 @@
-import Vue from 'vue';
-import Router from 'vue-router';
+import Vue from 'vue'
+import Router from 'vue-router'
 
-import Covers from '@/components/Covers';
-import Movies from '@/components/Movies';
-import Import from '@/components/Import';
-import Settings from '@/components/Settings';
-import Duplicates from '@/components/Duplicates';
-import Prune from '@/components/Prune';
+import Covers from '@/components/Covers'
+import Movies from '@/components/Movies'
+import Import from '@/components/Import'
+import Settings from '@/components/Settings'
+import Duplicates from '@/components/Duplicates'
+import Prune from '@/components/Prune'
 
-Vue.use(Router);
+Vue.use(Router)
 
 export default new Router({
   routes: [
     {
       path: '/',
       name: 'Covers',
-      component: Covers,
+      component: Covers
     },
     {
       path: '/movies',
       name: 'Movies',
-      component: Movies,
+      component: Movies
     },
     {
       path: '/import',
       name: 'Import',
-      component: Import,
+      component: Import
     },
     {
       path: '/settings',
       name: 'Settings',
-      component: Settings,
+      component: Settings
     },
     {
       path: '/duplicates',
       name: 'Duplicates',
-      component: Duplicates,
+      component: Duplicates
     },
     {
       path: '/prune',
       name: 'Prune',
-      component: Prune,
-    },
-  ],
-});
+      component: Prune
+    }
+  ]
+})

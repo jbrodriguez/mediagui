@@ -1,6 +1,6 @@
 # client
 
-> A Vue.js project
+> mediaGUI
 
 ## Build Setup
 

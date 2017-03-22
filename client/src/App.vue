@@ -13,19 +13,19 @@
 </template>
 
 <script>
-import HeaderBar from './components/HeaderBar';
-import FooterBar from './components/FooterBar';
-import * as types from './store/types';
+import HeaderBar from './components/HeaderBar.vue'
+import FooterBar from './components/FooterBar.vue'
+import * as types from './store/types'
 
 export default {
   name: 'app',
 
   components: { HeaderBar, FooterBar },
 
-  created() {
-    this.$store.dispatch(types.FETCH_CONFIG);
-  },
-};
+  created () {
+    this.$store.dispatch(types.FETCH_CONFIG)
+  }
+}
 </script>
 
 <style lang="scss" scoped>

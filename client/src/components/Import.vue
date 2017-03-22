@@ -14,8 +14,8 @@
 </template>
 
 <script>
-import * as types from '../store/types';
-import Console from './Console';
+import * as types from '../store/types'
+import Console from './Console'
 
 export default {
   name: 'import',
@@ -23,11 +23,11 @@ export default {
   components: { Console },
 
   methods: {
-    runImport() {
-      this.$store.dispatch(types.RUN_IMPORT);
-    },
-  },
-};
+    runImport () {
+      this.$store.dispatch(types.RUN_IMPORT)
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

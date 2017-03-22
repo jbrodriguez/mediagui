@@ -34,30 +34,30 @@
 </template>
 
 <script>
-import * as types from '../store/types';
+import * as types from '../store/types'
 
 export default {
   name: 'settings',
 
-  data() {
+  data () {
     return {
-      folder: '',
-    };
+      folder: ''
+    }
   },
 
   methods: {
-    onAdd() {
-      // console.log(`folder-${this.folder}`); // eslint-disable-line
-      this.$store.dispatch(types.ADD_FOLDER, this.folder);
-    },
+    onAdd () {
+      // console.log(`folder-${this.folder}`)
+      this.$store.dispatch(types.ADD_FOLDER, this.folder)
+    }
   },
 
   computed: {
-    folders() {
-      return this.$store.state.config ? this.$store.state.config.mediaFolders : [];
-    },
-  },
-};
+    folders () {
+      return this.$store.state.config ? this.$store.state.config.mediaFolders : []
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

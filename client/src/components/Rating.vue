@@ -7,48 +7,48 @@
 export default {
   name: 'rating',
 
-  data() {
+  data () {
     return {
       is_selected: true,
-      overwritten_value: this.value,
-    };
+      overwritten_value: this.value
+    }
   },
 
   props: {
     max: Number,
     value: Number,
-    disabled: Boolean,
+    disabled: Boolean
   },
 
   watch: {
-    overwritten_value() {
-      this.selected_value = false;
-    },
+    overwritten_value () {
+      this.selected_value = false
+    }
   },
 
   methods: {
-    star_over(index) {
+    star_over (index) {
       if (!this.disabled) {
-        this.temp_value = this.overwritten_value;
-        this.overwritten_value = index;
+        this.temp_value = this.overwritten_value
+        this.overwritten_value = index
       }
     },
 
-    star_out() {
+    star_out () {
       if (!this.disabled && !this.selected_value) {
-        this.overwritten_value = this.temp_value;
+        this.overwritten_value = this.temp_value
       }
     },
 
-    star_selected(value) {
+    star_selected (value) {
       if (!this.disabled) {
-        this.selected_value = true;
-        this.overwritten_value = value;
-        this.$emit('rating-selected', this.overwritten_value);
+        this.selected_value = true
+        this.overwritten_value = value
+        this.$emit('rating-selected', this.overwritten_value)
       }
-    },
-  },
-};
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

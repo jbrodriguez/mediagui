@@ -7,24 +7,24 @@
 </template>
 
 <script>
-import Cover from './Cover';
-import * as types from '../store/types';
+import Cover from './Cover'
+import * as types from '../store/types'
 
 export default {
   name: 'covers',
 
   components: { Cover },
 
-  created() {
-    this.$store.dispatch(types.FETCH_COVER);
+  created () {
+    this.$store.dispatch(types.FETCH_COVER)
   },
 
   computed: {
-    movies() {
-      return this.$store.getters.getMovies;
-    },
-  },
-};
+    movies () {
+      return this.$store.getters.getMovies
+    }
+  }
+}
 </script>
 
 <style>

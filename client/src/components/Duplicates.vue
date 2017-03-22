@@ -5,8 +5,8 @@
 </template>
 
 <script>
-import Movie from './Movie';
-import * as types from '../store/types';
+import Movie from './Movie'
+import * as types from '../store/types'
 
 export default {
   name: 'duplicates',
@@ -14,15 +14,15 @@ export default {
   components: { Movie },
 
   computed: {
-    movies() {
-      return this.$store.getters.getMovies;
-    },
+    movies () {
+      return this.$store.getters.getMovies
+    }
   },
 
-  created() {
-    this.$store.dispatch(types.FETCH_DUPLICATES);
-  },
-};
+  created () {
+    this.$store.dispatch(types.FETCH_DUPLICATES)
+  }
+}
 </script>
 
 <style>

@@ -14,8 +14,8 @@
 </template>
 
 <script>
-import * as types from '../store/types';
-import Console from './Console';
+import * as types from '../store/types'
+import Console from './Console'
 
 export default {
   name: 'prune',
@@ -23,11 +23,11 @@ export default {
   components: { Console },
 
   methods: {
-    onPrune() {
-      this.$store.dispatch(types.RUN_PRUNE);
-    },
-  },
-};
+    onPrune () {
+      this.$store.dispatch(types.RUN_PRUNE)
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>
