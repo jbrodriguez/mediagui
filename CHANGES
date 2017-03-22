@@ -1,3 +1,9 @@
+Version 3.2.0 - 2017-03-22
+- Add install script
+- Replace airbnb's with standard lint
+- Switch to upstream vuejs-paginate
+
+
 Version 3.1.0 - 2017-03-16
 - Fix build script
 - Display agent version on startup

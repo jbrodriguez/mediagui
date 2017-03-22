@@ -1,0 +1,7 @@
+2017-03-22 - 3.2.0
+
+Switch to stock vuejs-paginate, since it now supports forcePage prop.
+
+Also in this release
+- Add install script
+- Replace airbnb's with standard lint
