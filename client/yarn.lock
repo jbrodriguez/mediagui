@@ -5948,6 +5948,10 @@ vue@^2.2.2:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.2.4.tgz#d0a3a050a80a12356d7950ae5a7b3131048209cc"
 
+vuejs-paginate@^0.8.2:
+  version "0.8.2"
+  resolved "https://registry.yarnpkg.com/vuejs-paginate/-/vuejs-paginate-0.8.2.tgz#4bd5f39ba941cf253799b8869ba3e55beac8537d"
+
 vuex-router-sync@^4.1.2:
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/vuex-router-sync/-/vuex-router-sync-4.1.2.tgz#584d6315909257adec2914a63d54b428c016b8ec"
