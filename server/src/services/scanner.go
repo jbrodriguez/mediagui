@@ -15,17 +15,16 @@ import (
 	"github.com/jbrodriguez/pubsub"
 	"github.com/micro/go-micro/client"
 
+	"github.com/jbrodriguez/actor"
 	"golang.org/x/net/context"
 )
 
 // Scanner -
 type Scanner struct {
-	Service
-
 	bus      *pubsub.PubSub
 	settings *lib.Settings
 
-	mailbox chan *pubsub.Mailbox
+	actor *actor.Actor
 
 	re           []*lib.Rexp
 	includedMask string
@@ -33,8 +32,11 @@ type Scanner struct {
 
 // NewScanner -
 func NewScanner(bus *pubsub.PubSub, settings *lib.Settings) *Scanner {
-	scanner := &Scanner{bus: bus, settings: settings}
-	scanner.init()
+	scanner := &Scanner{
+		bus:      bus,
+		settings: settings,
+		actor:    actor.NewActor(bus),
+	}
 	return scanner
 }
 
@@ -42,8 +44,8 @@ func NewScanner(bus *pubsub.PubSub, settings *lib.Settings) *Scanner {
 func (s *Scanner) Start() {
 	mlog.Info("Starting service Scanner ...")
 
-	s.mailbox = s.register(s.bus, "/command/movie/scan", s.scanMovies)
-	s.registerAdditional(s.bus, "/event/config/changed", s.configChanged, s.mailbox)
+	s.actor.Register("/command/movie/scan", s.scanMovies)
+	s.actor.Register("/event/config/changed", s.configChanged)
 
 	re := []string{
 		`(?i)(.*)/(?P<Resolution>.*?)/(?P<Name>.*?)\s\((?P<Year>\d\d\d\d)\)/(?:.*/)*bdmv/index.(?P<FileType>bdmv)$`,
@@ -64,19 +66,12 @@ func (s *Scanner) Start() {
 
 	// cmd.Init()
 
-	go s.react()
+	go s.actor.React()
 }
 
 // Stop -
 func (s *Scanner) Stop() {
 	mlog.Info("Stopped service Scanner ...")
-}
-
-func (s *Scanner) react() {
-	for mbox := range s.mailbox {
-		// mlog.Info("Scanner:Topic: %s", mbox.Topic)
-		s.dispatch(mbox.Topic, mbox.Content)
-	}
 }
 
 func (s *Scanner) scanMovies(msg *pubsub.Message) {

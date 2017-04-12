@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/jbrodriguez/actor"
 	"github.com/jbrodriguez/mlog"
 	"github.com/jbrodriguez/pubsub"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 doesn't need to be named
@@ -20,12 +21,10 @@ import (
 
 // Dal -
 type Dal struct {
-	Service
-
 	bus      *pubsub.PubSub
 	settings *lib.Settings
 
-	mailbox chan *pubsub.Mailbox
+	actor *actor.Actor
 
 	db *sql.DB
 	// dbase       string
@@ -44,8 +43,11 @@ type Dal struct {
 
 // NewDal -
 func NewDal(bus *pubsub.PubSub, settings *lib.Settings) *Dal {
-	dal := &Dal{bus: bus, settings: settings}
-	dal.init()
+	dal := &Dal{
+		bus:      bus,
+		settings: settings,
+		actor:    actor.NewActor(bus),
+	}
 	return dal
 }
 
@@ -61,36 +63,29 @@ func (d *Dal) Start() {
 		mlog.Fatalf("Unable to open database (%s): %s", dbPath, err)
 	}
 
-	d.mailbox = d.register(d.bus, "/get/movies/cover", d.getCover)
-	d.registerAdditional(d.bus, "/get/movies", d.getMovies, d.mailbox)
-	d.registerAdditional(d.bus, "/get/movies/duplicates", d.getDuplicates, d.mailbox)
-	d.registerAdditional(d.bus, "/get/movie", d.getMovie, d.mailbox)
-	d.registerAdditional(d.bus, "/command/movie/exists", d.checkExists, d.mailbox)
-	d.registerAdditional(d.bus, "/command/movie/store", d.storeMovie, d.mailbox)
-	d.registerAdditional(d.bus, "/command/movie/partialstore", d.partialStoreMovie, d.mailbox)
-	d.registerAdditional(d.bus, "/command/movie/update", d.updateMovie, d.mailbox)
-	d.registerAdditional(d.bus, "/command/movie/delete", d.deleteMovie, d.mailbox)
-	d.registerAdditional(d.bus, "/put/movies/score", d.setScore, d.mailbox)
-	d.registerAdditional(d.bus, "/put/movies/watched", d.setWatched, d.mailbox)
-	d.registerAdditional(d.bus, "/put/movies/duplicate", d.setDuplicate, d.mailbox)
+	d.actor.Register("/get/movies/cover", d.getCover)
+	d.actor.Register("/get/movies", d.getMovies)
+	d.actor.Register("/get/movies/duplicates", d.getDuplicates)
+	d.actor.Register("/get/movie", d.getMovie)
+	d.actor.Register("/command/movie/exists", d.checkExists)
+	d.actor.Register("/command/movie/store", d.storeMovie)
+	d.actor.Register("/command/movie/partialstore", d.partialStoreMovie)
+	d.actor.Register("/command/movie/update", d.updateMovie)
+	d.actor.Register("/command/movie/delete", d.deleteMovie)
+	d.actor.Register("/put/movies/score", d.setScore)
+	d.actor.Register("/put/movies/watched", d.setWatched)
+	d.actor.Register("/put/movies/duplicate", d.setDuplicate)
 
 	d.countRows = d.prepare("select count(*) from movie;")
 
 	mlog.Info("Connected to database %s", dbPath)
 
-	go d.react()
+	go d.actor.React()
 }
 
 // Stop -
 func (d *Dal) Stop() {
 	mlog.Info("Stopped service Dal ...")
-}
-
-func (d *Dal) react() {
-	for mbox := range d.mailbox {
-		// mlog.Info("DAL:Topic: %s", mbox.Topic)
-		d.dispatch(mbox.Topic, mbox.Content)
-	}
 }
 
 func (d *Dal) getCover(msg *pubsub.Message) {

@@ -14,6 +14,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/jbrodriguez/actor"
 	"github.com/jbrodriguez/mlog"
 	"github.com/jbrodriguez/pubsub"
 	"github.com/micro/go-micro/client"
@@ -23,22 +24,23 @@ import (
 
 // Core -
 type Core struct {
-	Service
-
 	bus      *pubsub.PubSub
 	settings *lib.Settings
 
-	mailbox chan *pubsub.Mailbox
-	re      *regexp.Regexp
-	maps    map[string]bool
+	actor *actor.Actor
+	re    *regexp.Regexp
+	maps  map[string]bool
 
 	wg sync.WaitGroup
 }
 
 // NewCore -
 func NewCore(bus *pubsub.PubSub, settings *lib.Settings) *Core {
-	core := &Core{bus: bus, settings: settings}
-	core.init()
+	core := &Core{
+		bus:      bus,
+		settings: settings,
+		actor:    actor.NewActor(bus),
+	}
 	return core
 }
 
@@ -46,20 +48,20 @@ func NewCore(bus *pubsub.PubSub, settings *lib.Settings) *Core {
 func (c *Core) Start() {
 	mlog.Info("Starting service Core ...")
 
-	c.mailbox = c.register(c.bus, "/get/config", c.getConfig)
-	c.registerAdditional(c.bus, "/post/import", c.importMovies, c.mailbox)
-	c.registerAdditional(c.bus, "/post/prune", c.pruneMovies, c.mailbox)
-	c.registerAdditional(c.bus, "/put/config/folder", c.addMediaFolder, c.mailbox)
-	c.registerAdditional(c.bus, "/put/movies/fix", c.fixMovie, c.mailbox)
+	c.actor.Register("/get/config", c.getConfig)
+	c.actor.Register("/post/import", c.importMovies)
+	c.actor.Register("/post/prune", c.pruneMovies)
+	c.actor.Register("/put/config/folder", c.addMediaFolder)
+	c.actor.Register("/put/movies/fix", c.fixMovie)
 
-	c.registerAdditional(c.bus, "/event/movie/found", c.doMovieFound, c.mailbox)
-	c.registerAdditional(c.bus, "/event/movie/tmdbnotfound", c.doMovieTmdbNotFound, c.mailbox)
-	c.registerAdditional(c.bus, "/event/movie/scraped", c.doMovieScraped, c.mailbox)
-	c.registerAdditional(c.bus, "/event/movie/rescraped", c.doMovieReScraped, c.mailbox)
-	// c.registerAdditional(c.bus, "/event/movie/updated", c.doMovieUpdated, c.mailbox)
-	// c.registerAdditional(c.bus, "/event/movie/cached/forced", c.doMovieCachedForced, c.mailbox)
+	c.actor.Register("/event/movie/found", c.doMovieFound)
+	c.actor.Register("/event/movie/tmdbnotfound", c.doMovieTmdbNotFound)
+	c.actor.Register("/event/movie/scraped", c.doMovieScraped)
+	c.actor.Register("/event/movie/rescraped", c.doMovieReScraped)
+	// c.actor.Register("/event/movie/updated", c.doMovieUpdated)
+	// c.actor.Register("/event/movie/cached/forced", c.doMovieCachedForced)
 
-	c.registerAdditional(c.bus, "/event/workunit/done", c.doWorkUnitDone, c.mailbox)
+	c.actor.Register("/event/workunit/done", c.doWorkUnitDone)
 
 	c.re = regexp.MustCompile(`(?i)/Volumes/(.*?)/.*`)
 	c.maps = make(map[string]bool)
@@ -72,19 +74,12 @@ func (c *Core) Start() {
 		}
 	}
 
-	go c.react()
+	go c.actor.React()
 }
 
 // Stop -
 func (c *Core) Stop() {
 	mlog.Info("Stopped service Core ...")
-}
-
-func (c *Core) react() {
-	for mbox := range c.mailbox {
-		// mlog.Info("Core:Topic: %s", mbox.Topic)
-		c.dispatch(mbox.Topic, mbox.Content)
-	}
 }
 
 func (c *Core) getConfig(msg *pubsub.Message) {

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/jbrodriguez/actor"
 	"github.com/jbrodriguez/mlog"
 	"github.com/jbrodriguez/pubsub"
 	// "io/ioutil"
@@ -15,19 +16,20 @@ import (
 
 // Cache -
 type Cache struct {
-	Service
-
 	bus      *pubsub.PubSub
 	settings *lib.Settings
 	pool     *lib.Pool
 
-	mailbox chan *pubsub.Mailbox
+	actor *actor.Actor
 }
 
 // NewCache -
 func NewCache(bus *pubsub.PubSub, settings *lib.Settings) *Cache {
-	cache := &Cache{bus: bus, settings: settings}
-	cache.init()
+	cache := &Cache{
+		bus:      bus,
+		settings: settings,
+		actor:    actor.NewActor(bus),
+	}
 	return cache
 }
 
@@ -35,23 +37,16 @@ func NewCache(bus *pubsub.PubSub, settings *lib.Settings) *Cache {
 func (c *Cache) Start() {
 	mlog.Info("Starting service Cache ...")
 
-	c.mailbox = c.register(c.bus, "/command/movie/cache", c.cacheMovie)
+	c.actor.Register("/command/movie/cache", c.cacheMovie)
 
 	c.pool = lib.NewPool(4, 2000)
 
-	go c.react()
+	go c.actor.React()
 }
 
 // Stop -
 func (c *Cache) Stop() {
 	mlog.Info("Stopped service Cache")
-}
-
-func (c *Cache) react() {
-	for mbox := range c.mailbox {
-		// mlog.Info("Scraper:Topic: %s", mbox.Topic)
-		c.dispatch(mbox.Topic, mbox.Content)
-	}
 }
 
 func (c *Cache) cacheMovie(msg *pubsub.Message) {
