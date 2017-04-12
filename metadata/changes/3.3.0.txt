@@ -1,0 +1,7 @@
+2017-04-12 - 3.3.0
+
+Implement new Actor api, based on
+- https://github.com/jbrodriguez/actor
+- https://github.com/jbrodriguez/pubsub
+
+Also add install script to release
