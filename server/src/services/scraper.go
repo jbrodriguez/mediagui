@@ -12,24 +12,27 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/jbrodriguez/actor"
 )
 
 // Scraper -
 type Scraper struct {
-	Service
-
 	bus      *pubsub.PubSub
 	settings *lib.Settings
 	pool     *lib.Pool
 	tmdb     *tmdb.Tmdb
 
-	mailbox chan *pubsub.Mailbox
+	actor *actor.Actor
 }
 
 // NewScraper -
 func NewScraper(bus *pubsub.PubSub, settings *lib.Settings) *Scraper {
-	scraper := &Scraper{bus: bus, settings: settings}
-	scraper.init()
+	scraper := &Scraper{
+		bus:      bus,
+		settings: settings,
+		actor:    actor.NewActor(bus),
+	}
 	return scraper
 }
 
@@ -43,25 +46,18 @@ func (s *Scraper) Start() {
 		mlog.Fatalf("Unable to create tmdb client: %s", err)
 	}
 
-	s.mailbox = s.register(s.bus, "/command/movie/scrape", s.scrapeMovie)
-	s.registerAdditional(s.bus, "/command/movie/rescrape", s.reScrapeMovie, s.mailbox)
-	s.registerAdditional(s.bus, "/event/config/changed", s.configChanged, s.mailbox)
+	s.actor.Register("/command/movie/scrape", s.scrapeMovie)
+	s.actor.Register("/command/movie/rescrape", s.reScrapeMovie)
+	s.actor.Register("/event/config/changed", s.configChanged)
 
 	s.pool = lib.NewPool(12, 4000)
 
-	go s.react()
+	go s.actor.React()
 }
 
 // Stop -
 func (s *Scraper) Stop() {
 	mlog.Info("Stopped service Scraper ...")
-}
-
-func (s *Scraper) react() {
-	for mbox := range s.mailbox {
-		// mlog.Info("Scraper:Topic: %s", mbox.Topic)
-		s.dispatch(mbox.Topic, mbox.Content)
-	}
 }
 
 func (s *Scraper) scrapeMovie(msg *pubsub.Message) {

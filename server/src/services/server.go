@@ -13,6 +13,7 @@ import (
 
 	"golang.org/x/net/websocket"
 
+	"github.com/jbrodriguez/actor"
 	"github.com/jbrodriguez/mlog"
 	"github.com/jbrodriguez/pubsub"
 	"github.com/labstack/echo"
@@ -27,12 +28,10 @@ const (
 
 // Server -
 type Server struct {
-	Service
-
 	bus      *pubsub.PubSub
 	settings *lib.Settings
 	router   *echo.Echo
-	mailbox  chan *pubsub.Mailbox
+	actor    *actor.Actor
 
 	pool map[*net.Connection]bool
 }
@@ -42,9 +41,9 @@ func NewServer(bus *pubsub.PubSub, settings *lib.Settings) *Server {
 	server := &Server{
 		bus:      bus,
 		settings: settings,
+		actor:    actor.NewActor(bus),
 		pool:     make(map[*net.Connection]bool),
 	}
-	server.init()
 	return server
 }
 
@@ -135,8 +134,8 @@ func (s *Server) Start() {
 	port := ":7623"
 	go s.router.Start(port)
 
-	s.mailbox = s.register(s.bus, "socket:broadcast", s.broadcast)
-	go s.react()
+	s.actor.Register("socket:broadcast", s.broadcast)
+	go s.actor.React()
 
 	mlog.Info("Listening on %s", port)
 }
@@ -144,13 +143,6 @@ func (s *Server) Start() {
 // Stop -
 func (s *Server) Stop() {
 	mlog.Info("Stopped service Server ...")
-}
-
-func (s *Server) react() {
-	for mbox := range s.mailbox {
-		// mlog.Info("Core:Topic: %s", mbox.Topic)
-		s.dispatch(mbox.Topic, mbox.Content)
-	}
 }
 
 // // Closer -
