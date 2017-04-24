@@ -26,19 +26,19 @@ footer {
 // 	color: $footerColor;
 // 	background-color: $footerBackground;
 
-// 	font-size: 0.75em;	
+// 	font-size: 0.75em;
 
 // 	@include flexbox(flex, row, center, stretch);
 // }
 
 // .legal {
 // 	@include flexbox(flex, column, center, center);
-// 	background-color: $legalBackground;	
+// 	background-color: $legalBackground;
 
 //     @media (min-width: $breakpoint-2) {
 // 		flex-direction: row;
 // 		justify-content: space-between;
-//     }	
+//     }
 
 // 	a, span {
 // 		display: flex;
@@ -55,7 +55,7 @@ footer {
 
 //     @media (min-width: $breakpoint-2) {
 // 		margin: 0;
-//     }	
+//     }
 // }
 
 // .logos {

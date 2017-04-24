@@ -1,52 +1,53 @@
 <template>
-  <div class="c-mcover">
-    <div class="row">
-      <div class="col-xs-12">
-        <div class="c-moverlay">
-          <img :src="'/img/p' + movie.cover" />
-          <div v-if="watched" class="c-moverlaycover">
-            <span>watched</span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-xs-12">
-        <div class="pv0 ph2">
-          <p class="c-mctitle">{{movie.title}}</p>
-          <div class="between-xs c-mcdetails">
-            <span>{{movie.year}}</span>
-            <span>{{movie.imdb_rating}}</span>
-            <span>{{runtime}}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
+	<div class="c-mcover">
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="c-moverlay">
+					<img :src="'/img/p' + movie.cover" />
+					<div v-if="watched"
+					     class="c-moverlaycover">
+						<span>watched</span>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+				<div class="pv0 ph2">
+					<p class="c-mctitle">{{movie.title}}</p>
+					<div class="between-xs c-mcdetails">
+						<span>{{movie.year}}</span>
+						<span>{{movie.imdb_rating}}</span>
+						<span>{{runtime}}</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </template>
 
 <script>
 import { hourMinute } from '../lib/utils'
 
 export default {
-  name: 'cover',
+	name: 'cover',
 
-  props: {
-    movie: {
-      type: Object,
-      required: true
-    }
-  },
+	props: {
+		movie: {
+			type: Object,
+			required: true,
+		},
+	},
 
-  computed: {
-    runtime () {
-      return hourMinute(this.movie.runtime)
-    },
+	computed: {
+		runtime() {
+			return hourMinute(this.movie.runtime)
+		},
 
-    watched () {
-      return this.movie.count_watched > 0
-    }
-  }
+		watched() {
+			return this.movie.count_watched > 0
+		},
+	},
 }
 </script>
 
@@ -54,7 +55,7 @@ export default {
 @import "../styles/_settings.scss";
 
 .c-mcover {
-  background-color: $movie-cover-bg;
+	background-color: $movie-cover-bg;
 }
 
 .c-moverlay {
@@ -89,7 +90,8 @@ export default {
 	color: $movie-title-color;
 	white-space: nowrap;
 	width: 100%;
-	overflow: hidden;              /* "overflow" value must be different from "visible" */
+	overflow: hidden;
+	/* "overflow" value must be different from "visible" */
 	text-overflow: ellipsis;
 }
 

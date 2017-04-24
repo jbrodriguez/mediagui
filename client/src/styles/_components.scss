@@ -3,7 +3,7 @@
 	display: flex;
 	flex-direction: column;
 
-	min-height: 100vh;	
+	min-height: 100vh;
 }
 
 // // previously .row
@@ -60,8 +60,8 @@ i {
 
 	&:disabled {
 		background-color: #dddddd;
-		cursor: default; 		
-	}		
+		cursor: default;
+	}
 }
 
 input,
@@ -87,7 +87,7 @@ select {
 
 select {
 	-webkit-appearance: none !important;
-	-webkit-border-radius: 0px;	
+	-webkit-border-radius: 0px;
 	background-color: #fafafa;
 	background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZlcnNpb249IjEuMSIgeD0iMTJweCIgeT0iMHB4IiB3aWR0aD0iMjRweCIgaGVpZ2h0PSIzcHgiIHZpZXdCb3g9IjAgMCA2IDMiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDYgMyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+PHBvbHlnb24gcG9pbnRzPSI1Ljk5MiwwIDIuOTkyLDMgLTAuMDA4LDAgIi8+PC9zdmc+);
 	background-position: 100% center;
@@ -97,16 +97,16 @@ select {
 	// font-size: 0.875rem;
 	color: rgba(0, 0, 0, 0.75);
 	// line-height: normal;
-	// height: 2.3125rem;	
+	// height: 2.3125rem;
 
 	&:hover {
 		background-color: #f3f3f3;
-		border-color: #999999;		
-	}	
+		border-color: #999999;
+	}
 
 	&:disabled {
 		background-color: #dddddd;
-		cursor: default; 		
+		cursor: default;
 	}
 }
 
@@ -127,7 +127,7 @@ legend {
     margin-bottom: $padding-default;
     // color: #333;
     border-bottom: 1px solid $form-element-border;
-}	
+}
 
 .addon {
 	display: flex;
@@ -143,7 +143,7 @@ legend {
 
 	&:not(:last-child) {
 		border-right: 0;
-	}	
+	}
 }
 
 .addon-item {
@@ -226,7 +226,7 @@ legend {
 		cursor: not-allowed;
 		opacity: .65;
 		box-shadow: none;
-	}	
+	}
 }
 
 .btn-default {

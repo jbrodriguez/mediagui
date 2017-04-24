@@ -11,36 +11,36 @@ import Prune from '@/components/Prune'
 Vue.use(Router)
 
 export default new Router({
-  routes: [
-    {
-      path: '/',
-      name: 'Covers',
-      component: Covers
-    },
-    {
-      path: '/movies',
-      name: 'Movies',
-      component: Movies
-    },
-    {
-      path: '/import',
-      name: 'Import',
-      component: Import
-    },
-    {
-      path: '/settings',
-      name: 'Settings',
-      component: Settings
-    },
-    {
-      path: '/duplicates',
-      name: 'Duplicates',
-      component: Duplicates
-    },
-    {
-      path: '/prune',
-      name: 'Prune',
-      component: Prune
-    }
-  ]
+	routes: [
+		{
+			path: '/',
+			name: 'Covers',
+			component: Covers,
+		},
+		{
+			path: '/movies',
+			name: 'Movies',
+			component: Movies,
+		},
+		{
+			path: '/import',
+			name: 'Import',
+			component: Import,
+		},
+		{
+			path: '/settings',
+			name: 'Settings',
+			component: Settings,
+		},
+		{
+			path: '/duplicates',
+			name: 'Duplicates',
+			component: Duplicates,
+		},
+		{
+			path: '/prune',
+			name: 'Prune',
+			component: Prune,
+		},
+	],
 })
