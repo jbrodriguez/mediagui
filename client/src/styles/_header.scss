@@ -1,5 +1,5 @@
 header {
-	// background-color: $headerMenuBackground;	
+	// background-color: $headerMenuBackground;
 	margin: 0.5em 0;
 
 	// li {
@@ -21,8 +21,8 @@ header {
 
 // 	&:disabled {
 // 		background-color: #dddddd;
-// 		cursor: default; 		
-// 	}	
+// 		cursor: default;
+// 	}
 // }
 
 .header__logo {
@@ -34,7 +34,7 @@ header {
 }
 
 .header__menu {
-	background-color: $headerMenuBackground;	
+	background-color: $headerMenuBackground;
 }
 
 .header__menu-section {
@@ -48,13 +48,13 @@ header {
 			padding-bottom: 3px;
 			border-bottom: 3px solid $headerMenuAnchorColor;
 		}
-	}	
+	}
 }
 
 // .header__menu > select {
 // 	// display: block;
 // 	background: #efefef;
-// 	padding: 0.5em;	
+// 	padding: 0.5em;
 // }
 
 // header {
@@ -70,7 +70,7 @@ header {
 //     @media (min-width: $breakpoint-2) {
 // 		flex-direction: row;
 // 		justify-content: space-between;
-//     }	
+//     }
 
 // 	ul {
 //         @include flexbox(flex, row, center, center);
@@ -87,7 +87,7 @@ header {
 // 	}
 // }
 
-// .header-logo, 
+// .header-logo,
 // .header-menu {
 // 	@extend %spacer;
 

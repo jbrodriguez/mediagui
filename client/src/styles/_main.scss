@@ -24,13 +24,13 @@ main {
 .cover-title {
 	color: $movie-title-color;
 	white-space: nowrap;
-	width: 100%;                   
-	overflow: hidden;              /* "overflow" value must be different from "visible" */ 
+	width: 100%;
+	overflow: hidden;              /* "overflow" value must be different from "visible" */
 	text-overflow: ellipsis;
 }
 
 .cover-details {
-	display: flex;	
+	display: flex;
 	font-size: 0.75em;
 }
 
@@ -66,8 +66,8 @@ main {
 .overlay__cover {
 	position: absolute;
 	left: -40px;
-	top: 10px;	
-	background-color: rgba(170, 0, 0, 0.6);	
+	top: 10px;
+	background-color: rgba(170, 0, 0, 0.6);
 	transform: rotate(-45deg);
 	box-shadow: 0 0 10px #888;
 
@@ -82,7 +82,7 @@ main {
 		text-align: center;
 		text-decoration: none;
 		/* shadow */
-		text-shadow: 0 0 5px #444;		
+		text-shadow: 0 0 5px #444;
 	}
 }
 
@@ -104,7 +104,7 @@ ul.pagination {
 
 	li {
 		display: inline-block;
-	
+
 		a {
 			padding: 0.5em 1em;
 			transition: background-color 300ms ease-out;
@@ -118,7 +118,7 @@ ul.pagination {
 			background: $pagination-active-bg;
 			color: white;
 			font-weight: bold;
-			cursor: default; 
+			cursor: default;
 		}
 
 	}
@@ -134,7 +134,7 @@ ul.pagination {
 	ul.pages li.selected {
 		margin: 0 0.25em;
 		background-color: $pagination-hover-bg;
-	}	
+	}
 }
 
 
@@ -152,7 +152,7 @@ ul.pagination {
 
 	.console__line {
 		font-size: 0.8em;
-		// line-height: 0.5em;    	
+		// line-height: 0.5em;
 	}
 
     p {
@@ -176,7 +176,7 @@ ul.pagination {
 
 // 	.console__line {
 // 		font-size: 0.8em;
-// 		line-height: 0.5em;    	
+// 		line-height: 0.5em;
 // 	}
 
 //     p {

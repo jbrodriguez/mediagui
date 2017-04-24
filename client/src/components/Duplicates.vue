@@ -1,6 +1,8 @@
 <template>
 	<section>
-    <movie v-for="movie in movies" :movie="movie" :key="movie.id"></movie>
+		<movie v-for="movie in movies"
+		       :movie="movie"
+		       :key="movie.id"></movie>
 	</section>
 </template>
 
@@ -9,21 +11,22 @@ import Movie from './Movie'
 import * as types from '../store/types'
 
 export default {
-  name: 'duplicates',
+	name: 'duplicates',
 
-  components: { Movie },
+	components: { Movie },
 
-  computed: {
-    movies () {
-      return this.$store.getters.getMovies
-    }
-  },
+	computed: {
+		movies() {
+			return this.$store.getters.getMovies
+		},
+	},
 
-  created () {
-    this.$store.dispatch(types.FETCH_DUPLICATES)
-  }
+	created() {
+		this.$store.dispatch(types.FETCH_DUPLICATES)
+	},
 }
 </script>
 
 <style>
+
 </style>
