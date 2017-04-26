@@ -9,15 +9,15 @@ import * as types from './types'
 import storage from '../lib/storage'
 
 // websocket handler
-const socketPlugin = (store) => {
-	socket.receive((message) => {
+const socketPlugin = store => {
+	socket.receive(message => {
 		const packet = JSON.parse(message.data)
 		if (typeof packet.topic === 'string' && packet.topic.length > 0) {
 			store.commit(packet.topic, packet.payload)
 		}
 	})
 
-	store.subscribe((mutation) => {
+	store.subscribe(mutation => {
 		if (mutation.type.startsWith('skt')) {
 			socket.send({ topic: mutation.type, payload: mutation.payload })
 		}
@@ -28,7 +28,9 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
 	state: {
-		movies: { /* [id: number] Movie */ },
+		movies: {
+			/* [id: number] Movie */
+		},
 		total: 0,
 		config: {},
 		options: {
@@ -64,22 +66,20 @@ export default new Vuex.Store({
 
 	actions: {
 		[types.FETCH_CONFIG]: ({ commit }) =>
-			api.getConfig((config) => {
+			api.getConfig(config => {
 				commit(types.RECEIVE_CONFIG, config)
 			}),
 
 		[types.FETCH_COVER]: ({ commit }) =>
-			api.getCover((movies) => {
+			api.getCover(movies => {
 				// console.log(`movies-${JSON.stringify(movies)}`) // eslint-disable-line
 				commit(types.RECEIVE_MOVIES, movies)
 			}),
 
 		[types.FETCH_MOVIES]: ({ commit, state }) => {
-			const opts = pick(state.options, [
-				'query', 'filterBy', 'sortBy', 'sortOrder', 'limit', 'offset',
-			])
+			const opts = pick(state.options, ['query', 'filterBy', 'sortBy', 'sortOrder', 'limit', 'offset'])
 
-			api.getMovies(opts, (movies) => {
+			api.getMovies(opts, movies => {
 				// console.log(`movies-${JSON.stringify(movies)}`) // eslint-disable-line
 				commit(types.RECEIVE_MOVIES, movies)
 			})
@@ -119,6 +119,12 @@ export default new Vuex.Store({
 			const movie = Object.assign({}, state.movies[id], { showIfDuplicate })
 			api.setMovieDuplicate(movie, changed => commit(types.SET_MOVIE, changed))
 		},
+
+		[types.ADD_MOVIE]: ({ commit, state }, { title, year, tmdb_id }) => {
+			const movie = { title, year, tmdb_id: parseInt(tmdb_id) }
+			// console.log(`id(${movie.id})-last_watched(${movie.tmdb_id})`) // eslint-disable-line
+			api.addMovie(movie, added => commit(types.RECEIVE_MOVIES, { total: 1, items: [added] }))
+		},
 	},
 
 	mutations: {
@@ -128,10 +134,10 @@ export default new Vuex.Store({
 
 		[types.RECEIVE_MOVIES]: (state, movies) => {
 			// console.log(`state-${JSON.stringify(state)}`) // eslint-disable-line
-			console.log(`total(${movies.total})-items(${movies.items.length})`)  // eslint-disable-line
+			console.log(`total(${movies.total})-items(${movies.items.length})`) // eslint-disable-line
 			state.itemsOrder = [] // eslint-disable-line
 			state.total = movies.total // eslint-disable-line
-			movies.items.forEach((movie) => {
+			movies.items.forEach(movie => {
 				state.itemsOrder.push(movie.id)
 				Vue.set(state.movies, movie.id, movie)
 			})
@@ -157,7 +163,7 @@ export default new Vuex.Store({
 			state.options.offset = offset // eslint-disable-line
 		},
 
-		[types.FLIP_ORDER]: (state) => {
+		[types.FLIP_ORDER]: state => {
 			state.options.sortOrder = state.options.sortOrder === 'asc' ? 'desc' : 'asc' // eslint-disable-line
 			storage.set('sortOrder', state.options.sortOrder)
 		},
@@ -192,6 +198,14 @@ export default new Vuex.Store({
 
 		[types.PRUNE_END]: (state, line) => {
 			state.lines.push(line)
+		},
+
+		[types.CLEAN_MOVIES]: state => {
+			// console.log(`state-${JSON.stringify(state)}`) // eslint-disable-line
+			// console.log(`total(${movies.total})-items(${movies.items.length})`) // eslint-disable-line
+			state.itemsOrder = []
+			state.total = 0
+			state.movies = {}
 		},
 	},
 

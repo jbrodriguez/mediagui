@@ -7,6 +7,7 @@ import Import from '@/components/Import'
 import Settings from '@/components/Settings'
 import Duplicates from '@/components/Duplicates'
 import Prune from '@/components/Prune'
+import Add from '@/components/Add'
 
 Vue.use(Router)
 
@@ -26,6 +27,11 @@ export default new Router({
 			path: '/import',
 			name: 'Import',
 			component: Import,
+		},
+		{
+			path: '/add',
+			name: 'Add',
+			component: Add,
 		},
 		{
 			path: '/settings',

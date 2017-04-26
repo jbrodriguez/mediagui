@@ -38,6 +38,11 @@
 
 							<router-link to="/import"
 							             class="mv0">IMPORT</router-link>
+
+							<span class="mv0 ml2"></span>
+
+							<router-link to="/add"
+							             class="mv0">ADD</router-link>
 						</div>
 					</div>
 					<div class="col-xs-12 col-sm-4 end-xs">

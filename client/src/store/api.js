@@ -1,5 +1,5 @@
-const encode = (data) => {
-	const encoded = Object.keys(data).map((key) => {
+const encode = data => {
+	const encoded = Object.keys(data).map(key => {
 		const value = encodeURIComponent(data[key].toString())
 		return `${key}=${value}`
 	})
@@ -11,21 +11,15 @@ class Api {
 	// host = 'http://blackbeard.apertoire.org:7623/api/v1'
 
 	getConfig(cb) {
-		return fetch(`${this.host}/config`)
-			.then(resp => resp.json())
-			.then(data => cb(data))
+		return fetch(`${this.host}/config`).then(resp => resp.json()).then(data => cb(data))
 	}
 
 	getCover(cb) {
-		return fetch(`${this.host}/movies/cover`)
-			.then(resp => resp.json())
-			.then(data => cb(data))
+		return fetch(`${this.host}/movies/cover`).then(resp => resp.json()).then(data => cb(data))
 	}
 
 	getMovies(options, cb) {
-		return fetch(`${this.host}/movies?${encode(options)}`)
-			.then(resp => resp.json())
-			.then(data => cb(data))
+		return fetch(`${this.host}/movies?${encode(options)}`).then(resp => resp.json()).then(data => cb(data))
 	}
 
 	importMovies() {
@@ -47,9 +41,7 @@ class Api {
 	}
 
 	getDuplicates(cb) {
-		return fetch(`${this.host}/movies/duplicates`)
-			.then(resp => resp.json())
-			.then(data => cb(data))
+		return fetch(`${this.host}/movies/duplicates`).then(resp => resp.json()).then(data => cb(data))
 	}
 
 	setMovieScore(movie, cb) {
@@ -85,6 +77,16 @@ class Api {
 	setMovieDuplicate(movie, cb) {
 		return fetch(`${this.host}/movies/${movie.id}/duplicate`, {
 			method: 'PUT',
+			headers: new Headers({ 'Content-Type': 'application/json' }),
+			body: JSON.stringify(movie),
+		})
+			.then(resp => resp.json())
+			.then(data => cb(data))
+	}
+
+	addMovie(movie, cb) {
+		return fetch(`${this.host}/add`, {
+			method: 'POST',
 			headers: new Headers({ 'Content-Type': 'application/json' }),
 			body: JSON.stringify(movie),
 		})

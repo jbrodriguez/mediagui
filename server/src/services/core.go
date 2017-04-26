@@ -50,6 +50,7 @@ func (c *Core) Start() {
 
 	c.actor.Register("/get/config", c.getConfig)
 	c.actor.Register("/post/import", c.importMovies)
+	c.actor.Register("/post/add", c.addMovie)
 	c.actor.Register("/post/prune", c.pruneMovies)
 	c.actor.Register("/put/config/folder", c.addMediaFolder)
 	c.actor.Register("/put/movies/fix", c.fixMovie)
@@ -104,6 +105,33 @@ func (c *Core) importMovies(msg *pubsub.Message) {
 		lib.Notify(c.bus, "import:end", fmt.Sprintf("Import process finished (%s elapsed)", time.Since(t0).String()))
 	}()
 
+}
+
+func (c *Core) addMovie(msg *pubsub.Message) {
+	// I'm expecting movie to have the following fields filled
+	// Tmdb_Id
+	// Title
+	// Year
+	movie := msg.Payload.(*model.Movie)
+
+	// Since it's coming in through this endpoint, we know it's a stub
+	movie.File_Title = movie.Title
+	movie.Resolution = "n/a"
+	movie.FileType = "n/a"
+	movie.Location = "n/a"
+	movie.Stub = 1
+
+	// 3 operations, rescrape, update and cache
+	c.wg.Add(1)
+
+	// rescrape
+	scrape := &pubsub.Message{Payload: movie, Reply: make(chan interface{}, 3)}
+	c.bus.Pub(scrape, "/command/movie/scrape")
+
+	go func() {
+		c.wg.Wait()
+		msg.Reply <- movie
+	}()
 }
 
 func (c *Core) doMovieFound(msg *pubsub.Message) {

@@ -106,6 +106,7 @@ func (s *Server) Start() {
 	api.GET("/movies/duplicates", s.getDuplicates)
 
 	api.POST("/import", s.importMovies)
+	api.POST("/add", s.addMovie)
 	api.POST("/prune", s.pruneMovies)
 
 	api.PUT("/config/folder", s.addMediaFolder)
@@ -234,6 +235,29 @@ func (s *Server) importMovies(c echo.Context) error {
 	s.bus.Pub(nil, "/post/import")
 
 	return nil
+}
+
+func (s *Server) addMovie(c echo.Context) error {
+	var movie model.Movie
+	if err := c.Bind(&movie); err != nil {
+		mlog.Warning("Unable to bind addMovie body: %s", err.Error())
+		return c.JSON(http.StatusBadRequest, nil)
+	}
+
+	// title := c.QueryParam("title")
+	// tmdb_id := c.QueryParam("tmdb_id")
+
+	// movie := model.Movie{}
+	// movie.Title = title
+	// movie.Tmdb_Id = tmdb_id
+
+	msg := &pubsub.Message{Payload: &movie, Reply: make(chan interface{}, capacity)}
+	s.bus.Pub(msg, "/post/add")
+
+	reply := <-msg.Reply
+	resp := reply.(*model.Movie)
+
+	return c.JSON(http.StatusOK, &resp)
 }
 
 func (s *Server) pruneMovies(c echo.Context) error {

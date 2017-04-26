@@ -175,7 +175,7 @@ func (s *Scanner) analyze(files []string) {
 				resolution = ""
 			}
 
-			movie := &model.Movie{Title: rmap["Name"], File_Title: rmap["Name"], Year: rmap["Year"], Resolution: resolution, FileType: rmap["FileType"], Location: file}
+			movie := &model.Movie{Title: rmap["Name"], File_Title: rmap["Name"], Year: rmap["Year"], Resolution: resolution, FileType: rmap["FileType"], Location: file, Stub: 0}
 			// mlog.Info("FOUND [%s] (%s)", movie.Title, movie.Location)
 
 			// mlog.Info("found %s", movie.Location)
