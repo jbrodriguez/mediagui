@@ -55,6 +55,7 @@ export default {
 
 	methods: {
 		addMovie() {
+			this.$store.commit(types.CLEAN_MOVIES)
 			this.$store.dispatch(types.ADD_MOVIE, { title: this.title, year: this.year, tmdb_id: this.tmdb_id })
 		},
 	},
