@@ -66,7 +66,8 @@ CREATE TABLE movie
   awards text,
   imdb_rating integer,
   imdb_votes integer,
-  show_if_duplicate integer
+  show_if_duplicate integer,
+  stub integer
 );
 CREATE INDEX movie_title_idx ON movie (title);
 CREATE INDEX movie_location_idx ON movie (location);
