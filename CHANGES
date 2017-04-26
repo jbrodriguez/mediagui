@@ -1,3 +1,9 @@
+Version 3.4.0 - 2017-04-26
+- Implement prettier + standard
+- Update db schema
+- Implement stub movies support
+
+
 Version 3.3.0 - 2017-04-12
 - Refactor Actor api
 - Add install script to release
