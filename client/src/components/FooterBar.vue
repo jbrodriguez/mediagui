@@ -13,13 +13,24 @@
 			</div>
 		</ul>
 		<ul class="col-xs-12 col-sm-4 end-xs middle-xs">
-			<a class="end-xs middle-xs mv0 mh3"
-			   href="http://jbrodriguez.io"
-			   title="jbrodriguez.io"
-			   target="_blank">
-				<img src="../assets/logo-small.png"
-				     alt="Logo for Juan B. Rodriguez" />
-			</a>
+			<li class="row end-xs middle-xs">
+				<a class="end-xs middle-xs mv0 mr3"
+					href="https://www.themoviedb.org/"
+					title="themoviedb.org"
+					height="40"
+					target="_blank">
+						<img src="../assets/tmdb.png"
+							alt="Logo for tmdb" />
+				</a>
+
+				<a class="end-xs middle-xs mv0 mr3"
+					href="http://jbrodriguez.io"
+					title="jbrodriguez.io"
+					target="_blank">
+						<img src="../assets/logo-small.png"
+							alt="Logo for Juan B. Rodriguez" />
+				</a>
+			</li>
 		</ul>
 	</section>
 </template>
