@@ -1,3 +1,7 @@
+Version 3.4.1 - 2017-04-26
+- Fix go-micro vendor issue
+
+
 Version 3.4.0 - 2017-04-26
 - Implement prettier + standard
 - Update db schema

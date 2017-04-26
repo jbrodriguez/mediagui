@@ -1,0 +1,9 @@
+2017-04-26 - 3.4.1
+
+Implement stub movies support.
+
+Those are movies not present in the filesystem, but that I have already
+watched.
+
+Also, converted to a slightly modified [standard lint](https://standardjs.com/)
+and used [prettier](https://github.com/prettier/prettier/) on the js codebase.
