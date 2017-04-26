@@ -40,4 +40,5 @@ type Movie struct {
 	Imdb_Rating          float64 `json:"imdb_rating"`
 	Imdb_Votes           uint64  `json:"imdb_votes"`
 	ShowIfDuplicate      uint64  `json:"showIfDuplicate"`
+	Stub                 uint64  `json:"stub"`
 }
