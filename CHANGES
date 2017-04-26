@@ -1,3 +1,9 @@
+Version 3.5.0 - 2017-04-26
+- Include id in response
+- Wipe the current movie before adding
+- Add tmdb logo
+
+
 Version 3.4.1 - 2017-04-26
 - Fix go-micro vendor issue
 
