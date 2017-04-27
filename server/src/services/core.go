@@ -109,9 +109,7 @@ func (c *Core) importMovies(msg *pubsub.Message) {
 
 func (c *Core) addMovie(msg *pubsub.Message) {
 	// I'm expecting movie to have the following fields filled
-	// Tmdb_Id
 	// Title
-	// Year
 	movie := msg.Payload.(*model.Movie)
 
 	// Since it's coming in through this endpoint, we know it's a stub

@@ -244,13 +244,6 @@ func (s *Server) addMovie(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, nil)
 	}
 
-	// title := c.QueryParam("title")
-	// tmdb_id := c.QueryParam("tmdb_id")
-
-	// movie := model.Movie{}
-	// movie.Title = title
-	// movie.Tmdb_Id = tmdb_id
-
 	msg := &pubsub.Message{Payload: &movie, Reply: make(chan interface{}, capacity)}
 	s.bus.Pub(msg, "/post/add")
 
