@@ -201,6 +201,8 @@ func _scrape(wid int, tmdb *tmdb.Tmdb, id uint64, movie *model.Movie) error {
 	movie.Cover = gmr.Poster_Path
 	movie.Backdrop = gmr.Backdrop_Path
 
+	movie.Year = gmr.Release_Date[0:4]
+
 	movie.Genres = ""
 	for i := 0; i < len(gmr.Genres); i++ {
 		attr := &gmr.Genres[i]

@@ -120,8 +120,7 @@ export default new Vuex.Store({
 			api.setMovieDuplicate(movie, changed => commit(types.SET_MOVIE, changed))
 		},
 
-		[types.ADD_MOVIE]: ({ commit, state }, { title, year, tmdb_id }) => {
-			const movie = { title, year, tmdb_id: parseInt(tmdb_id) }
+		[types.ADD_MOVIE]: ({ commit, state }, movie) => {
 			// console.log(`id(${movie.id})-last_watched(${movie.tmdb_id})`) // eslint-disable-line
 			api.addMovie(movie, added => commit(types.RECEIVE_MOVIES, { total: 1, items: [added] }))
 		},
