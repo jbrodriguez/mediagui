@@ -29,12 +29,14 @@ type Settings struct {
 	Location   string
 	GinMode    string
 	CPUProfile string
+	CheckOnly  bool
+	WorkDir    string
 }
 
 // NewSettings -
 func NewSettings(name, version, home string, locations []string) (*Settings, error) {
-	var config, dataDir, webDir, logDir, mediaFolders, ginMode, cpuprofile, unraidHosts string
-	var logtostderr, unraidMode bool
+	var config, dataDir, webDir, logDir, mediaFolders, ginMode, cpuprofile, unraidHosts, workDir string
+	var logtostderr, unraidMode, checkOnly bool
 
 	location := SearchFile(name, locations)
 
@@ -48,6 +50,8 @@ func NewSettings(name, version, home string, locations []string) (*Settings, err
 	flag.StringVar(&cpuprofile, "cpuprofile", "", "write cpu profile to file")
 	flag.BoolVar(&unraidMode, "unraid_mode", true, "if true the app will work distributed with a service running on the unraid host")
 	flag.StringVar(&unraidHosts, unraidHosts, "wopr|hal", "specify which unraid hosts will be scanned for movies. the service agent must be running in that host")
+	flag.BoolVar(&checkOnly, "checkOnly", false, "for importer cli tool -> true: check if exists (by name) / false: add movies as stub")
+	flag.StringVar(&workDir, "workDir", filepath.Join(home, "tmp", "mediagui"), "for importer cli tool -> folder where the file with movies to import resides")
 
 	if found, _ := Exists(location); found {
 		flag.Set("config", location)
@@ -70,6 +74,8 @@ func NewSettings(name, version, home string, locations []string) (*Settings, err
 	s.GinMode = ginMode
 	s.CPUProfile = cpuprofile
 	s.UnraidMode = unraidMode
+	s.CheckOnly = checkOnly
+	s.WorkDir = workDir
 	if unraidHosts == "" {
 		s.UnraidHosts = make([]string, 0)
 	} else {
