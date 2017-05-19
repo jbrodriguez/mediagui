@@ -553,24 +553,27 @@ func (d *Dal) partialStoreMovie(msg *pubsub.Message) {
 								last_watched, all_watched, count_watched, score, director,
 								writer, actors, awards, imdb_rating, imdb_votes, show_if_duplicate, stub)
 								values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-									?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+									?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		tx.Rollback()
 		mlog.Fatalf("at prepare: %s", err)
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec(movie.Title, movie.Original_Title, movie.File_Title, movie.Year,
+	res, e := stmt.Exec(movie.Title, movie.Original_Title, movie.File_Title, movie.Year,
 		movie.Runtime, movie.Tmdb_Id, movie.Imdb_Id, movie.Overview, movie.Tagline,
 		movie.Resolution, movie.FileType, movie.Location, movie.Cover, movie.Backdrop,
 		movie.Genres, movie.Vote_Average, movie.Vote_Count, movie.Production_Countries,
 		movie.Added, movie.Modified, movie.Last_Watched, movie.All_Watched, movie.Count_Watched,
 		movie.Score, movie.Director, movie.Writer, movie.Actors, movie.Awards, movie.Imdb_Rating,
 		movie.Imdb_Votes, movie.ShowIfDuplicate, movie.Stub)
-	if err != nil {
+	if e != nil {
 		tx.Rollback()
-		mlog.Fatalf("at exec: %s", err)
+		mlog.Fatalf("at exec: %s", e)
 	}
+
+	id, _ := res.LastInsertId()
+	movie.Id = uint64(id)
 
 	tx.Commit()
 	mlog.Info("FINISHED PARTIAL SAVING %s [%d]", movie.Title, movie.Id)
