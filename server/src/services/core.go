@@ -230,6 +230,11 @@ func (c *Core) pruneMovies(msg *pubsub.Message) {
 			// mlog.Info("Item is %s (%s)", item.Title, item.Location)
 
 			index := strings.Index(item.Location, ":")
+			if index == -1 {
+				// a valid location is wopr:/mnt/user/films/bluray/22 Bullets (2010)/22.Bullets_BLURAY.iso
+				// if a ':' isn't found, then this must be a stub
+				continue
+			}
 
 			host := item.Location[:index]
 			location := item.Location[index+1:]
