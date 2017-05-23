@@ -1,9 +1,9 @@
 package lib
 
 import (
-	"encoding/json"
 	"image/jpeg"
 	"io"
+	"io/ioutil"
 	"jbrodriguez/mediagui/server/src/dto"
 	"net/http"
 	"os"
@@ -41,17 +41,29 @@ func SearchFile(name string, locations []string) string {
 }
 
 // RestGet -
-func RestGet(url string, reply interface{}) error {
-	resp, err := http.Get(url)
+func RestGet(url string) (string, error) {
+	client := &http.Client{}
+
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return err
+		return "", err
+	}
+
+	req.Header.Set("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/604.1.22 (KHTML, like Gecko) Version/10.2 Safari/604.1.22")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
 	}
 	defer resp.Body.Close()
 
-	// body, err := ioutil.ReadAll(resp.Body)
-	err = json.NewDecoder(resp.Body).Decode(reply)
+	// err = json.NewDecoder(resp.Body).Decode(reply)
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
 
-	return err
+	return string(body), nil
 }
 
 // Download -
