@@ -1,6 +1,7 @@
 package services
 
 import (
+	"github.com/jbrodriguez/actor"
 	"github.com/jbrodriguez/go-tmdb"
 	"github.com/jbrodriguez/mlog"
 	"github.com/jbrodriguez/pubsub"
@@ -9,11 +10,11 @@ import (
 	"jbrodriguez/mediagui/server/src/dto"
 	"jbrodriguez/mediagui/server/src/lib"
 	"jbrodriguez/mediagui/server/src/model"
+
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/jbrodriguez/actor"
 )
 
 // Scraper -
@@ -24,6 +25,12 @@ type Scraper struct {
 	tmdb     *tmdb.Tmdb
 
 	actor *actor.Actor
+
+	// reRating   *regexp.Regexp
+	// reVotes    *regexp.Regexp
+	// reDirector *regexp.Regexp
+	// reWriter   *regexp.Regexp
+	// reActor    *regexp.Regexp
 }
 
 // NewScraper -
@@ -33,6 +40,13 @@ func NewScraper(bus *pubsub.PubSub, settings *lib.Settings) *Scraper {
 		settings: settings,
 		actor:    actor.NewActor(bus),
 	}
+
+	// reRating = `<span[^>]*itemprop="ratingValue">([^<]*)</span>`
+	// reVotes = `<span[^>]*itemprop="ratingCount">([^<]*)</span>`
+	// reDirector = `<a href="/name[^"]*dr"[^>]*><span[^>]*>([^<]*)?</span>`
+	// reWriter = `<a href="/name[^"]*wr"[^>]*><span[^>]*>([^<]*)?</span>`
+	// reActor = `<a href="/name[^"]*st_sm"[^>]*><span[^>]*>([^<]*)?</span>`
+
 	return scraper
 }
 
@@ -234,13 +248,15 @@ func _scrape(wid int, tmdb *tmdb.Tmdb, id uint64, movie *model.Movie) error {
 		}
 	}
 
-	var omdb model.Omdb
+	// var omdb model.Omdb
 
 	// lib.Notify(s.bus, "import:progress", fmt.Sprintf("STARTED OMDB [%s]", movie.Title))
-	err = lib.RestGet(fmt.Sprintf("http://www.omdbapi.com/?i=%s", movie.Imdb_Id), &omdb)
+	data, err := lib.RestGet(fmt.Sprintf("http://www.im%s.com/title/%s", "db", movie.Imdb_Id))
 	if err != nil {
 		return fmt.Errorf("OMDB Error: %s", err)
 	}
+
+	omdb := getOmdb(data)
 
 	// lib.Notify(s.bus, "import:progress", fmt.Sprintf("omdb: %+v", omdb))
 
@@ -260,4 +276,59 @@ func _scrape(wid int, tmdb *tmdb.Tmdb, id uint64, movie *model.Movie) error {
 
 func (s *Scraper) configChanged(msg *pubsub.Message) {
 	s.settings = msg.Payload.(*lib.Settings)
+}
+
+var reRating *regexp.Regexp = regexp.MustCompile(`<span[^>]*itemprop="ratingValue">([^<]*)</span>`)
+var reVotes *regexp.Regexp = regexp.MustCompile(`<span[^>]*itemprop="ratingCount">([^<]*)</span>`)
+var reDirector *regexp.Regexp = regexp.MustCompile(`<a href="/name[^"]*dr"[^>]*><span[^>]*>([^<]*)?</span>`)
+var reWriter *regexp.Regexp = regexp.MustCompile(`<a href="/name[^"]*wr"[^>]*><span[^>]*>([^<]*)?</span>`)
+var reActor *regexp.Regexp = regexp.MustCompile(`<a href="/name[^"]*st_sm"[^>]*><span[^>]*>([^<]*)?</span>`)
+
+func getOmdb(data string) *model.Omdb {
+	omdb := &model.Omdb{}
+
+	rating := reRating.FindStringSubmatch(data)
+	if len(rating) > 0 {
+		omdb.Imdb_Rating = rating[1]
+	}
+
+	votes := reVotes.FindStringSubmatch(data)
+	if len(votes) > 0 {
+		omdb.Imdb_Vote = votes[1]
+	}
+
+	directors := reDirector.FindAllStringSubmatch(data, -1)
+	if len(directors) > 0 {
+		for _, director := range directors {
+			if omdb.Director == "" {
+				omdb.Director = director[1]
+			} else {
+				omdb.Director += ", " + director[1]
+			}
+		}
+	}
+
+	writers := reWriter.FindAllStringSubmatch(data, -1)
+	if len(writers) > 0 {
+		for _, writer := range writers {
+			if omdb.Writer == "" {
+				omdb.Writer = writer[1]
+			} else {
+				omdb.Writer += ", " + writer[1]
+			}
+		}
+	}
+
+	actors := reActor.FindAllStringSubmatch(data, -1)
+	if len(actors) > 0 {
+		for _, actor := range actors {
+			if omdb.Actors == "" {
+				omdb.Actors = actor[1]
+			} else {
+				omdb.Actors += ", " + actor[1]
+			}
+		}
+	}
+
+	return omdb
 }
