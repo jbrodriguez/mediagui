@@ -246,7 +246,7 @@ func (c *Core) pruneMovies(msg *pubsub.Message) {
 			rsp := &agent.ExistsRsp{}
 
 			if err := client.Call(context.Background(), req, rsp); err != nil {
-				mlog.Warning("Unable to connect to service (%s): %s", "io.jbrodriguez.mediagui.agent."+host, err)
+				// mlog.Warning("Unable to connect to service (%s): %s", "io.jbrodriguez.mediagui.agent."+host, err)
 				// lib.Notify(s.bus, "import:progress", "Unable to connect to host "+host)
 				// lib.Notify(s.bus, "import:end", "Import process finished")
 				// return
