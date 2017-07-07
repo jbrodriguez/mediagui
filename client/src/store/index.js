@@ -52,6 +52,7 @@ export default new Vuex.Store({
 				{ value: 'count_watched', label: 'Watched C' },
 				{ value: 'year', label: 'Year' },
 				{ value: 'imdb_rating', label: 'Rating' },
+				{ value: 'score', label: 'Score' },
 			],
 			sortBy: storage.get('sortBy') || 'added',
 			sortOrderOptions: ['asc', 'desc'],
