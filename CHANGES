@@ -1,3 +1,8 @@
+Version 3.7.1 - 2017-07-07
+- Remove comment
+- Sort by Score
+
+
 Version 3.7.0 - 2017-05-23
 - Retrieve text body (instead of json)
 - Scan body for results
