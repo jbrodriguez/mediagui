@@ -1,3 +1,10 @@
+Version 3.7.2 - 2017-09-15
+- Update vue template
+- Switch from yarn to npm5
+- Update scripts
+- Update server packages
+
+
 Version 3.7.1 - 2017-07-07
 - Remove comment
 - Sort by Score
