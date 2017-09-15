@@ -1,0 +1,6 @@
+2017-09-15 - 3.7.2
+
+- Update vue template
+- Switch from yarn to npm5
+- Update scripts
+- Update server packages
