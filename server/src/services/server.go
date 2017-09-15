@@ -79,6 +79,9 @@ func (s *Server) Start() {
 	mlog.Info("Serving files from %s", location)
 
 	s.router = echo.New()
+
+	s.router.HideBanner = true
+
 	s.router.Use(mw.Logger())
 	s.router.Use(mw.Recover())
 
