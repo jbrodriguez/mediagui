@@ -27,7 +27,7 @@ mv jbrodriguez/${PROG} src/jbrodriguez
 cd src/jbrodriguez/${PROG}
 
 pushd client
-yarn
+npm install
 popd
 
 pushd server
