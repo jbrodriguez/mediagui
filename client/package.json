@@ -1,6 +1,6 @@
 {
 	"name": "client",
-	"version": "3.7.3",
+	"version": "3.8.0",
 	"description": "mediaGUI",
 	"author": "Juan B. Rodriguez <jbrodriguez@gmail.com>",
 	"private": true,

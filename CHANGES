@@ -1,3 +1,8 @@
+Version 3.8.0 - 2018-07-12
+- Implement new logic to prune items
+- Fix linting issues
+
+
 Version 3.7.3 - 2017-09-15
 - Fix parameter binding issue
 
