@@ -9,10 +9,16 @@ message ScanRsp {
 	repeated string filenames = 1;
 }
 
+message Item {
+	uint64 id = 1;
+	string location = 2;
+	string title = 3;
+}
+
 message ExistsReq {
-	string location = 1;
+	repeated Item items = 1;
 }
 
 message ExistsRsp {
-	bool exists = 1;
+	repeated Item items = 1;
 }

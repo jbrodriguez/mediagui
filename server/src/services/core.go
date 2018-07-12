@@ -6,6 +6,7 @@ import (
 	"jbrodriguez/mediagui/server/src/model"
 	"jbrodriguez/mediagui/server/src/proto"
 
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -18,8 +19,6 @@ import (
 	"github.com/jbrodriguez/mlog"
 	"github.com/jbrodriguez/pubsub"
 	"github.com/micro/go-micro/client"
-
-	"golang.org/x/net/context"
 )
 
 // Core -
@@ -223,10 +222,16 @@ func (c *Core) pruneMovies(msg *pubsub.Message) {
 	c.bus.Pub(all, "/get/movies")
 
 	reply := <-all.Reply
-	dto := reply.(*model.MoviesDTO)
+	list := reply.(*model.MoviesDTO)
 
 	if c.settings.UnraidMode {
-		for _, item := range dto.Items {
+		hostItems := make(map[string][]*agent.Item)
+
+		for _, host := range c.settings.UnraidHosts {
+			hostItems[host] = make([]*agent.Item, 0)
+		}
+
+		for _, item := range list.Items {
 			// mlog.Info("Item is %s (%s)", item.Title, item.Location)
 
 			index := strings.Index(item.Location, ":")
@@ -239,29 +244,34 @@ func (c *Core) pruneMovies(msg *pubsub.Message) {
 			host := item.Location[:index]
 			location := item.Location[index+1:]
 
+			hostItems[host] = append(hostItems[host], &agent.Item{Id: item.Id, Location: location, Title: item.Title})
+		}
+
+		for _, host := range c.settings.UnraidHosts {
 			req := client.NewRequest("io.jbrodriguez.mediagui.agent."+host, "Agent.Exists", &agent.ExistsReq{
-				Location: location,
+				Items: hostItems[host],
 			})
 
 			rsp := &agent.ExistsRsp{}
 
 			if err := client.Call(context.Background(), req, rsp); err != nil {
-				// mlog.Warning("Unable to connect to service (%s): %s", "io.jbrodriguez.mediagui.agent."+host, err)
+				mlog.Warning("Unable to connect to service (%s): %s", "io.jbrodriguez.mediagui.agent."+host, err)
 				// lib.Notify(s.bus, "import:progress", "Unable to connect to host "+host)
 				// lib.Notify(s.bus, "import:end", "Import process finished")
 				// return
 				continue
 			}
 
-			if !rsp.Exists {
+			for _, item := range rsp.Items {
 				lib.Notify(c.bus, "prune:selected", fmt.Sprintf("UP FOR DELETION: [%d] %s (%s))", item.Id, item.Title, item.Location))
 
 				movie := &pubsub.Message{Payload: item, Reply: make(chan interface{}, capacity)}
 				c.bus.Pub(movie, "/command/movie/delete")
 			}
+
 		}
 	} else {
-		for _, item := range dto.Items {
+		for _, item := range list.Items {
 			matches := c.re.FindStringSubmatch(item.Location)
 			if len(matches) == 0 {
 				continue
@@ -286,17 +296,6 @@ func (c *Core) pruneMovies(msg *pubsub.Message) {
 		}
 	}
 
-	// for _, folder := range c.settings.MediaFolders {
-	// 	mlog.Info("folder: %s", folder)
-	// 	if _, err := os.Stat(folder); err != nil {
-	// 		if os.IsNotExist(err) {
-	// 			lib.Notify(c.bus, "prune:error", fmt.Sprintf("Folder %s is not present. Aborting Prune process.", folder))
-	// 			return
-	// 		}
-	// 	}
-	// }
-
-	// lib.Notify(c.bus, "prune:end", "Finished Prune Process")
 	lib.Notify(c.bus, "prune:end", fmt.Sprintf("Prune process finished (%s elapsed)", time.Since(t0).String()))
 
 }
