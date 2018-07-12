@@ -1,22 +1,21 @@
 package services
 
 import (
-	"jbrodriguez/mediagui/server/src/lib"
-	"jbrodriguez/mediagui/server/src/model"
-	"jbrodriguez/mediagui/server/src/proto"
-	"time"
-
+	"context"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 
+	"github.com/jbrodriguez/actor"
 	"github.com/jbrodriguez/mlog"
 	"github.com/jbrodriguez/pubsub"
 	"github.com/micro/go-micro/client"
 
-	"github.com/jbrodriguez/actor"
-	"golang.org/x/net/context"
+	"jbrodriguez/mediagui/server/src/lib"
+	"jbrodriguez/mediagui/server/src/model"
+	"jbrodriguez/mediagui/server/src/proto"
 )
 
 // Scanner -

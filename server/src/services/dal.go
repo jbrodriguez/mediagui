@@ -137,7 +137,7 @@ func (d *Dal) listMovies(options *lib.Options) (total uint64, movies []*model.Mo
 	if err != nil {
 		mlog.Fatalf("Unable to prepare transaction: %s", err)
 	}
-	defer stmt.Close()
+	defer lib.Close(stmt)
 
 	rows, err := stmt.Query(options.Limit, options.Offset)
 	if err != nil {
@@ -169,9 +169,9 @@ func (d *Dal) listMovies(options *lib.Options) (total uint64, movies []*model.Mo
 		)
 		items = append(items, &movie)
 	}
-	rows.Close()
+	lib.Close(rows)
 
-	tx.Commit()
+	commit(tx)
 
 	mlog.Info("Listed %d movies (total %d)", len(items), count)
 
@@ -220,7 +220,7 @@ func (d *Dal) searchByYear(options *lib.Options) (total uint64, movies []*model.
 	if err != nil {
 		mlog.Fatalf("searchByYear:Unable to prepare transaction: %s", err)
 	}
-	defer stmt.Close()
+	defer lib.Close(stmt)
 
 	var count uint64
 
@@ -241,7 +241,7 @@ func (d *Dal) searchByYear(options *lib.Options) (total uint64, movies []*model.
 		if err != nil {
 			mlog.Fatalf("Unable to prepare transaction: %s", err)
 		}
-		defer stmt.Close()
+		defer lib.Close(stmt)
 
 		rows, err = stmt.Query(start, end, options.Limit, options.Offset)
 		if err != nil {
@@ -265,7 +265,7 @@ func (d *Dal) searchByYear(options *lib.Options) (total uint64, movies []*model.
 		if err != nil {
 			mlog.Fatalf("Unable to prepare transaction: %s", err)
 		}
-		defer stmt.Close()
+		defer lib.Close(stmt)
 
 		rows, err = stmt.Query(year, options.Limit, options.Offset)
 		if err != nil {
@@ -291,9 +291,9 @@ func (d *Dal) searchByYear(options *lib.Options) (total uint64, movies []*model.
 		// mlog.Info("title: (%s)", movie.Title)
 		items = append(items, &movie)
 	}
-	rows.Close()
+	lib.Close(rows)
 
-	tx.Commit()
+	commit(tx)
 
 	mlog.Info("searchByYear:Listed %d movies (total %d)", len(items), count)
 
@@ -324,7 +324,7 @@ func (d *Dal) regularSearch(options *lib.Options) (total uint64, movies []*model
 	if err != nil {
 		mlog.Fatalf("searchMovies:Unable to prepare transaction: %s", err)
 	}
-	defer stmt.Close()
+	defer lib.Close(stmt)
 
 	mlog.Info("searchMovies:CountQuery:%s", countQuery)
 
@@ -350,7 +350,7 @@ func (d *Dal) regularSearch(options *lib.Options) (total uint64, movies []*model
 	if err != nil {
 		mlog.Fatalf("searchMovies:listQuery:Unable to prepare transaction: %s", err)
 	}
-	defer stmt.Close()
+	defer lib.Close(stmt)
 
 	rows, err := stmt.Query(term, options.Limit, options.Offset)
 	if err != nil {
@@ -367,9 +367,9 @@ func (d *Dal) regularSearch(options *lib.Options) (total uint64, movies []*model
 		// mlog.Info("title: (%s)", movie.Title)
 		items = append(items, &movie)
 	}
-	rows.Close()
+	lib.Close(rows)
 
-	tx.Commit()
+	commit(tx)
 
 	mlog.Info("searchMovies:Listed %d movies (total %d)", len(items), count)
 
@@ -412,9 +412,9 @@ func (d *Dal) getDuplicates(msg *pubsub.Message) {
 		rows.Scan(&movie.Id, &movie.Title, &movie.Original_Title, &movie.File_Title, &movie.Year, &movie.Runtime, &movie.Tmdb_Id, &movie.Imdb_Id, &movie.Overview, &movie.Tagline, &movie.Resolution, &movie.FileType, &movie.Location, &movie.Cover, &movie.Backdrop, &movie.Genres, &movie.Vote_Average, &movie.Vote_Count, &movie.Production_Countries, &movie.Added, &movie.Modified, &movie.Last_Watched, &movie.All_Watched, &movie.Count_Watched, &movie.Score, &movie.Director, &movie.Writer, &movie.Actors, &movie.Awards, &movie.Imdb_Rating, &movie.Imdb_Votes, &movie.ShowIfDuplicate, &movie.Stub)
 		items = append(items, &movie)
 	}
-	rows.Close()
+	lib.Close(rows)
 
-	tx.Commit()
+	commit(tx)
 
 	mlog.Info("Found %d duplicate movies", len(items))
 
@@ -434,7 +434,7 @@ func (d *Dal) getMovie(msg *pubsub.Message) {
 	if err != nil {
 		mlog.Fatalf("Unable to prepare transaction: %s", err)
 	}
-	defer stmt.Close()
+	defer lib.Close(stmt)
 
 	movie := model.Movie{}
 
@@ -456,10 +456,10 @@ func (d *Dal) checkExists(msg *pubsub.Message) {
 
 	stmt, err := tx.Prepare("select rowid from movie where location = ?")
 	if err != nil {
-		tx.Rollback()
+		rollback(tx)
 		mlog.Fatalf("at prepare: %s", err)
 	}
-	defer stmt.Close()
+	defer lib.Close(stmt)
 
 	movie := msg.Payload.(*model.Movie)
 
@@ -472,11 +472,11 @@ func (d *Dal) checkExists(msg *pubsub.Message) {
 
 	// mlog.Fatalf("gone and done")
 	if err != sql.ErrNoRows && err != nil {
-		tx.Rollback()
+		rollback(tx)
 		mlog.Fatalf("at queryrow: %s", err)
 	}
 
-	tx.Commit()
+	commit(tx)
 
 	// mlog.Info("Check exists: [%d] (%s)", id, movie.Location)
 
@@ -506,10 +506,10 @@ func (d *Dal) storeMovie(msg *pubsub.Message) {
 								values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
 									?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
-		tx.Rollback()
+		rollback(tx)
 		mlog.Fatalf("at prepare: %s", err)
 	}
-	defer stmt.Close()
+	defer lib.Close(stmt)
 
 	res, e := stmt.Exec(movie.Title, movie.Original_Title, movie.File_Title, movie.Year,
 		movie.Runtime, movie.Tmdb_Id, movie.Imdb_Id, movie.Overview, movie.Tagline,
@@ -519,14 +519,14 @@ func (d *Dal) storeMovie(msg *pubsub.Message) {
 		movie.Score, movie.Director, movie.Writer, movie.Actors, movie.Awards, movie.Imdb_Rating,
 		movie.Imdb_Votes, movie.ShowIfDuplicate, movie.Stub)
 	if e != nil {
-		tx.Rollback()
+		rollback(tx)
 		mlog.Fatalf("at exec: %s", e)
 	}
 
 	id, _ := res.LastInsertId()
 	movie.Id = uint64(id)
 
-	tx.Commit()
+	commit(tx)
 	mlog.Info("FINISHED SAVING %s [%d]", movie.Title, movie.Id)
 }
 
@@ -557,10 +557,10 @@ func (d *Dal) partialStoreMovie(msg *pubsub.Message) {
 								values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
 									?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
-		tx.Rollback()
+		rollback(tx)
 		mlog.Fatalf("at prepare: %s", err)
 	}
-	defer stmt.Close()
+	defer lib.Close(stmt)
 
 	res, e := stmt.Exec(movie.Title, movie.Original_Title, movie.File_Title, movie.Year,
 		movie.Runtime, movie.Tmdb_Id, movie.Imdb_Id, movie.Overview, movie.Tagline,
@@ -570,14 +570,14 @@ func (d *Dal) partialStoreMovie(msg *pubsub.Message) {
 		movie.Score, movie.Director, movie.Writer, movie.Actors, movie.Awards, movie.Imdb_Rating,
 		movie.Imdb_Votes, movie.ShowIfDuplicate, movie.Stub)
 	if e != nil {
-		tx.Rollback()
+		rollback(tx)
 		mlog.Fatalf("at exec: %s", e)
 	}
 
 	id, _ := res.LastInsertId()
 	movie.Id = uint64(id)
 
-	tx.Commit()
+	commit(tx)
 	mlog.Info("FINISHED PARTIAL SAVING %s [%d]", movie.Title, movie.Id)
 }
 
@@ -617,18 +617,18 @@ func (d *Dal) updateMovie(msg *pubsub.Message) {
 								show_if_duplicate = ?
 								where rowid = ?`)
 	if err != nil {
-		tx.Rollback()
+		rollback(tx)
 		mlog.Fatalf("at prepare: %s", err)
 	}
-	defer stmt.Close()
+	defer lib.Close(stmt)
 
 	_, err = stmt.Exec(movie.Title, movie.Original_Title, movie.Year, movie.Runtime, movie.Tmdb_Id, movie.Imdb_Id, movie.Overview, movie.Tagline, movie.Cover, movie.Backdrop, movie.Genres, movie.Vote_Average, movie.Vote_Count, movie.Production_Countries, movie.Modified, movie.Director, movie.Writer, movie.Actors, movie.Awards, movie.Imdb_Rating, movie.Imdb_Votes, movie.ShowIfDuplicate, movie.Id)
 	if err != nil {
-		tx.Rollback()
+		rollback(tx)
 		mlog.Fatalf("at exec: %s", err)
 	}
 
-	tx.Commit()
+	commit(tx)
 	mlog.Info("FINISHED UPDATING [%d] %s", movie.Id, movie.Title)
 
 	// updated := &pubsub.Message{}
@@ -649,18 +649,18 @@ func (d *Dal) deleteMovie(msg *pubsub.Message) {
 
 	stmt, err := tx.Prepare("delete from movie where rowid = ?")
 	if err != nil {
-		tx.Rollback()
+		rollback(tx)
 		mlog.Fatalf("at prepare: %s", err)
 	}
-	defer stmt.Close()
+	defer lib.Close(stmt)
 
 	_, err = stmt.Exec(movie.Id)
 	if err != nil {
-		tx.Rollback()
+		rollback(tx)
 		mlog.Fatalf("at exec: %s", err)
 	}
 
-	tx.Commit()
+	commit(tx)
 
 	lib.Notify(d.bus, "prune:delete", fmt.Sprintf("FINISHED DELETING [%d] %s", movie.Id, movie.Title))
 }
@@ -680,20 +680,20 @@ func (d *Dal) setScore(msg *pubsub.Message) {
 								modified = ?
 								where rowid = ?`)
 	if err != nil {
-		tx.Rollback()
+		rollback(tx)
 		mlog.Fatalf("at prepare: %s", err)
 	}
-	defer stmt.Close()
+	defer lib.Close(stmt)
 
 	now := time.Now().UTC().Format(time.RFC3339)
 
 	_, err = stmt.Exec(movie.Score, now, movie.Id)
 	if err != nil {
-		tx.Rollback()
+		rollback(tx)
 		mlog.Fatalf("at exec: %s", err)
 	}
 
-	tx.Commit()
+	commit(tx)
 	mlog.Info("FINISHED UPDATING MOVIE SCORE [%d] %s", movie.Id, movie.Title)
 
 	msg.Reply <- movie
@@ -767,18 +767,18 @@ func (d *Dal) setWatched(msg *pubsub.Message) {
 								modified = ?
 								where rowid = ?`)
 	if err != nil {
-		tx.Rollback()
+		rollback(tx)
 		mlog.Fatalf("at prepare: %s", err)
 	}
-	defer stmt.Close()
+	defer lib.Close(stmt)
 
 	_, err = stmt.Exec(lastWatched, allWatched, countWatched, now, dto.Id)
 	if err != nil {
-		tx.Rollback()
+		rollback(tx)
 		mlog.Fatalf("at exec: %s", err)
 	}
 
-	tx.Commit()
+	commit(tx)
 	mlog.Info("FINISHED UPDATING MOVIE WATCHED DATE [%d] %s", dto.Id, dto.Title)
 
 	dto.All_Watched = allWatched
@@ -803,20 +803,20 @@ func (d *Dal) setDuplicate(msg *pubsub.Message) {
 								modified = ?
 								where rowid = ?`)
 	if err != nil {
-		tx.Rollback()
+		rollback(tx)
 		mlog.Fatalf("at prepare: %s", err)
 	}
-	defer stmt.Close()
+	defer lib.Close(stmt)
 
 	now := time.Now().UTC().Format(time.RFC3339)
 
 	_, err = stmt.Exec(movie.ShowIfDuplicate, now, movie.Id)
 	if err != nil {
-		tx.Rollback()
+		rollback(tx)
 		mlog.Fatalf("at exec: %s", err)
 	}
 
-	tx.Commit()
+	commit(tx)
 	mlog.Info("FINISHED UPDATING MOVIE DUPLICATE STATUS [%d] %s", movie.Id, movie.Title)
 
 	msg.Reply <- movie
@@ -839,4 +839,18 @@ func parseToday(clientToday string) (today time.Time, err error) {
 	today = time.Date(client.Year(), client.Month(), client.Day(), 0, 0, 0, 0, client.Location())
 
 	return today, nil
+}
+
+func rollback(tx *sql.Tx) {
+	err := tx.Rollback()
+	if err != nil {
+		mlog.Warning("ROLLBACK: %s", err)
+	}
+}
+
+func commit(tx *sql.Tx) {
+	err := tx.Commit()
+	if err != nil {
+		mlog.Warning("COMMIT: %s", err)
+	}
 }
