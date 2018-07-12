@@ -74,15 +74,21 @@ func (s *Agent) walk(folder, mask string) []string {
 
 // Exists -
 func (s *Agent) Exists(ctx context.Context, req *agent.ExistsReq, rsp *agent.ExistsRsp) error {
-	// log.Infof("Received Agent.Exists request: %v", req)
+	log.Printf("Received Agent.Exists request: %d items", len(req.Items))
 
-	rsp.Exists = true
-	if _, err := os.Stat(req.Location); err != nil {
-		rsp.Exists = !os.IsNotExist(err)
-	}
+	rsp.Items = make([]*agent.Item, 0)
 
-	if !rsp.Exists {
-		log.Printf("Location %s doesn't exist\n", req.Location)
+	for _, item := range req.Items {
+		exists := true
+
+		if _, err := os.Stat(item.Location); err != nil {
+			exists = !os.IsNotExist(err)
+		}
+
+		if !exists {
+			log.Printf("Location %s doesn't exist\n", item.Location)
+			rsp.Items = append(rsp.Items, item)
+		}
 	}
 
 	return nil

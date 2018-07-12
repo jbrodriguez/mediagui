@@ -1,10 +1,12 @@
 package services
 
 import (
-	"database/sql"
-	"fmt"
 	"jbrodriguez/mediagui/server/src/lib"
 	"jbrodriguez/mediagui/server/src/model"
+	"jbrodriguez/mediagui/server/src/proto"
+
+	"database/sql"
+	"fmt"
 	"path/filepath"
 	"sort"
 	"strconv"
@@ -634,7 +636,7 @@ func (d *Dal) updateMovie(msg *pubsub.Message) {
 }
 
 func (d *Dal) deleteMovie(msg *pubsub.Message) {
-	movie := msg.Payload.(*model.Movie)
+	movie := msg.Payload.(*agent.Item)
 
 	// d.count = 0
 

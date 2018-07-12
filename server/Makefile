@@ -27,6 +27,9 @@ default: dependencies test
 # clean up
 clean:
 	go clean
+
+protobuf:
+	protoc -I=./src/proto --go_out=./src/proto ./src/proto/agent.proto
  
 # run formatting tool and build
 build: dependencies clean
