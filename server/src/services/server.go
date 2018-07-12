@@ -23,7 +23,7 @@ import (
 const (
 	apiVersion = "api/v1"
 	capacity   = 3
-	bufferSize = 8192
+	// bufferSize = 8192
 )
 
 // Server -

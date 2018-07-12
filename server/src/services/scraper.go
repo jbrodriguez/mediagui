@@ -5,16 +5,17 @@ import (
 	"github.com/jbrodriguez/go-tmdb"
 	"github.com/jbrodriguez/mlog"
 	"github.com/jbrodriguez/pubsub"
+
 	// "io/ioutil"
 	"fmt"
-	"jbrodriguez/mediagui/server/src/dto"
-	"jbrodriguez/mediagui/server/src/lib"
-	"jbrodriguez/mediagui/server/src/model"
-
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
+
+	"jbrodriguez/mediagui/server/src/dto"
+	"jbrodriguez/mediagui/server/src/lib"
+	"jbrodriguez/mediagui/server/src/model"
 )
 
 // Scraper -
@@ -278,11 +279,11 @@ func (s *Scraper) configChanged(msg *pubsub.Message) {
 	s.settings = msg.Payload.(*lib.Settings)
 }
 
-var reRating *regexp.Regexp = regexp.MustCompile(`<span[^>]*itemprop="ratingValue">([^<]*)</span>`)
-var reVotes *regexp.Regexp = regexp.MustCompile(`<span[^>]*itemprop="ratingCount">([^<]*)</span>`)
-var reDirector *regexp.Regexp = regexp.MustCompile(`<a href="/name[^"]*dr"[^>]*><span[^>]*>([^<]*)?</span>`)
-var reWriter *regexp.Regexp = regexp.MustCompile(`<a href="/name[^"]*wr"[^>]*><span[^>]*>([^<]*)?</span>`)
-var reActor *regexp.Regexp = regexp.MustCompile(`<a href="/name[^"]*st_sm"[^>]*><span[^>]*>([^<]*)?</span>`)
+var reRating = regexp.MustCompile(`<span[^>]*itemprop="ratingValue">([^<]*)</span>`)
+var reVotes = regexp.MustCompile(`<span[^>]*itemprop="ratingCount">([^<]*)</span>`)
+var reDirector = regexp.MustCompile(`<a href="/name[^"]*dr"[^>]*><span[^>]*>([^<]*)?</span>`)
+var reWriter = regexp.MustCompile(`<a href="/name[^"]*wr"[^>]*><span[^>]*>([^<]*)?</span>`)
+var reActor = regexp.MustCompile(`<a href="/name[^"]*st_sm"[^>]*><span[^>]*>([^<]*)?</span>`)
 
 func getOmdb(data string) *model.Omdb {
 	omdb := &model.Omdb{}

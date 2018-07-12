@@ -21,6 +21,8 @@ import (
 	"github.com/micro/go-micro/client"
 )
 
+const cNotAvailable = "n/a"
+
 // Core -
 type Core struct {
 	bus      *pubsub.PubSub
@@ -113,9 +115,9 @@ func (c *Core) addMovie(msg *pubsub.Message) {
 
 	// Since it's coming in through this endpoint, we know it's a stub
 	movie.File_Title = movie.Title
-	movie.Resolution = "n/a"
-	movie.FileType = "n/a"
-	movie.Location = "n/a"
+	movie.Resolution = cNotAvailable
+	movie.FileType = cNotAvailable
+	movie.Location = cNotAvailable
 	movie.Stub = 1
 
 	// 3 operations, rescrape, update and cache

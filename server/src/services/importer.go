@@ -55,7 +55,7 @@ func (i *Importer) runImport(msg *pubsub.Message) {
 	if err != nil {
 		mlog.Fatal(err)
 	}
-	defer f.Close() // this needs to be after the err check
+	defer lib.Close(f) // this needs to be after the err check
 
 	psv := csv.NewReader(f)
 	psv.Comma = '|'
@@ -136,12 +136,9 @@ func WriteLine(fullpath, line string) error {
 	if err != nil {
 		return err
 	}
-	defer f.Close()
+	defer lib.Close(f)
 
 	_, err = f.WriteString(line + "\n")
-	if err != nil {
-		return err
-	}
 
-	return nil
+	return err
 }

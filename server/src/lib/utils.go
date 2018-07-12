@@ -4,7 +4,7 @@ import (
 	"image/jpeg"
 	"io"
 	"io/ioutil"
-	"jbrodriguez/mediagui/server/src/dto"
+	"log"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -12,6 +12,8 @@ import (
 	"github.com/jbrodriguez/mlog"
 	"github.com/jbrodriguez/pubsub"
 	"github.com/nfnt/resize"
+
+	"jbrodriguez/mediagui/server/src/dto"
 )
 
 // Exists - Check if File / Directory Exists
@@ -55,7 +57,7 @@ func RestGet(url string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	defer resp.Body.Close()
+	defer Close(resp.Body)
 
 	// err = json.NewDecoder(resp.Body).Decode(reply)
 	body, err := ioutil.ReadAll(resp.Body)
@@ -130,4 +132,12 @@ func ResizeImage(src, dst string) (err error) {
 
 	// write new image to file
 	return jpeg.Encode(out, m, nil)
+}
+
+// Close -
+func Close(c io.Closer) {
+	err := c.Close()
+	if err != nil {
+		log.Printf("ERROR: %s", err)
+	}
 }
