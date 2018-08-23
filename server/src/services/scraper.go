@@ -279,7 +279,7 @@ func (s *Scraper) configChanged(msg *pubsub.Message) {
 	s.settings = msg.Payload.(*lib.Settings)
 }
 
-var reRating = regexp.MustCompile(`<span[^>]*itemprop="ratingValue">([^<]*)</span>`)
+var reRating = regexp.MustCompile(`<strong title[^>]*.*<span>([^<]*)<\/span>`)
 var reVotes = regexp.MustCompile(`<span[^>]*itemprop="ratingCount">([^<]*)</span>`)
 var reDirector = regexp.MustCompile(`<a href="/name[^"]*dr"[^>]*><span[^>]*>([^<]*)?</span>`)
 var reWriter = regexp.MustCompile(`<a href="/name[^"]*wr"[^>]*><span[^>]*>([^<]*)?</span>`)
