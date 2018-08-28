@@ -89,7 +89,7 @@ func (c *Core) getConfig(msg *pubsub.Message) {
 	mlog.Info("Sent config")
 }
 
-func (c *Core) importMovies(msg *pubsub.Message) {
+func (c *Core) importMovies(_ *pubsub.Message) {
 	t0 := time.Now()
 	// mlog.Info("Begin movie scanning ...")
 	lib.Notify(c.bus, "import:begin", "Import process started")
@@ -214,7 +214,7 @@ func (c *Core) doMovieReScraped(msg *pubsub.Message) {
 	// mlog.Info("ScrapeDTO: %+v", dto)
 }
 
-func (c *Core) pruneMovies(msg *pubsub.Message) {
+func (c *Core) pruneMovies(_ *pubsub.Message) {
 	t0 := time.Now()
 
 	lib.Notify(c.bus, "prune:begin", "Started Prune Process")
@@ -246,7 +246,7 @@ func (c *Core) pruneMovies(msg *pubsub.Message) {
 			host := item.Location[:index]
 			location := item.Location[index+1:]
 
-			hostItems[host] = append(hostItems[host], &agent.Item{Id: item.Id, Location: location, Title: item.Title})
+			hostItems[host] = append(hostItems[host], &agent.Item{Id: item.ID, Location: location, Title: item.Title})
 		}
 
 		for _, host := range c.settings.UnraidHosts {
@@ -289,7 +289,7 @@ func (c *Core) pruneMovies(msg *pubsub.Message) {
 
 			if _, err := os.Stat(item.Location); err != nil {
 				if os.IsNotExist(err) {
-					lib.Notify(c.bus, "prune:selected", fmt.Sprintf("UP FOR DELETION: [%d] %s (%s))", item.Id, item.Title, item.Location))
+					lib.Notify(c.bus, "prune:selected", fmt.Sprintf("UP FOR DELETION: [%d] %s (%s))", item.ID, item.Title, item.Location))
 
 					movie := &pubsub.Message{Payload: item, Reply: make(chan interface{}, capacity)}
 					c.bus.Pub(movie, "/command/movie/delete")
@@ -329,6 +329,6 @@ func (c *Core) addMediaFolder(msg *pubsub.Message) {
 // 	c.wg.Done()
 // }
 
-func (c *Core) doWorkUnitDone(msg *pubsub.Message) {
+func (c *Core) doWorkUnitDone(_ *pubsub.Message) {
 	c.wg.Done()
 }

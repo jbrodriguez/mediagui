@@ -8,7 +8,7 @@ type MoviesDTO struct {
 
 // Movie -
 type Movie struct {
-	Id                   uint64  `json:"id"`
+	ID                   uint64  `json:"id"`
 	Title                string  `json:"title"`
 	Original_Title       string  `json:"original_title"`
 	File_Title           string  `json:"file_title"`

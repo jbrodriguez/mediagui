@@ -234,7 +234,7 @@ func (s *Server) getMovie(c echo.Context) error {
 	return c.JSON(http.StatusOK, dto)
 }
 
-func (s *Server) importMovies(c echo.Context) error {
+func (s *Server) importMovies(_ echo.Context) error {
 	s.bus.Pub(nil, "/post/import")
 
 	return nil
@@ -256,7 +256,7 @@ func (s *Server) addMovie(c echo.Context) error {
 	return c.JSON(http.StatusOK, &resp)
 }
 
-func (s *Server) pruneMovies(c echo.Context) error {
+func (s *Server) pruneMovies(_ echo.Context) error {
 	s.bus.Pub(nil, "/post/prune")
 
 	return nil
@@ -284,7 +284,7 @@ func (s *Server) setMovieScore(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, nil)
 	}
 
-	movie.Id, _ = strconv.ParseUint(c.Param("id"), 0, 64)
+	movie.ID, _ = strconv.ParseUint(c.Param("id"), 0, 64)
 
 	msg := &pubsub.Message{Payload: &movie, Reply: make(chan interface{}, capacity)}
 	s.bus.Pub(msg, "/put/movies/score")
@@ -302,7 +302,7 @@ func (s *Server) setMovieWatched(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, nil)
 	}
 
-	movie.Id, _ = strconv.ParseUint(c.Param("id"), 0, 64)
+	movie.ID, _ = strconv.ParseUint(c.Param("id"), 0, 64)
 
 	msg := &pubsub.Message{Payload: &movie, Reply: make(chan interface{}, capacity)}
 	s.bus.Pub(msg, "/put/movies/watched")
@@ -320,7 +320,7 @@ func (s *Server) fixMovie(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, nil)
 	}
 
-	movie.Id, _ = strconv.ParseUint(c.Param("id"), 0, 64)
+	movie.ID, _ = strconv.ParseUint(c.Param("id"), 0, 64)
 
 	msg := &pubsub.Message{Payload: &movie, Reply: make(chan interface{}, capacity)}
 	s.bus.Pub(msg, "/put/movies/fix")
@@ -338,7 +338,7 @@ func (s *Server) setDuplicate(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, nil)
 	}
 
-	movie.Id, _ = strconv.ParseUint(c.Param("id"), 0, 64)
+	movie.ID, _ = strconv.ParseUint(c.Param("id"), 0, 64)
 
 	msg := &pubsub.Message{Payload: &movie, Reply: make(chan interface{}, capacity)}
 	s.bus.Pub(msg, "/put/movies/duplicate")

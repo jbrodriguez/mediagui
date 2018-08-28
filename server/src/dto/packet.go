@@ -1,7 +1,8 @@
 package dto
 
+// Packet -
 type Packet struct {
-	Id      string `json:"-"`
+	ID      string `json:"-"`
 	Topic   string `json:"topic"`
 	Payload string `json:"payload"`
 }

@@ -1,8 +1,9 @@
 package dto
 
+// Scrape -
 type Scrape struct {
-	BaseUrl       string
-	SecureBaseUrl string
+	BaseURL       string
+	SecureBaseURL string
 	// BasePath      string
 	Movie  interface{}
 	Forced bool

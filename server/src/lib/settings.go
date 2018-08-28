@@ -107,11 +107,8 @@ func (s *Settings) Save() error {
 	}
 
 	mediaFolders := strings.Join(s.MediaFolders, "|")
-	if err = writeLine(file, "mediafolders", mediaFolders); err != nil {
-		return err
-	}
 
-	return nil
+	return writeLine(file, "mediafolders", mediaFolders)
 }
 
 func writeLine(file *os.File, key, value string) error {
