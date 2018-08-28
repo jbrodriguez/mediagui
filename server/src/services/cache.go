@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+
 	// "image/jpeg"
 
 	"jbrodriguez/mediagui/server/src/dto"
@@ -60,8 +61,8 @@ func (c *Cache) cacheMovie(msg *pubsub.Message) {
 	caching := &Caching{
 		bus:      c.bus,
 		path:     c.settings.WebDir,
-		url:      dto.SecureBaseUrl,
-		id:       movie.Id,
+		url:      dto.SecureBaseURL,
+		id:       movie.ID,
 		title:    movie.Title,
 		forced:   dto.Forced,
 		cover:    movie.Cover,

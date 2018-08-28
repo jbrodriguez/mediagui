@@ -73,7 +73,7 @@ func (s *Scanner) Stop() {
 	mlog.Info("Stopped service Scanner ...")
 }
 
-func (s *Scanner) scanMovies(msg *pubsub.Message) {
+func (s *Scanner) scanMovies(_ *pubsub.Message) {
 	defer s.bus.Pub(nil, "/event/workunit/done")
 
 	// folders := []string{

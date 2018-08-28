@@ -49,7 +49,7 @@ func (i *Importer) Stop() {
 	mlog.Info("Stopped service Importer")
 }
 
-func (i *Importer) runImport(msg *pubsub.Message) {
+func (i *Importer) runImport(_ *pubsub.Message) {
 	file := filepath.Join(i.settings.WorkDir, "moviesi.txt")
 	f, err := os.Open(file)
 	if err != nil {
@@ -65,7 +65,7 @@ func (i *Importer) runImport(msg *pubsub.Message) {
 		mlog.Fatal(err)
 	}
 
-	mlog.Info("Is check only (%s)", i.settings.CheckOnly)
+	mlog.Info("Is check only (%t)", i.settings.CheckOnly)
 
 	if i.settings.CheckOnly {
 		ofile := filepath.Join(i.settings.WorkDir, "movieo.txt")

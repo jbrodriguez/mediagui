@@ -17,7 +17,7 @@ type Agent struct {
 }
 
 // Scan -
-func (s *Agent) Scan(ctx context.Context, req *agent.ScanReq, rsp *agent.ScanRsp) error {
+func (s *Agent) Scan(_ context.Context, req *agent.ScanReq, rsp *agent.ScanRsp) error {
 	log.Printf("Received Agent.Scan request: %v\n", req)
 
 	// var files []string
@@ -73,7 +73,7 @@ func (s *Agent) walk(folder, mask string) []string {
 }
 
 // Exists -
-func (s *Agent) Exists(ctx context.Context, req *agent.ExistsReq, rsp *agent.ExistsRsp) error {
+func (s *Agent) Exists(_ context.Context, req *agent.ExistsReq, rsp *agent.ExistsRsp) error {
 	log.Printf("Received Agent.Exists request: %d items", len(req.Items))
 
 	rsp.Items = make([]*agent.Item, 0)

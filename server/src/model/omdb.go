@@ -1,5 +1,6 @@
 package model
 
+// Omdb -
 type Omdb struct {
 	Director    string `json:"Director"`
 	Writer      string `json:"Writer"`
