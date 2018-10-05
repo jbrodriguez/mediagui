@@ -7,6 +7,7 @@ import (
 	"github.com/jbrodriguez/pubsub"
 
 	// "io/ioutil"
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"strconv"
@@ -249,28 +250,20 @@ func _scrape(wid int, tmdb *tmdb.Tmdb, id uint64, movie *model.Movie) error {
 		}
 	}
 
-	// var omdb model.Omdb
-
-	// lib.Notify(s.bus, "import:progress", fmt.Sprintf("STARTED OMDB [%s]", movie.Title))
-	data, err := lib.RestGet(fmt.Sprintf("http://www.im%s.com/title/%s", "db", movie.Imdb_Id))
+	// lib.Notify(s.bus, "import:progress", fmt.Sprintf("STARTED IMDB [%s]", movie.Title))
+	data, err := lib.RestGet(fmt.Sprintf("https://www.imdb.com/title/%s", movie.Imdb_Id))
 	if err != nil {
-		return fmt.Errorf("OMDB Error: %s", err)
+		return fmt.Errorf("IMDB Error: %s", err)
 	}
 
-	omdb := getOmdb(data)
+	imdb := getImdb(data)
 
-	// lib.Notify(s.bus, "import:progress", fmt.Sprintf("omdb: %+v", omdb))
-
-	vote := strings.Replace(omdb.Imdb_Vote, ",", "", -1)
-	imdbVote, _ := strconv.ParseUint(vote, 0, 64)
-	imdbRating, _ := strconv.ParseFloat(omdb.Imdb_Rating, 64)
-
-	movie.Director = omdb.Director
-	movie.Writer = omdb.Writer
-	movie.Actors = omdb.Actors
-	movie.Awards = omdb.Awards
-	movie.Imdb_Rating = imdbRating
-	movie.Imdb_Votes = imdbVote
+	movie.Director = imdb.Director
+	movie.Writer = imdb.Writers
+	movie.Actors = imdb.Actors
+	movie.Awards = imdb.Awards
+	movie.Imdb_Rating = imdb.Rating
+	movie.Imdb_Votes = imdb.Votes
 
 	return nil
 }
@@ -279,57 +272,43 @@ func (s *Scraper) configChanged(msg *pubsub.Message) {
 	s.settings = msg.Payload.(*lib.Settings)
 }
 
-var reRating = regexp.MustCompile(`<strong title[^>]*.*<span>([^<]*)<\/span>`)
-var reVotes = regexp.MustCompile(`<span[^>]*itemprop="ratingCount">([^<]*)</span>`)
-var reDirector = regexp.MustCompile(`<a href="/name[^"]*dr"[^>]*><span[^>]*>([^<]*)?</span>`)
-var reWriter = regexp.MustCompile(`<a href="/name[^"]*wr"[^>]*><span[^>]*>([^<]*)?</span>`)
-var reActor = regexp.MustCompile(`<a href="/name[^"]*st_sm"[^>]*><span[^>]*>([^<]*)?</span>`)
+var reJSONLD = regexp.MustCompile(`<script type="application/ld\+json">([^\<]*)`)
 
-func getOmdb(data string) *model.Omdb {
-	omdb := &model.Omdb{}
+func getImdb(data string) *model.Imdb {
+	imdbJSON := &model.ImdbJson{}
+	imdb := &model.Imdb{}
 
-	rating := reRating.FindStringSubmatch(data)
-	if len(rating) > 0 {
-		omdb.Imdb_Rating = rating[1]
+	ld := reJSONLD.FindStringSubmatch(data)
+
+	if err := json.Unmarshal([]byte(ld[1]), &imdbJSON); err != nil {
+		mlog.Warning("Unable to unmarshal imdb data: %s", err)
+		return imdb
 	}
 
-	votes := reVotes.FindStringSubmatch(data)
-	if len(votes) > 0 {
-		omdb.Imdb_Vote = votes[1]
-	}
+	imdb.Director = imdbJSON.Director.Name
 
-	directors := reDirector.FindAllStringSubmatch(data, -1)
-	if len(directors) > 0 {
-		for _, director := range directors {
-			if omdb.Director == "" {
-				omdb.Director = director[1]
+	for _, writer := range imdbJSON.Creator {
+		if writer.Type == "Person" {
+			if imdb.Writers == "" {
+				imdb.Writers = writer.Name
 			} else {
-				omdb.Director += ", " + director[1]
+				imdb.Writers += ", " + writer.Name
 			}
 		}
 	}
 
-	writers := reWriter.FindAllStringSubmatch(data, -1)
-	if len(writers) > 0 {
-		for _, writer := range writers {
-			if omdb.Writer == "" {
-				omdb.Writer = writer[1]
+	for _, actor := range imdbJSON.Actor {
+		if actor.Type == "Person" {
+			if imdb.Actors == "" {
+				imdb.Actors = actor.Name
 			} else {
-				omdb.Writer += ", " + writer[1]
+				imdb.Actors += ", " + actor.Name
 			}
 		}
 	}
 
-	actors := reActor.FindAllStringSubmatch(data, -1)
-	if len(actors) > 0 {
-		for _, actor := range actors {
-			if omdb.Actors == "" {
-				omdb.Actors = actor[1]
-			} else {
-				omdb.Actors += ", " + actor[1]
-			}
-		}
-	}
+	imdb.Votes = uint64(imdbJSON.AggregateRating.RatingCount)
+	imdb.Rating, _ = strconv.ParseFloat(imdbJSON.AggregateRating.RatingValue, 64)
 
-	return omdb
+	return imdb
 }
