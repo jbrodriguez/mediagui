@@ -10,7 +10,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"regexp"
-	"strconv"
 	"strings"
 	"time"
 
@@ -275,40 +274,14 @@ func (s *Scraper) configChanged(msg *pubsub.Message) {
 var reJSONLD = regexp.MustCompile(`<script type="application/ld\+json">([^\<]*)`)
 
 func getImdb(data string) *model.Imdb {
-	imdbJSON := &model.ImdbJson{}
 	imdb := &model.Imdb{}
 
 	ld := reJSONLD.FindStringSubmatch(data)
 
-	if err := json.Unmarshal([]byte(ld[1]), &imdbJSON); err != nil {
+	if err := json.Unmarshal([]byte(ld[1]), &imdb); err != nil {
 		mlog.Warning("Unable to unmarshal imdb data: %s", err)
 		return imdb
 	}
-
-	imdb.Director = imdbJSON.Director.Name
-
-	for _, writer := range imdbJSON.Creator {
-		if writer.Type == "Person" {
-			if imdb.Writers == "" {
-				imdb.Writers = writer.Name
-			} else {
-				imdb.Writers += ", " + writer.Name
-			}
-		}
-	}
-
-	for _, actor := range imdbJSON.Actor {
-		if actor.Type == "Person" {
-			if imdb.Actors == "" {
-				imdb.Actors = actor.Name
-			} else {
-				imdb.Actors += ", " + actor.Name
-			}
-		}
-	}
-
-	imdb.Votes = uint64(imdbJSON.AggregateRating.RatingCount)
-	imdb.Rating, _ = strconv.ParseFloat(imdbJSON.AggregateRating.RatingValue, 64)
 
 	return imdb
 }
