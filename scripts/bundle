@@ -31,12 +31,12 @@ if [ $? -ne 0 ]; then
 fi
 popd
 
-echo "Building server/agent"
+echo "Building server & agent"
 pushd server
 make release
 if [ $? -ne 0 ]; then
 	popd
-	error "Unable to build server/agent. Please check and try again"
+	error "Unable to build server & agent. Please check and try again"
 fi
 popd
 
@@ -44,7 +44,7 @@ echo "Generating release ..."
 rm -rf release && mkdir -p $APP_RELEASE/{client,server,agent}
 cp -r client/dist/* $APP_RELEASE/client
 cp -r server/${PROG} ${APP_RELEASE}/server
-cp -r server/agent ${APP_RELEASE}/agent
+cp -r server/agentx ${APP_RELEASE}/agent
 cp scripts/install ${APP_RELEASE}
 cp LICENSE $APP_RELEASE
 cp VERSION $APP_RELEASE
