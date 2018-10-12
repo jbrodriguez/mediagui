@@ -56,5 +56,5 @@ mv ${APPPATH}/img ${APPPATH}/web
 cp ./server/mediagui ${BINPATH}
 
 # Copy agent
-scp ./agent/agent root@wopr:/boot
-scp ./agent/agent root@hal:/boot
+scp ./agent/agentx root@wopr:/boot
+scp ./agent/agentx root@hal:/boot

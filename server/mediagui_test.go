@@ -1,22 +1,15 @@
 package main
 
 import (
-	// "fmt"
 	"encoding/json"
+	"log"
+	"os"
+	"path/filepath"
+	"testing"
 
 	"github.com/jbrodriguez/mlog"
 
-	// "github.com/stretchr/testify/assert"
-	// "io"
-
-	"jbrodriguez/mediagui/server/src/model"
-	"log"
-	"os"
-
-	// "os/signal"
-	"path/filepath"
-	// "strings"
-	"testing"
+	"mediagui/model"
 )
 
 // func write(filename, text string) error {

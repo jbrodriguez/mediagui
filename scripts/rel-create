@@ -9,46 +9,16 @@ function error {
 
 PROG="mediagui"
 
-# current dir is ~/.cix/builds/jbrodriguez/${PROG}
-ORIGINAL_DIR=`pwd`
-
-# move two folders up to ~/.cix/builds
-cd ../..
-
-# store current dir, which will become gopath ~/.cix/builds
-CURRENT_DIR=`pwd`
-
-# set golang env: ~/.cix/builds/src/jbrodriguez/${PROG}
-rm -rf src
-mkdir -p src/jbrodriguez/${PROG}
-mv jbrodriguez/${PROG} src/jbrodriguez
-
-# let's go to new starting folder: ~/.cix/builds/src/jbrodriguez/${PROG}
-cd src/jbrodriguez/${PROG}
-
+# install client dependencies
 pushd client
 npm install
 popd
 
-pushd server
-GOPATH="$CURRENT_DIR" gom install -v
-popd
-
-# compile with a temp gopath
-GOPATH="$CURRENT_DIR" scripts/bundle
+# this builds both client and server
+scripts/bundle
 
 if [ $? -ne 0 ]; then
-	cd $CURRENT_DIR
-	mv src/jbrodriguez/${PROG} jbrodriguez
-	rm -rf src
-	cd $ORIGINAL_DIR
-
 	error "Unable to create release. Please check and try again"
 fi
-
-cd $CURRENT_DIR
-mv src/jbrodriguez/${PROG} jbrodriguez
-rm -rf src
-cd $ORIGINAL_DIR
 
 echo "Successfully generated $PROG"

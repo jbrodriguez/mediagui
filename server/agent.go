@@ -3,13 +3,13 @@
 package main
 
 import (
-	"jbrodriguez/mediagui/server/src/agent"
-
 	"log"
 	"os"
 
 	"github.com/micro/go-micro/cmd"
 	"github.com/micro/go-micro/server"
+
+	"mediagui/agent"
 )
 
 // Version - plugin version

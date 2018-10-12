@@ -1,9 +1,10 @@
 package main
 
 import (
-	"jbrodriguez/mediagui/server/src/app"
 	"log"
 	"os"
+
+	"mediagui/app"
 )
 
 // Version - plugin version
