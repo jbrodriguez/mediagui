@@ -382,6 +382,101 @@ func TestJsonLd(t *testing.T) {
 	}
 
 	t.Logf("imdb: %+v", &imdb)
+
+	jsonString2 := `
+	{
+		"@context": "http://schema.org",
+		"@type": "Movie",
+		"url": "/title/tt7664504/",
+		"name": "Three Identical Strangers",
+		"image": "https://m.media-amazon.com/images/M/MV5BMTc0NWM3ZGItMzlmZC00NDRmLWJlZmUtMjkzZjNlYmNhYTc1XkEyXkFqcGdeQXVyNzgxMzYzNjA@._V1_.jpg",
+		"genre": "Documentary",
+		"contentRating": "PG-13",
+		"actor": [
+		  {
+			"@type": "Person",
+			"url": "/name/nm5210206/",
+			"name": "Silvi Alzetta-Reali"
+		  },
+		  {
+			"@type": "Person",
+			"url": "/name/nm7013156/",
+			"name": "Eddy Galland"
+		  },
+		  {
+			"@type": "Person",
+			"url": "/name/nm1275842/",
+			"name": "Ron Guttman"
+		  },
+		  {
+			"@type": "Person",
+			"url": "/name/nm10172003/",
+			"name": "Natasha Josefowitz"
+		  }
+		],
+		"director": {
+		  "@type": "Person",
+		  "url": "/name/nm2268736/",
+		  "name": "Tim Wardle"
+		},
+		"description": "Three Identical Strangers is a movie starring Silvi Alzetta-Reali, Eddy Galland, and Ron Guttman. In 1980 New York, three young men who were all adopted meet each other and find out they\u0027re triplets who were separated at birth. Then...",
+		"datePublished": "2018-01-19",
+		"creator": {
+		  "@type": "Organization",
+		  "url": "/company/co0178419/"
+		},
+		"keywords": "separated at birth,multiple birth,media sensation,adoption,documentary film",
+		"aggregateRating": {
+		  "@type": "AggregateRating",
+		  "ratingCount": 4306,
+		  "bestRating": "10.0",
+		  "worstRating": "1.0",
+		  "ratingValue": "7.8"
+		},
+		"review": {
+		  "@type": "Review",
+		  "itemReviewed": {
+			"@type": "CreativeWork",
+			"url": "/title/tt7664504/"
+		  },
+		  "author": {
+			"@type": "Person",
+			"name": "proud_luddite"
+		  },
+		  "dateCreated": "2018-09-21",
+		  "inLanguage": "English",
+		  "name": "A superior documentary",
+		  "reviewBody": "On July 12, 1961 in Glen Oaks, New York: Robert Shafran, Eddie Galland, and Robert Kellman were born as identical triplets to a single mother and later adopted in different families. This documentary chronicles their story which includes their eventual reunion and beyond.\n\nThis is one of those documentaries which reinforces the belief that truth is stranger than fiction. It can also join superior documentaries like \"Bus 174\" (2002 - Brazil) and \"Tower\" (2016 - USA) as non-fiction films that end up as mysterious thrillers for audiences who are unaware of the events exposed in each film. An odd twist about \"Strangers\" though, is that some information remains incomplete by the end - this is no fault by any means of the filmmakers who do a superb job. Without giving anything away, there is a perverse reason that so much information is denied to the viewer and to the many involved in this bizarre story.\n\nSome movies finish with happy endings. This one starts with a happy beginning. There is much joy in the reunion and the enormous ripple effect this causes. Once the thrill starts to settle down, the young men naturally want to learn more about their birth and adoption circumstances. What they learn turns the film into a sinister mystery.\n\nOnce all the talking heads are introduced within the first twenty minutes or so, a keen observer will notice that another mystery is yet to unfold as the film chronologically reveals the lives of the triplets. Once the mystery is revealed, the emotional impact is stunning.\n\nAs if this film isn\u0027t rich enough, it even digs into issues of class. Each boy grew up in different circumstances from each other. This further fuels the debate of nature vs nurture. One thing though is not debatable: \"Three Identical Strangers\" is one of the most fascinating documentaries ever. Not since the Dionne quintuplets were born in 1934 has there been such a fascinating story of identical siblings from a multiple birth.",
+		  "reviewRating": {
+			"@type": "Rating",
+			"worstRating": "1",
+			"bestRating": "10",
+			"ratingValue": "8"
+		  }
+		},
+		"duration": "PT1H36M",
+		"trailer": {
+		  "@type": "VideoObject",
+		  "name": "Three Identical Strangers [Official Trailer]",
+		  "embedUrl": "/video/imdb/vi2892085273",
+		  "thumbnail": {
+			"@type": "ImageObject",
+			"contentUrl": "https://m.media-amazon.com/images/M/MV5BZGIxNjBjYWUtYzExYS00NGFhLTkwYmQtZTZkNTcxYTY5ZTQ1XkEyXkFqcGdeQXRzdGFzaWVr._V1_.jpg"
+		  },
+		  "thumbnailUrl": "https://m.media-amazon.com/images/M/MV5BZGIxNjBjYWUtYzExYS00NGFhLTkwYmQtZTZkNTcxYTY5ZTQ1XkEyXkFqcGdeQXRzdGFzaWVr._V1_.jpg",
+		  "uploadDate": "2018-04-12T20:00:31Z"
+		}
+	  }	
+	`
+
+	// var imdb model.Imdb
+
+	if err := json.Unmarshal([]byte(jsonString2), &imdb); err != nil {
+		log.Fatal(err)
+	}
+
+	t.Logf("imdb: %+v", &imdb)
+
 }
 
 func TestMain(m *testing.M) {
