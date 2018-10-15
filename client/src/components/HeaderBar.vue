@@ -10,48 +10,38 @@
 				<div class="row between-xs">
 					<div class="col-xs-12 col-sm-8">
 						<div class="c-hmenusection">
-							<router-link to="/movies"
-							             class="mv0 mh2">MOVIES</router-link>
+							<router-link to="/movies" class="mv0 mh2">MOVIES</router-link>
 
-							<select v-model="selected"
-							        @change="changeFilter">
-								<option v-for="option in filters"
-								        :value="option.value">{{option.label}}</option>
+							<select v-model="filterBy" @change="changeFilter">
+								<option v-for="option in options.filterByOptions" :value="option.value" :key="option.value">{{option.label}}</option>
 							</select>
 
-							<input type="search"
-							       placeholder="Enter search string"
-							       :value="query"
-							       @input="updateQuery">
+							<input type="search" placeholder="Enter search string" :value="options.query" @input="updateQuery">
 
-							<select v-model="sortBy"
-							        @change="changeSort">
-								<option v-for="sort in sorts"
-								        :value="sort.value">{{sort.label}}</option>
+							<select v-model="sortBy" @change="changeSort">
+								<option v-for="sort in options.sortByOptions" :value="sort.value" :key="sort.value">{{sort.label}}</option>
 							</select>
 
-							<i class="fa mv0 ml2"
-							   :class="chevron"
-							   @click="changeOrder"></i>
+							<font-awesome-icon class="fa mv0 ml2 c-fai" :icon="chevron" @click="changeOrder" />
 
 							<span class="mv0 mh2">|</span>
 
-							<router-link to="/import"
-							             class="mv0">IMPORT</router-link>
+							<router-link to="/import" class="mv0">IMPORT</router-link>
 
 							<span class="mv0 ml2"></span>
 
-							<router-link to="/add"
-							             class="mv0">ADD</router-link>
+							<router-link to="/add" class="mv0">ADD</router-link>
 						</div>
 					</div>
 					<div class="col-xs-12 col-sm-4 end-xs">
 						<div class="c-hmenusection">
 							<router-link to="/settings">SETTINGS</router-link>
+
 							<span class="mv0 mh2">|</span>
+
 							<router-link to="/duplicates">DUPLICATES</router-link>
-							<router-link to="/prune"
-							             class="mv0 mh2">PRUNE</router-link>
+
+							<router-link to="/prune" class="mv0 mh2">PRUNE</router-link>
 						</div>
 					</div>
 				</div>
@@ -60,90 +50,83 @@
 	</nav>
 </template>
 
-<script>
+<script lang="ts">
 import debounce from 'lodash.debounce'
+import { Component, Prop, Vue } from 'vue-property-decorator'
+import { State } from 'vuex-class'
+// import format from 'date-fns/format'
 
-import * as types from '../store/types'
+import * as constant from '@/constants'
+import { OptionsState } from '@/types'
+// import { Statement, Category } from '@/types'
 
-export default {
-	name: 'header-bar',
+@Component
+export default class HeaderBar extends Vue {
+	@State(state => state.options.filterBy)
+	private filterBy!: string
 
-	data() {
-		return {
-			selected: this.$store.state.options.filterBy,
-			sortBy: this.$store.state.options.sortBy,
-		}
-	},
+	@State(state => state.options.sortBy)
+	private sortBy!: string
 
-	methods: {
-		changeFilter(e) {
-			this.selected = e.target.value
-			this.$store.commit(types.SET_FILTER, e.target.value)
-			this.$store.dispatch(types.FETCH_MOVIES)
-		},
+	@State(state => state.options)
+	private options!: OptionsState
 
-		changeSort(e) {
-			this.sortBy = e.target.value
-			this.$store.commit(types.SET_SORT, e.target.value)
-			this.$store.dispatch(types.FETCH_MOVIES)
-		},
+	get chevron() {
+		return this.options.sortOrder === 'asc' ? 'chevron-circle-up' : 'chevron-circle-down'
+	}
 
-		updateQuery: debounce(
-			function handle(e) {
-				this.$store.commit(types.SET_QUERY, e.target.value)
-				this.$store.dispatch(types.FETCH_MOVIES)
-			},
-			750,
-		),
+	private updateQuery = debounce((e: Event) => {
+		this.$store.commit(constant.SET_QUERY, (e.target as HTMLInputElement).value)
+		this.$store.dispatch(constant.FETCH_MOVIES)
+	}, 750)
 
-		changeOrder() {
-			this.$store.commit(types.FLIP_ORDER)
-			this.$store.dispatch(types.FETCH_MOVIES)
-		},
-	},
+	private changeFilter(e: Event) {
+		this.filterBy = (e.target as HTMLInputElement).value
+		this.$store.commit(constant.SET_FILTER, (e.target as HTMLInputElement).value)
+		this.$store.dispatch(constant.FETCH_MOVIES)
+	}
 
-	computed: {
-		filters() {
-			return this.$store.state.options.filterByOptions
-		},
+	private changeSort(e: Event) {
+		this.sortBy = (e.target as HTMLInputElement).value
+		this.$store.commit(constant.SET_SORT, (e.target as HTMLInputElement).value)
+		this.$store.dispatch(constant.FETCH_MOVIES)
+	}
 
-		sorts() {
-			return this.$store.state.options.sortByOptions
-		},
-
-		query() {
-			return this.$store.state.options.query
-		},
-
-		chevron() {
-			return this.$store.state.options.sortOrder === 'asc' ? 'fa-chevron-circle-up' : 'fa-chevron-circle-down'
-		},
-	},
+	private changeOrder() {
+		this.$store.commit(constant.FLIP_ORDER)
+		this.$store.dispatch(constant.FETCH_MOVIES)
+	}
 }
 </script>
 
 <style lang="scss" scoped>
-@import "../styles/_settings.scss";
+@import '../styles/variables.scss';
+@import '../styles/custom.scss';
 
 .c-hlogo {
-	background-color: $headerLogoBackground;
+	background-color: $logo-background;
 
 	a {
-		color: $headerLogoAnchorColor;
+		color: $logo-anchor;
 	}
 }
 
 .c-hmenu {
-	background-color: $headerMenuBackground;
+	background-color: $menu-background;
+
+	a {
+		font-size: 0.9em;
+		color: $menu-anchor;
+	}
 }
 
-.c-hmenusection {
+.c-hmenusection a {
 	// background-color: $headerMenuBackground;
 	a {
 		font-size: 0.9em; // color: $headerMenuAnchorColor;
 		&.router-link-active {
 			padding-bottom: 3px;
-			border-bottom: 2px solid $headerMenuAnchorColor;
+			border-bottom: 2px solid $menu-anchor;
 		}
 	}
 }

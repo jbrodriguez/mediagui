@@ -26,33 +26,35 @@
 	</div>
 </template>
 
-<script>
-import { hourMinute } from '../lib/utils'
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import { State } from 'vuex-class'
+import { Prop } from 'vue-property-decorator'
 
-export default {
-	name: 'cover',
+import { Movie } from '@/types'
+import * as constant from '@/constants'
+import { hourMinute } from '@/lib/utils'
 
-	props: {
-		movie: {
-			type: Object,
-			required: true,
-		},
-	},
+@Component
+export default class Cover extends Vue {
+	// @State(state => state.movies)
+	// private movies!: Movie[]
+	@Prop(Object)
+	private movie!: Movie
 
-	computed: {
-		runtime() {
-			return hourMinute(this.movie.runtime)
-		},
+	get watched() {
+		return this.movie.count_watched > 0
+	}
 
-		watched() {
-			return this.movie.count_watched > 0
-		},
-	},
+	get runtime(): string {
+		return hourMinute(this.movie.runtime)
+	}
 }
 </script>
 
 <style lang="scss" scoped>
-@import "../styles/_settings.scss";
+@import '../styles/variables.scss';
 
 .c-mcover {
 	background-color: $movie-cover-bg;
@@ -84,7 +86,6 @@ export default {
 		text-shadow: 0 0 5px #444;
 	}
 }
-
 
 .c-mctitle {
 	color: $movie-title-color;

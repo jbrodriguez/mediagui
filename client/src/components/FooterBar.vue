@@ -2,8 +2,8 @@
 	<section class="row c-flegal between-xs middle-xs">
 		<ul class="col-xs-12 col-sm-4">
 			<div>
-				<span class="mv0 mh3">Copyright &copy;</span>
-				<a href="http://jbrodriguez.io">Juan B. Rodriguez</a>
+				<span class="mv0 mr1">Copyright &copy;</span>
+				<a href="https://jbrio.net/">Juan B. Rodriguez</a>
 			</div>
 		</ul>
 		<ul class="col-xs-12 col-sm-4">
@@ -24,8 +24,8 @@
 				</a>
 
 				<a class="end-xs middle-xs mv0 mr3"
-					href="http://jbrodriguez.io"
-					title="jbrodriguez.io"
+					href="https://jbrio.net/"
+					title="jbrio.net"
 					target="_blank">
 						<img src="../assets/logo-small.png"
 							alt="Logo for Juan B. Rodriguez" />
@@ -35,23 +35,22 @@
 	</section>
 </template>
 
-<script>
-export default {
-	name: 'footer-bar',
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import { State } from 'vuex-class'
 
-	computed: {
-		version() {
-			return this.$store.getters.version
-		},
-	},
+@Component
+export default class FooterBar extends Vue {
+	@State(state => state.config.version)
+	private version!: string
 }
 </script>
 
 <style lang="scss" scoped>
-@import "../styles/_settings.scss";
+@import '../styles/variables.scss';
 
 .c-flegal {
-
 	a,
 	img,
 	span,
@@ -60,7 +59,7 @@ export default {
 	}
 
 	a {
-		color: $footer-anchor-color;
+		color: $menu-anchor;
 	}
 }
 </style>
