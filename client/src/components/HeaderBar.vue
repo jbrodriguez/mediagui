@@ -120,11 +120,11 @@ export default class HeaderBar extends Vue {
 	}
 }
 
-.c-hmenusection a {
+.c-hmenusection {
 	// background-color: $headerMenuBackground;
 	a {
 		font-size: 0.9em; // color: $headerMenuAnchorColor;
-		&.router-link-active {
+		&.router-link-exact-active {
 			padding-bottom: 3px;
 			border-bottom: 2px solid $menu-anchor;
 		}

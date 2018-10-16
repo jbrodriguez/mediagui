@@ -1,6 +1,6 @@
 <template>
   <div class="container flex flex-column body">
-		<header class="mv3">
+		<header class="mv2">
 			<header-bar></header-bar>
 		</header>
 		<main>
