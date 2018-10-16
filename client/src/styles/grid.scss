@@ -1,0 +1,5 @@
+/* Flexbox Grid Sass overrides */
+$breakpoints: sm 48em 49rem, md 62em 65rem, lg 75em 76rem;
+$flexboxgrid-max-width: 78rem;
+
+@import '../../node_modules/flexboxgrid-sass/flexboxgrid.scss';

@@ -65,112 +65,95 @@ class Api {
 		return movies
 	}
 
-	// public async loadStatement(filepath: string): Promise<Statement | null> {
-	// 	let statement: Statement | null = null
+	public async setMovieScore(movie: Movie): Promise<Movie> {
+		let changed: Movie = { ...movie }
 
-	// 	const query = encode({ filepath })
-	// 	const [err, data] = await to<Response>(retrieve(`${this.ep}/loadStatement?${query}`))
-	// 	if (err) {
-	// 		// console.log(`reply.err(${err})`)
-	// 	} else {
-	// 		if (data) {
-	// 			statement = await data.json()
-	// 			// console.log(`data(${d})`)
-	// 		}
-	// 	}
+		const [err, data] = await to<Response>(
+			retrieve(`${this.ep}/movies/${movie.id}/score`, {
+				method: 'PUT',
+				headers: new Headers({ 'Content-Type': 'application/json' }),
+				body: JSON.stringify(movie),
+			}),
+		)
+		if (err) {
+			// console.log(`reply.err(${err})`)
+		} else {
+			if (data) {
+				changed = await data.json()
+				// console.log(`data(${d})`)
+			}
+		}
 
-	// 	return statement
-	// }
+		return changed
+	}
 
-	// public async saveStatement(statement: Statement | null) {
-	// 	const [err, data] = await to<Response>(
-	// 		retrieve(`${this.ep}/saveStatement`, {
-	// 			method: 'POST',
-	// 			headers: new Headers({ 'Content-Type': 'application/json' }),
-	// 			body: JSON.stringify(statement),
-	// 		}),
-	// 	)
+	public async setMovieWatched(movie: Movie): Promise<Movie> {
+		let changed: Movie = { ...movie }
 
-	// 	if (err) {
-	// 		// console.log(`reply.err(${err})`)
-	// 	} else {
-	// 		// if (data) {
-	// 		// 	statement = await data.json()
-	// 		// 	// console.log(`data(${d})`)
-	// 		// }
-	// 	}
+		const [err, data] = await to<Response>(
+			retrieve(`${this.ep}/movies/${movie.id}/watched`, {
+				method: 'PUT',
+				headers: new Headers({ 'Content-Type': 'application/json' }),
+				body: JSON.stringify(movie),
+			}),
+		)
+		if (err) {
+			// console.log(`reply.err(${err})`)
+		} else {
+			if (data) {
+				changed = await data.json()
+				// console.log(`data(${d})`)
+			}
+		}
 
-	// 	return statement
-	// }
+		return changed
+	}
 
-	// public async listStatements(): Promise<Statement[] | null> {
-	// 	let statements: Statement[] = []
+	public async fixMovie(movie: Movie): Promise<Movie> {
+		let changed: Movie = { ...movie }
 
-	// 	const [err, data] = await to<Response>(retrieve(`${this.ep}/listStatements`))
-	// 	if (err) {
-	// 		// console.log(`reply.err(${err})`)
-	// 	} else {
-	// 		if (data) {
-	// 			statements = await data.json()
-	// 			// console.log(`data(${d})`)
-	// 		}
-	// 	}
+		const [err, data] = await to<Response>(
+			retrieve(`${this.ep}/movies/${movie.id}/fix`, {
+				method: 'PUT',
+				headers: new Headers({ 'Content-Type': 'application/json' }),
+				body: JSON.stringify(movie),
+			}),
+		)
+		if (err) {
+			// console.log(`reply.err(${err})`)
+		} else {
+			if (data) {
+				changed = await data.json()
+				// console.log(`data(${d})`)
+			}
+		}
 
-	// 	return statements
-	// }
+		return changed
+	}
 
-	// public async getStmtPlot(id: number): Promise<Plot | null> {
-	// 	let plot: Plot | null = null
+	public async setMovieDuplicate(movie: Movie): Promise<Movie> {
+		let changed: Movie = { ...movie }
 
-	// 	const query = encode({ id })
-	// 	const [err, data] = await to<Response>(retrieve(`${this.ep}/stmtPlot?${query}`))
-	// 	if (err) {
-	// 		// console.log(`reply.err(${err})`)
-	// 	} else {
-	// 		if (data) {
-	// 			plot = await data.json()
-	// 			// console.log(`data(${d})`)
-	// 		}
-	// 	}
+		const [err, data] = await to<Response>(
+			retrieve(`${this.ep}/movies/${movie.id}/duplicate`, {
+				method: 'PUT',
+				headers: new Headers({ 'Content-Type': 'application/json' }),
+				body: JSON.stringify(movie),
+			}),
+		)
+		if (err) {
+			// console.log(`reply.err(${err})`)
+		} else {
+			if (data) {
+				changed = await data.json()
+				// console.log(`data(${d})`)
+			}
+		}
 
-	// 	return plot
-	// }
-
-	// public async getHistory(): Promise<Plot | null> {
-	// 	let plot: Plot | null = null
-
-	// 	const [err, data] = await to<Response>(retrieve(`${this.ep}/getHistory`))
-	// 	if (err) {
-	// 		// console.log(`reply.err(${err})`)
-	// 	} else {
-	// 		if (data) {
-	// 			plot = await data.json()
-	// 			// console.log(`data(${d})`)
-	// 		}
-	// 	}
-
-	// 	return plot
-	// }
+		return changed
+	}
 }
 
 const api = new Api()
 
 export default api
-
-// function tony<T, U = any>(promise: Promise<T>, errorExt?: object): Promise<[U | null, T | undefined]> {
-// 	console.log('tonifier')
-// 	return promise
-// 		.then<[null, T]>((data: T) => {
-// 			console.log(`tonydata(${data})`)
-// 			return [null, data]
-// 		})
-// 		.catch<[U, undefined]>(err => {
-// 			console.log(`hereamin-(${errorExt})-err(${err})`)
-// 			if (errorExt) {
-// 				Object.assign(err, errorExt)
-// 			}
-
-// 			console.log(`errinside(${err})`)
-// 			return [err, undefined]
-// 		})
-// }

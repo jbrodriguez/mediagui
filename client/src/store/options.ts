@@ -37,6 +37,9 @@ export const state: OptionsState = {
 }
 
 const mutations: MutationTree<OptionsState> = {
+	[constant.SET_OFFSET]: (local, offset) => {
+		local.offset = offset // eslint-disable-line
+	},
 	// [constant.SET_STATEMENT]: (local, stmt: Statement) => {
 	// 	// console.log(`stmt(${JSON.stringify(local)})-uno(${JSON.stringify(uno)}))-dos(${JSON.stringify(dos)})`)
 	// 	// console.log(`stmt(${JSON.stringify(stmt)})`)

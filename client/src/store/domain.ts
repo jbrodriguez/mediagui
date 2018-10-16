@@ -17,7 +17,7 @@ export const state: DomainState = {
 const mutations: MutationTree<DomainState> = {
 	[constant.RECEIVE_MOVIES]: (local, movies: Movies) => {
 		// console.log(`state-${JSON.stringify(state)}`) // eslint-disable-line
-		console.log(`total(${movies.total})-items(${movies.items.length})`) // eslint-disable-line
+		// console.log(`total(${movies.total})-items(${movies.items.length})`) // eslint-disable-line
 		local.total = movies.total // eslint-disable-line
 		local.movies = movies.items.reduce(
 			(list, movie: Movie) => {
@@ -27,18 +27,11 @@ const mutations: MutationTree<DomainState> = {
 			{} as MovieList,
 		)
 		local.itemsOrder = movies.items.map((movie: Movie) => movie.id)
-		// movies.items.forEach((movie: Movie) => {
-		// 	state.itemsOrder.push(movie.id)
-		// 	Vue.set(local.movies, movie.id, movie)
-		// })
 	},
-	// [constant.SET_CATEGORY]: (local, category: Category) => {
-	// 	// console.log(`stmt(${JSON.stringify(local)})-uno(${JSON.stringify(uno)}))-dos(${JSON.stringify(dos)})`)
-	// 	// console.log(`stmt(${JSON.stringify(stmt)})`)
-	// 	if (local.statement) {
-	// 		local.statement.transactions[category.id].category = +category.name
-	// 	}
-	// },
+
+	[constant.SET_MOVIE]: (local, movie: Movie) => {
+		local.movies[movie.id] = { ...movie }
+	},
 }
 
 export const actions: ActionTree<DomainState, RootState> = {
@@ -50,28 +43,53 @@ export const actions: ActionTree<DomainState, RootState> = {
 		commit(constant.SET_BUSY, false, { root: true })
 	},
 
-	// async fetchMovies({ commit, rootState }) {
-	// 	commit(constant.SET_BUSY, true, { root: true })
-	// 	const opts = pick(rootState.options, ['query', 'filterBy', 'sortBy', 'sortOrder', 'limit', 'offset'])
-	// 	const movies: Movie[] = await api.getMovies(opts)
-	// 	commit(constant.RECEIVE_MOVIES, movies)
-	// 	commit(constant.SET_BUSY, false, { root: true })
-	// },
+	[constant.SET_SCORE_BASE]: async (context, { id, score }) => {
+		// console.log(`scoreNew(${score})-scoreOld(${context.state.movies[id].score})`) // eslint-disable-line
+		const movie = { ...context.state.movies[id], score }
+		// console.log(`id(${movie.id})-score(${movie.score})`) // eslint-disable-line
+		context.commit(constant.SET_BUSY, true, { root: true })
+		const reply: Movie = await api.setMovieScore(movie)
+		context.commit(constant.SET_MOVIE, reply)
+		context.commit(constant.SET_BUSY, false, { root: true })
 
-	// [constant.LOAD_STATEMENT]: async (context, filepath) => {
-	// 	// tslint:disable-next-line:no-console
-	// 	// console.log(`file(${JSON.stringify(context)})-filepath(${filepath})`)
-	// 	context.commit(constant.SET_BUSY, true)
-	// 	const loaded = await api.loadStatement(filepath)
-	// 	context.commit(constant.SET_STATEMENT, loaded)
-	// 	context.commit(constant.SET_BUSY, false)
-	// },
-	// [constant.SAVE_STATEMENT]: async context => {
-	// 	context.commit(constant.SET_BUSY, true)
-	// 	// console.log(`statement(${JSON.stringify(context.state.statement)})`)
-	// 	const loaded = await api.saveStatement(context.state.statement)
-	// 	context.commit(constant.SET_BUSY, false)
-	// },
+		// api.setMovieScore(movie, changed => commit(types.SET_MOVIE, changed))
+	},
+
+	[constant.SET_WATCHED_BASE]: async (context, { id, watched }) => {
+		// console.log(`scoreNew(${score})-scoreOld(${context.state.movies[id].score})`) // eslint-disable-line
+		const movie = { ...context.state.movies[id], last_watched: watched }
+		// console.log(`id(${movie.id})-score(${movie.score})`) // eslint-disable-line
+		context.commit(constant.SET_BUSY, true, { root: true })
+		const reply: Movie = await api.setMovieWatched(movie)
+		context.commit(constant.SET_MOVIE, reply)
+		context.commit(constant.SET_BUSY, false, { root: true })
+
+		// api.setMovieScore(movie, changed => commit(types.SET_MOVIE, changed))
+	},
+
+	[constant.FIX_MOVIE_BASE]: async (context, { id, tmdb }) => {
+		// console.log(`scoreNew(${score})-scoreOld(${context.state.movies[id].score})`) // eslint-disable-line
+		const movie = { ...context.state.movies[id], tmdb_id: tmdb }
+		// console.log(`id(${movie.id})-score(${movie.score})`) // eslint-disable-line
+		context.commit(constant.SET_BUSY, true, { root: true })
+		const reply: Movie = await api.fixMovie(movie)
+		context.commit(constant.SET_MOVIE, reply)
+		context.commit(constant.SET_BUSY, false, { root: true })
+
+		// api.setMovieScore(movie, changed => commit(types.SET_MOVIE, changed))
+	},
+
+	[constant.SET_DUPLICATE_BASE]: async (context, { id, showIfDuplicate }) => {
+		// console.log(`scoreNew(${score})-scoreOld(${context.state.movies[id].score})`) // eslint-disable-line
+		const movie = { ...context.state.movies[id], showIfDuplicate }
+		// console.log(`id(${movie.id})-score(${movie.score})`) // eslint-disable-line
+		context.commit(constant.SET_BUSY, true, { root: true })
+		const reply: Movie = await api.setMovieDuplicate(movie)
+		context.commit(constant.SET_MOVIE, reply)
+		context.commit(constant.SET_BUSY, false, { root: true })
+
+		// api.setMovieScore(movie, changed => commit(types.SET_MOVIE, changed))
+	},
 }
 
 export const getters: GetterTree<DomainState, RootState> = {

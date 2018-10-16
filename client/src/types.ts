@@ -46,6 +46,15 @@ export interface Movie {
 	title: string
 	runtime: number
 	count_watched: number
+	tmdb_id: number
+	score: number
+	added: string
+	last_watched: string
+	cover: string
+	backdrop: string
+	overview: string
+	all_watched: string
+	showIfDuplicate: number
 }
 
 export interface Movies {
