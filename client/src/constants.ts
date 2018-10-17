@@ -15,6 +15,11 @@ export const FIX_MOVIE_BASE = 'FIX_MOVIE'
 export const FIX_MOVIE = `domain/${FIX_MOVIE_BASE}`
 export const SET_DUPLICATE_BASE = 'SET_DUPLICATE'
 export const SET_DUPLICATE = `domain/${SET_DUPLICATE_BASE}`
+// export const CLEAN_MOVIES = 'CLEAN_MOVIES'
+export const CLEAN_MOVIES_BASE = 'CLEAN_MOVIES'
+export const CLEAN_MOVIES = `domain/${CLEAN_MOVIES_BASE}`
+export const ADD_MOVIE_BASE = 'ADD_MOVIE'
+export const ADD_MOVIE = `domain/${ADD_MOVIE_BASE}`
 
 export const SET_FILTER = 'SET_FILTER'
 export const SET_SORT = 'SET_SORT'

@@ -4,6 +4,7 @@ import Router from 'vue-router'
 import Covers from './components/Covers.vue'
 import Movies from './components/Movies.vue'
 import Import from './components/Import.vue'
+import Add from './components/Add.vue'
 
 Vue.use(Router)
 
@@ -24,11 +25,11 @@ export default new Router({
 			name: 'Import',
 			component: Import,
 		},
-		// {
-		// 	path: '/add',
-		// 	name: 'Add',
-		// 	component: Add,
-		// },
+		{
+			path: '/add',
+			name: 'Add',
+			component: Add,
+		},
 		// {
 		// 	path: '/settings',
 		// 	name: 'Settings',

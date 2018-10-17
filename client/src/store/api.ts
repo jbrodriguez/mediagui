@@ -164,6 +164,28 @@ class Api {
 			}
 		}
 	}
+
+	public async addMovie(title: string) {
+		let changed: Movie = { title } // here i should initialize an empty Movie
+
+		const [err, data] = await to<Response>(
+			retrieve(`${this.ep}/add`, {
+				method: 'POST',
+				headers: new Headers({ 'Content-Type': 'application/json' }),
+				body: JSON.stringify(changed),
+			}),
+		)
+		if (err) {
+			// console.log(`reply.err(${err})`)
+		} else {
+			if (data) {
+				changed = await data.json()
+				// console.log(`data(${d})`)
+			}
+		}
+
+		return changed
+	}
 }
 
 const api = new Api()
