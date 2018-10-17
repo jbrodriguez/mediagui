@@ -12,13 +12,13 @@
 						<div class="c-hmenusection">
 							<router-link to="/movies" class="mv0 mh2">MOVIES</router-link>
 
-							<select v-model="filterBy" @change="changeFilter">
+							<select :value="filterBy" @change="changeFilter">
 								<option v-for="option in options.filterByOptions" :value="option.value" :key="option.value">{{option.label}}</option>
 							</select>
 
 							<input type="search" placeholder="Enter search string" :value="options.query" @input="updateQuery">
 
-							<select v-model="sortBy" @change="changeSort">
+							<select :value="sortBy" @change="changeSort">
 								<option v-for="sort in options.sortByOptions" :value="sort.value" :key="sort.value">{{sort.label}}</option>
 							</select>
 
@@ -75,19 +75,25 @@ export default class HeaderBar extends Vue {
 		return this.options.sortOrder === 'asc' ? 'chevron-circle-up' : 'chevron-circle-down'
 	}
 
+	// get selected() {
+	// 	return this.page
+	// }
+
+	// set selected(value: number) {
+	// 	console.log(`selected(${selected})`)
+	// }
+
 	private updateQuery = debounce((e: Event) => {
 		this.$store.commit(constant.SET_QUERY, (e.target as HTMLInputElement).value)
 		this.$store.dispatch(constant.FETCH_MOVIES)
 	}, 750)
 
 	private changeFilter(e: Event) {
-		this.filterBy = (e.target as HTMLInputElement).value
 		this.$store.commit(constant.SET_FILTER, (e.target as HTMLInputElement).value)
 		this.$store.dispatch(constant.FETCH_MOVIES)
 	}
 
 	private changeSort(e: Event) {
-		this.sortBy = (e.target as HTMLInputElement).value
 		this.$store.commit(constant.SET_SORT, (e.target as HTMLInputElement).value)
 		this.$store.dispatch(constant.FETCH_MOVIES)
 	}

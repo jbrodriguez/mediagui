@@ -37,21 +37,30 @@ export const state: OptionsState = {
 }
 
 const mutations: MutationTree<OptionsState> = {
-	[constant.SET_OFFSET]: (local, offset) => {
-		local.offset = offset // eslint-disable-line
+	[constant.SET_FILTER]: (local, filterBy) => {
+		local.filterBy = filterBy
+		local.offset = 0
+		storage.set('filterBy', filterBy)
 	},
-	// [constant.SET_STATEMENT]: (local, stmt: Statement) => {
-	// 	// console.log(`stmt(${JSON.stringify(local)})-uno(${JSON.stringify(uno)}))-dos(${JSON.stringify(dos)})`)
-	// 	// console.log(`stmt(${JSON.stringify(stmt)})`)
-	// 	local.statement = stmt
-	// },
-	// [constant.SET_CATEGORY]: (local, category: Category) => {
-	// 	// console.log(`stmt(${JSON.stringify(local)})-uno(${JSON.stringify(uno)}))-dos(${JSON.stringify(dos)})`)
-	// 	// console.log(`stmt(${JSON.stringify(stmt)})`)
-	// 	if (local.statement) {
-	// 		local.statement.transactions[category.id].category = +category.name
-	// 	}
-	// },
+
+	[constant.SET_QUERY]: (local, query) => {
+		local.query = query
+		local.offset = 0
+	},
+
+	[constant.SET_SORT]: (local, sortBy) => {
+		local.sortBy = sortBy
+		storage.set('sortBy', sortBy)
+	},
+
+	[constant.SET_OFFSET]: (local, offset) => {
+		local.offset = offset
+	},
+
+	[constant.FLIP_ORDER]: (local, sortOrder) => {
+		local.sortOrder = local.sortOrder === 'asc' ? 'desc' : 'asc'
+		storage.set('sortOrder', local.sortOrder)
+	},
 }
 
 export const actions: ActionTree<OptionsState, RootState> = {
