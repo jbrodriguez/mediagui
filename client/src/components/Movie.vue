@@ -107,7 +107,6 @@ import { Prop } from 'vue-property-decorator'
 import { State, Action, Getter, namespace } from 'vuex-class'
 
 import format from 'date-fns/format'
-// import VueFlatpickr from 'vue-flatpickr'
 import FlatPickr from 'vue-flatpickr-component'
 import 'flatpickr/dist/flatpickr.css'
 

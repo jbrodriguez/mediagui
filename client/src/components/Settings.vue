@@ -48,7 +48,7 @@ export default class Settings extends Vue {
 	@State(state => state.config.mediaFolders)
 	private mediaFolders!: string[]
 
-	onAdd() {
+	private onAdd() {
 		this.$store.dispatch(constant.ADD_FOLDER, this.folder)
 	}
 
