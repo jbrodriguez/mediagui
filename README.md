@@ -52,9 +52,9 @@ I'd say it's the reference right now, like parceljs on steroids for vuejs.
 
 I can't say the same about vuex modules.
 
-It's probably because I'm using class decorators and typescript, but namespacing doesn't quite feel right.
+It's probably because I'm using class decorators and typescript, but namespacing doesn't feel quite right.
 
-Hopefull vue 3.x will improve in that aspect.
+Hopefully vue 3.x will improve in that aspect.
 
 ### 3rd Iteration
 
