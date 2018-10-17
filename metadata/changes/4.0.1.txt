@@ -1,0 +1,7 @@
+2018-10-17 - 4.0.1
+
+Post-release fixes:
+
+- Modify README.md copy
+- Change favicon
+
