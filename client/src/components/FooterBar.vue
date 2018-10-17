@@ -19,7 +19,7 @@
 					title="themoviedb.org"
 					height="40"
 					target="_blank">
-						<img src="../assets/tmdb.png"
+						<img src="@/assets/tmdb.png"
 							alt="Logo for tmdb" />
 				</a>
 
@@ -27,7 +27,7 @@
 					href="https://jbrio.net/"
 					title="jbrio.net"
 					target="_blank">
-						<img src="../assets/logo-small.png"
+						<img src="@/assets/logo-small.png"
 							alt="Logo for Juan B. Rodriguez" />
 				</a>
 			</li>

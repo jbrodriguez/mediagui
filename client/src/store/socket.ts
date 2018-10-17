@@ -7,18 +7,18 @@ class Socket {
 
 	constructor() {
 		this.skt = new WebSocket(this.ep)
-		this.skt.onopen = () => console.log('Connection opened')
-		this.skt.onclose = () => console.log('Connection is closed...')
+		this.skt.onopen = () => console.log('Connection opened') // tslint:disable-line
+		this.skt.onclose = () => console.log('Connection is closed...') // tslint:disable-line
 	}
 
 	public receive(fn: any) {
 		this.skt.onmessage = fn
 	}
 
-	public send({ topic, payload }) {
+	public send(msg: any) {
 		const packet = {
-			topic,
-			payload: JSON.stringify(payload),
+			topic: msg.topic,
+			payload: JSON.stringify(msg.payload),
 		}
 
 		this.skt.send(JSON.stringify(packet))

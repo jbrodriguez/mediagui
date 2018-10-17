@@ -166,7 +166,22 @@ class Api {
 	}
 
 	public async addMovie(title: string) {
-		let changed: Movie = { title } // here i should initialize an empty Movie
+		// here i should initialize an empty Movie
+		let changed: Movie = {
+			id: 0,
+			title,
+			runtime: 0,
+			count_watched: 0,
+			tmdb_id: 0,
+			score: 0,
+			added: '',
+			last_watched: '',
+			cover: '',
+			backdrop: '',
+			overview: '',
+			all_watched: '',
+			showIfDuplicate: 0,
+		}
 
 		const [err, data] = await to<Response>(
 			retrieve(`${this.ep}/add`, {
