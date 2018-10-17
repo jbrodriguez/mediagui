@@ -46,7 +46,7 @@ export const actions: ActionTree<DomainState, RootState> = {
 	[constant.FETCH_MOVIES_BASE]: async ({ commit, rootState }) => {
 		commit(constant.SET_BUSY, true, { root: true })
 		const opts = pick(rootState.options, ['query', 'filterBy', 'sortBy', 'sortOrder', 'limit', 'offset'])
-		const movies: Movie[] = await api.getMovies(opts)
+		const movies: Movies = await api.getMovies(opts)
 		commit(constant.RECEIVE_MOVIES, movies)
 		commit(constant.SET_BUSY, false, { root: true })
 	},

@@ -49,8 +49,8 @@ class Api {
 		return config
 	}
 
-	public async getMovies(options: any): Promise<Movie[]> {
-		let movies: Movie[] = []
+	public async getMovies(options: any): Promise<Movies> {
+		let movies: Movies = { total: 0, items: [] }
 
 		const [err, data] = await to<Response>(retrieve(`${this.ep}/movies?${encode(options)}`))
 		if (err) {
