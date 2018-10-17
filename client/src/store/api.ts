@@ -1,5 +1,5 @@
 import to from 'await-to-js'
-import { ConfigState, Movie } from '@/types'
+import { ConfigState, Movie, Movies } from '@/types'
 import { Config } from '@fortawesome/fontawesome-svg-core'
 
 const encode = (data: any) => {
@@ -203,6 +203,22 @@ class Api {
 				// console.log(`data(${d})`)
 			}
 		}
+	}
+
+	public async getDuplicates(): Promise<Movies> {
+		let movies: Movies = { total: 0, items: [] }
+
+		const [err, data] = await to<Response>(retrieve(`${this.ep}/movies/duplicates`))
+		if (err) {
+			// console.log(`reply.err(${err})`)
+		} else {
+			if (data) {
+				movies = await data.json()
+				// console.log(`data(${d})`)
+			}
+		}
+
+		return movies
 	}
 }
 

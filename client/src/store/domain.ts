@@ -108,6 +108,13 @@ export const actions: ActionTree<DomainState, RootState> = {
 		context.commit(constant.RECEIVE_MOVIES, { total: 1, items: [reply] })
 		context.commit(constant.SET_BUSY, false, { root: true })
 	},
+
+	[constant.FETCH_DUPLICATES_BASE]: async context => {
+		context.commit(constant.SET_BUSY, true, { root: true })
+		const reply: Movies = await api.getDuplicates()
+		context.commit(constant.RECEIVE_MOVIES, reply)
+		context.commit(constant.SET_BUSY, false, { root: true })
+	},
 }
 
 export const getters: GetterTree<DomainState, RootState> = {

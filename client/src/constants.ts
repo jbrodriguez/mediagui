@@ -20,6 +20,8 @@ export const CLEAN_MOVIES_BASE = 'CLEAN_MOVIES'
 export const CLEAN_MOVIES = `domain/${CLEAN_MOVIES_BASE}`
 export const ADD_MOVIE_BASE = 'ADD_MOVIE'
 export const ADD_MOVIE = `domain/${ADD_MOVIE_BASE}`
+export const FETCH_DUPLICATES_BASE = 'FETCH_DUPLICATES'
+export const FETCH_DUPLICATES = `domain/${FETCH_DUPLICATES_BASE}`
 
 export const SET_FILTER = 'SET_FILTER'
 export const SET_SORT = 'SET_SORT'
