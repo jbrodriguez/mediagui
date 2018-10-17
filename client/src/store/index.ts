@@ -43,11 +43,31 @@ const mutations: MutationTree<RootState> = {
 	[constant.IMPORT_END]: (state, line) => {
 		state.lines.push(line)
 	},
+
+	[constant.PRUNE_BEGIN]: (state, line) => {
+		state.lines = [line]
+	},
+
+	[constant.PRUNE_SELECTED]: (state, line) => {
+		state.lines.push(line)
+	},
+
+	[constant.PRUNE_DELETE]: (state, line) => {
+		state.lines.push(line)
+	},
+
+	[constant.PRUNE_END]: (state, line) => {
+		state.lines.push(line)
+	},
 }
 
 const actions: ActionTree<RootState, RootState> = {
 	[constant.RUN_IMPORT]: context => {
 		api.importMovies()
+	},
+
+	[constant.RUN_PRUNE]: context => {
+		api.pruneMovies()
 	},
 }
 

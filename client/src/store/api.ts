@@ -220,6 +220,18 @@ class Api {
 
 		return movies
 	}
+
+	public async pruneMovies() {
+		const [err, data] = await to<Response>(retrieve(`${this.ep}/prune`, { method: 'POST' }))
+		if (err) {
+			// console.log(`reply.err(${err})`)
+		} else {
+			if (data) {
+				// changed = await data.json()
+				// console.log(`data(${d})`)
+			}
+		}
+	}
 }
 
 const api = new Api()

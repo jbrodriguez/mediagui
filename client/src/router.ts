@@ -7,6 +7,7 @@ import Import from './components/Import.vue'
 import Add from './components/Add.vue'
 import Settings from './components/Settings.vue'
 import Duplicates from './components/Duplicates.vue'
+import Prune from './components/Prune.vue'
 
 Vue.use(Router)
 
@@ -42,10 +43,10 @@ export default new Router({
 			name: 'Duplicates',
 			component: Duplicates,
 		},
-		// {
-		// 	path: '/prune',
-		// 	name: 'Prune',
-		// 	component: Prune,
-		// },
+		{
+			path: '/prune',
+			name: 'Prune',
+			component: Prune,
+		},
 	],
 })
