@@ -85,6 +85,7 @@ func (s *Server) Start() {
 	s.router.Use(mw.Logger())
 	s.router.Use(mw.Recover())
 	s.router.Use(mw.CORS())
+	s.router.Use(mw.Gzip())
 
 	s.router.Static("/", filepath.Join(location, "index.html"))
 	s.router.Static("/img", filepath.Join(location, "img"))
