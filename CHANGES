@@ -1,3 +1,28 @@
+Version 4.0.0 - 2018-10-17
+- Fix package issues
+- Fix imdb rating issue
+- Go lint (revive)
+- Fix scraping issues
+- Fix imdb parsing
+- Migrate project outside GOPATH
+- Initial working version
+- Implement Movies screen
+- Small UI fixes
+- Implement paginations in movies screen
+- Fix conflicts
+- Implement HeaderBar features
+- Implement Import screen
+- Implement Add screen
+- Implement Settings screen
+- Implement Duplicates screen
+- Fix Movies api type definition
+- Implement Prune screen
+- Remove deprecated component
+- Readiness
+- Remove errors for production build
+- Add gzip to server
+
+
 Version 3.8.0 - 2018-07-12
 - Implement new logic to prune items
 - Fix linting issues
