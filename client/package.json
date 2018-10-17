@@ -23,6 +23,7 @@
     "vue-flatpickr": "^2.3.0",
     "vue-property-decorator": "^7.0.0",
     "vue-router": "^3.0.1",
+    "vuejs-paginate": "^2.0.1",
     "vuex": "^3.0.1",
     "vuex-class": "^0.3.1"
   },

@@ -6,6 +6,7 @@
 				<div class="col-xs-12">
 					<div class="row">
 						<div class="col-xs-12">
+							<div class="c-title-shade">
 							<div class="row">
 								<div class="col-xs-12 col-sm-10">
 									<h2 class="c-title pt2 ml2">{{movie.title}} ({{movie.year}})</h2>
@@ -13,6 +14,7 @@
 								<div class="col-xs-12 col-sm-2 end-xs">
 									<h2 class="c-title pt2 mr2">{{runtime}} | {{movie.imdb_rating}}</h2>
 								</div>
+							</div>
 							</div>
 						</div>
 					</div>
@@ -262,7 +264,6 @@ export default class MovieX extends Vue {
 
 <style lang="scss" scoped>
 @import '../styles/variables.scss';
-@import '../styles/custom.scss';
 @import '../../node_modules/vue-flatpickr/theme/base16_flat.css';
 
 .c-bg {
@@ -297,6 +298,10 @@ export default class MovieX extends Vue {
 .c-title {
 	color: #fff;
 	text-shadow: 0 1px 0 hsla(0, 0%, 0%, 0.75), 0 0 1px hsla(0, 0%, 0%, 0.75), 0 1px 5px hsla(0, 0%, 0%, 0.75);
+	// background: linear-gradient(to bottom, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+.c-title-shade {
 	background: linear-gradient(to bottom, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0) 100%);
 }
 

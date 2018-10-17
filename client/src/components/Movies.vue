@@ -2,12 +2,17 @@
 	<section v-if="total > 0">
 		<div class="row between-xs middle-xs mb2">
 			<div class="col-xs-12 col-sm-10 middle-xs">
-				<!-- <paginate :pageCount="pageCount"
-				          :pageRange="5"
-				          :marginPages="3"
-				          :forcePage="forcePage"
-				          :containerClass="'pagination'"
-				          :clickHandler="onPaginationClick" /> -->
+				<paginate v-model="page"
+						:pageCount="pageCount"
+				        :pageRange="5"
+				        :marginPages="3"
+				        :forcePage="forcePage"
+				    	:containerClass="'pagination'"
+				        :clickHandler="onPaginationClick"
+						:page-class="'p-li'"
+						:page-link-class="'p-a'"
+						:next-link-class="'p-next'"
+						/>
 			</div>
 			<div class="col-xs-12 col-sm-2 end-xs">
 				<span>TOTAL </span>
@@ -18,16 +23,20 @@
 		<movie-x v-for="movie in movies" :movie="movie" :key="movie.id" />
 		<!-- <span v-for="movie in movies" :movie="movie" :key="movie.id">{{movie.title}}</span> -->
 
-		<!-- <div class="row">
+		<div class="row">
 			<div class="col-xs-12 middle-xs">
-				<paginate :pageCount="pageCount"
-				          :pageRange="5"
-				          :marginPages="3"
-				          :forcePage="forcePage"
-				          :containerClass="'pagination'"
-				          :clickHandler="onPaginationClick" />
+				<paginate v-model="page"
+						:pageCount="pageCount"
+				        :pageRange="5"
+				        :marginPages="3"
+				        :forcePage="forcePage"
+				    	:containerClass="'pagination'"
+				        :clickHandler="onPaginationClick"
+						:page-class="'p-li'"
+						:page-link-class="'p-a'"
+						/>
 			</div>
-		</div> -->
+		</div>
 	</section>
 </template>
 
@@ -37,9 +46,10 @@ import { mapGetters } from 'vuex'
 import Component from 'vue-class-component'
 import { State, Action, Getter } from 'vuex-class'
 
+import Paginate from 'vuejs-paginate'
+
 import { Movie, OptionsState, DomainState, RootState } from '@/types'
 import * as constant from '@/constants'
-
 import MovieX from './Movie.vue'
 
 // const domain = namespace('domain')
@@ -47,6 +57,7 @@ import MovieX from './Movie.vue'
 @Component({
 	components: {
 		MovieX,
+		Paginate,
 	},
 	computed: {
 		...mapGetters('domain', { movies: 'getMovies' }),
@@ -54,6 +65,7 @@ import MovieX from './Movie.vue'
 })
 export default class Movies extends Vue {
 	private shouldScroll: boolean = false
+	private page: number = 1
 
 	@State((state: RootState) => state.options)
 	private options!: OptionsState

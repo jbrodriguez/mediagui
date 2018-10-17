@@ -1,8 +1,6 @@
 import Vue from 'vue'
 
-import 'tachyons/css/tachyons.min.css'
-import '@/styles/grid.scss'
-// import 'flexboxgrid-sass/flexboxgrid.scss'
+import '@/styles/styles.scss'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faChevronCircleUp, faChevronCircleDown, faStar, faBinoculars, faPlus } from '@fortawesome/free-solid-svg-icons'

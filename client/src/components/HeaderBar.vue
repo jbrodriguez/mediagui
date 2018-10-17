@@ -101,7 +101,7 @@ export default class HeaderBar extends Vue {
 
 <style lang="scss" scoped>
 @import '../styles/variables.scss';
-@import '../styles/custom.scss';
+// @import '../styles/custom.scss';
 
 .c-hlogo {
 	background-color: $logo-background;

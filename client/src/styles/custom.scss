@@ -1,3 +1,5 @@
+@import './variables.scss';
+
 /* mixin */
 @mixin button-variant($color: $button-default-color, $background: $button-default-bg) {
 	color: $color;
@@ -28,6 +30,20 @@
 }
 
 /* GENERAL */
+body {
+	color: $primary-text;
+	background: $background;
+}
+
+main {
+	flex: 1;
+}
+
+footer {
+	color: $footer;
+	background-color: $footer-bg;
+}
+
 i {
 	color: $menu-anchor;
 
@@ -79,6 +95,13 @@ select {
 		background-color: #dddddd;
 		cursor: default;
 	}
+}
+
+// GENERAL
+.body {
+	min-height: 100vh;
+	margin-right: auto;
+	margin-left: auto;
 }
 
 /* FONTAWESOME ICON */
@@ -275,40 +298,31 @@ th {
 }
 
 // PAGINATION
-ul.pagination {
-	font-size: 0.9em;
+.pagination {
 	display: flex;
+}
 
-	li {
-		display: inline-block;
+.p-li {
+	display: inline-block;
+	margin-left: 0.5rem;
 
-		a {
-			padding: 0.5em 1em;
-			transition: background-color 300ms ease-out;
-		}
-
-		&:hover a {
-			background-color: $pagination-hover-bg;
-		}
-
-		&.active a {
-			background: $pagination-active-bg;
-			color: white;
-			font-weight: bold;
-			cursor: default;
-		}
+	&.active {
+		background: $pagination-active-bg;
+		color: white;
+		font-weight: bold;
+		cursor: default;
 	}
 
-	.pages {
-		display: inline;
-	}
-
-	.pages > li {
-		margin: 0 0.25em;
-	}
-
-	ul.pages li.selected {
-		margin: 0 0.25em;
+	&:hover {
 		background-color: $pagination-hover-bg;
 	}
+}
+
+.p-a {
+	padding: 0.5em 1em;
+	transition: background-color 300ms ease-out;
+}
+
+.p-next {
+	margin-left: 0.5rem;
 }
