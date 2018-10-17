@@ -287,6 +287,9 @@ export default class MovieX extends Vue {
 .c-title {
 	color: #fff;
 	text-shadow: 0 1px 0 hsla(0, 0%, 0%, 0.75), 0 0 1px hsla(0, 0%, 0%, 0.75), 0 1px 5px hsla(0, 0%, 0%, 0.75);
+}
+
+.c-title-shade {
 	background: linear-gradient(to bottom, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0) 100%);
 }
 
