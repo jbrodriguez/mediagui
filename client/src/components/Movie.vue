@@ -264,6 +264,7 @@ export default class MovieX extends Vue {
 
 <style lang="scss" scoped>
 @import '../styles/variables.scss';
+@import '../styles/custom.scss';
 @import '../../node_modules/vue-flatpickr/theme/base16_flat.css';
 
 .c-bg {
@@ -276,14 +277,9 @@ export default class MovieX extends Vue {
 	margin-bottom: 2em;
 	border-bottom: 1px solid $article-border-color;
 
-<<<<<<< HEAD
-	// height: 765px;
-	// background-size: cover;
-=======
 	&:not(last-child) {
 		margin-bottom: 2em;
 	}
->>>>>>> 69804b8... fixup below implm. movie screen
 
 	.director {
 		color: $director-color;
@@ -298,10 +294,6 @@ export default class MovieX extends Vue {
 .c-title {
 	color: #fff;
 	text-shadow: 0 1px 0 hsla(0, 0%, 0%, 0.75), 0 0 1px hsla(0, 0%, 0%, 0.75), 0 1px 5px hsla(0, 0%, 0%, 0.75);
-	// background: linear-gradient(to bottom, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0) 100%);
-}
-
-.c-title-shade {
 	background: linear-gradient(to bottom, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0) 100%);
 }
 
