@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from './views/Home.vue'
+
 import Covers from './components/Covers.vue'
 import Movies from './components/Movies.vue'
+import Import from './components/Import.vue'
 
 Vue.use(Router)
 
@@ -18,11 +19,11 @@ export default new Router({
 			name: 'Movies',
 			component: Movies,
 		},
-		// {
-		// 	path: '/import',
-		// 	name: 'Import',
-		// 	component: Import,
-		// },
+		{
+			path: '/import',
+			name: 'Import',
+			component: Import,
+		},
 		// {
 		// 	path: '/add',
 		// 	name: 'Add',

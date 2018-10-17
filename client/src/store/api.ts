@@ -152,6 +152,18 @@ class Api {
 
 		return changed
 	}
+
+	public async importMovies() {
+		const [err, data] = await to<Response>(retrieve(`${this.ep}/import`, { method: 'POST' }))
+		if (err) {
+			// console.log(`reply.err(${err})`)
+		} else {
+			if (data) {
+				// changed = await data.json()
+				// console.log(`data(${d})`)
+			}
+		}
+	}
 }
 
 const api = new Api()

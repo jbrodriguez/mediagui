@@ -1,6 +1,7 @@
 // workaround - https://forum.vuejs.org/t/vuex-submodules-with-typescript/40903/4
 export interface RootState {
 	isBusy: boolean
+	lines: string[]
 	config: ConfigState | {}
 	options: OptionsState | {}
 	domain: DomainState | {}

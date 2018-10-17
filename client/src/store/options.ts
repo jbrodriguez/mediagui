@@ -4,8 +4,6 @@ import { Module, ActionTree, MutationTree } from 'vuex'
 import storage from '@/lib/storage'
 import { RootState, OptionsState, Option } from '@/types'
 import * as constant from '@/constants'
-// import api from '@/store/api'
-// import { Category } from '@/types'
 
 export const state: OptionsState = {
 	query: '',
