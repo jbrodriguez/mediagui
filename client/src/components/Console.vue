@@ -2,31 +2,32 @@
 	<div class="c-console">
 		<div class="row">
 			<div class="col-xs-12">
-				<p v-for="line in lines"
-				   class="console__line">{{line}}</p>
+				<p v-for="(line, index) in lines" :key="index" class="console__line">{{line}}</p>
 			</div>
 		</div>
 	</div>
 </template>
 
-<script>
-export default {
-	name: 'console',
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import { State } from 'vuex-class'
 
-	computed: {
-		lines() {
-			return this.$store.state.lines
-		},
-	},
+import * as constant from '@/constants'
 
-	updated() {
-		this.$el.scrollTop = this.$el.scrollHeight
-	},
+@Component
+export default class Console extends Vue {
+	@State(state => state.lines)
+	private lines!: string[]
+
+	public runImport() {
+		this.$store.dispatch(constant.RUN_IMPORT)
+	}
 }
 </script>
 
 <style lang="scss" scoped>
-@import "../styles/_settings.scss";
+@import '../styles/variables.scss';
 
 .c-console {
 	display: flex;

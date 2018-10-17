@@ -2,8 +2,7 @@
 	<div class="">
 		<section class="row">
 			<div class="col-xs-12 mb2">
-				<button class="btn btn-default"
-				        @click="onPrune">PRUNE</button>
+				<button class="btn btn-default" @click="onPrune">PRUNE</button>
 			</div>
 		</section>
 		<section class="row">
@@ -14,23 +13,25 @@
 	</div>
 </template>
 
-<script>
-import * as types from '../store/types'
-import Console from './Console'
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
 
-export default {
-	name: 'prune',
+import * as constant from '@/constants'
 
-	components: { Console },
+import Console from './Console.vue'
 
-	methods: {
-		onPrune() {
-			this.$store.dispatch(types.RUN_PRUNE)
-		},
+@Component({
+	components: {
+		Console,
 	},
+})
+export default class Import extends Vue {
+	public onPrune() {
+		this.$store.dispatch(constant.RUN_PRUNE)
+	}
 }
 </script>
 
 <style lang="scss" scoped>
-
 </style>

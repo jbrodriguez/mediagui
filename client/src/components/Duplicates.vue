@@ -1,32 +1,32 @@
 <template>
 	<section>
-		<movie v-for="movie in movies"
-		       :movie="movie"
-		       :key="movie.id"></movie>
+		<movie v-for="movie in movies" :movie="movie" :key="movie.id"></movie>
 	</section>
 </template>
 
-<script>
-import Movie from './Movie'
-import * as types from '../store/types'
+<script lang="ts">
+import Vue from 'vue'
+import { mapGetters } from 'vuex'
+import Component from 'vue-class-component'
 
-export default {
-	name: 'duplicates',
+import * as constant from '@/constants'
 
-	components: { Movie },
+import Movie from './Movie.vue'
 
+@Component({
+	components: {
+		Movie,
+	},
 	computed: {
-		movies() {
-			return this.$store.getters.getMovies
-		},
+		...mapGetters('domain', { movies: 'getMovies' }),
 	},
-
-	created() {
-		this.$store.dispatch(types.FETCH_DUPLICATES)
-	},
+})
+export default class Duplicates extends Vue {
+	public mounted() {
+		this.$store.dispatch(constant.FETCH_DUPLICATES)
+	}
 }
 </script>
 
 <style>
-
 </style>

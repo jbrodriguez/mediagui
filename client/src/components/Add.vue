@@ -13,40 +13,36 @@
 	</div>
 </template>
 
-<script>
-import * as types from '../store/types'
-import Movie from './Movie'
+<script lang="ts">
+import Vue from 'vue'
+import { mapGetters } from 'vuex'
+import Component from 'vue-class-component'
 
-export default {
-	name: 'add',
+import * as constant from '@/constants'
 
-	components: { Movie },
+import Movie from './Movie.vue'
 
-	data() {
-		return {
-			title: '',
-		}
+@Component({
+	components: {
+		Movie,
 	},
-
-	created() {
-		this.$store.commit(types.CLEAN_MOVIES)
-	},
-
 	computed: {
-		movies() {
-			return this.$store.getters.getMovies
-		},
+		...mapGetters('domain', { movies: 'getMovies' }),
 	},
+})
+export default class Add extends Vue {
+	private title: string = ''
 
-	methods: {
-		addMovie() {
-			this.$store.commit(types.CLEAN_MOVIES)
-			this.$store.dispatch(types.ADD_MOVIE, { title: this.title })
-		},
-	},
+	private mounted() {
+		this.$store.commit(constant.CLEAN_MOVIES)
+	}
+
+	private addMovie() {
+		this.$store.commit(constant.CLEAN_MOVIES)
+		this.$store.dispatch(constant.ADD_MOVIE, { title: this.title })
+	}
 }
 </script>
 
 <style lang="scss" scoped>
-
 </style>

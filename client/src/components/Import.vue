@@ -14,23 +14,25 @@
 	</div>
 </template>
 
-<script>
-import * as types from '../store/types'
-import Console from './Console'
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
 
-export default {
-	name: 'import',
+import * as constant from '@/constants'
 
-	components: { Console },
+import Console from './Console.vue'
 
-	methods: {
-		runImport() {
-			this.$store.dispatch(types.RUN_IMPORT)
-		},
+@Component({
+	components: {
+		Console,
 	},
+})
+export default class Import extends Vue {
+	public runImport() {
+		this.$store.dispatch(constant.RUN_IMPORT)
+	}
 }
 </script>
 
 <style lang="scss" scoped>
-
 </style>

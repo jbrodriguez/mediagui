@@ -7,11 +7,8 @@
 					<div class="row mb3">
 						<div class="col-xs-12 addon">
 							<span class="addon-item">Folder</span>
-							<input class="addon-field"
-							       type="text"
-							       v-model="folder" />
-							<button class="btn btn-default"
-							        @click="onAdd">Add</button>
+							<input class="addon-field" type="text" v-model="folder" />
+							<button class="btn btn-default" @click="onAdd">Add</button>
 						</div>
 					</div>
 					<div class="row mb3">
@@ -22,8 +19,8 @@
 									<th>Folder</th>
 								</thead>
 								<tbody>
-									<tr v-for="folder in folders">
-										<td><i class="fa fa-times-circle" /></td>
+									<tr v-for="(folder, index) in folders" :key="index">
+										<td><font-awesome-icon icon="times-circle" /></td>
 										<td>{{ folder }}</td>
 									</tr>
 								</tbody>
@@ -36,33 +33,55 @@
 	</section>
 </template>
 
-<script>
-import * as types from '../store/types'
+<script lang="ts">
+import Vue from 'vue'
+import { mapGetters } from 'vuex'
+import Component from 'vue-class-component'
+import { State } from 'vuex-class'
 
-export default {
-	name: 'settings',
+import * as constant from '@/constants'
 
-	data() {
-		return {
-			folder: '',
-		}
-	},
+@Component
+export default class Settings extends Vue {
+	private folder: string = ''
 
-	methods: {
-		onAdd() {
-			// console.log(`folder-${this.folder}`)
-			this.$store.dispatch(types.ADD_FOLDER, this.folder)
-		},
-	},
+	@State(state => state.config.mediaFolders)
+	private mediaFolders!: string[]
 
-	computed: {
-		folders() {
-			return this.$store.state.config ? this.$store.state.config.mediaFolders : []
-		},
-	},
+	private onAdd() {
+		this.$store.dispatch(constant.ADD_FOLDER, this.folder)
+	}
+
+	get folders() {
+		return this.mediaFolders
+	}
 }
+
+// import * as types from '../store/types'
+
+// export default {
+// 	name: 'settings',
+
+// 	data() {
+// 		return {
+// 			folder: '',
+// 		}
+// 	},
+
+// 	methods: {
+// 		onAdd() {
+// 			// console.log(`folder-${this.folder}`)
+// 			this.$store.dispatch(types.ADD_FOLDER, this.folder)
+// 		},
+// 	},
+
+// 	computed: {
+// 		folders() {
+// 			return this.$store.state.config ? this.$store.state.config.mediaFolders : []
+// 		},
+// 	},
+// }
 </script>
 
 <style lang="scss" scoped>
-
 </style>
