@@ -88,7 +88,7 @@
 							<div class="col-xs-12 col-sm-4 addon end-sm">
 								<span v-if="hasRating" class="label success mv0 mr2">{{movie.score}}</span>
 								<Rating :max="10" :value="movie.score" @rating-selected="setScore" class="mr2" />
-								<VueFlatpickr v-model="seen" :options="fpOptions" />
+								<flat-pickr v-model="seen" :config="fpConfig" @on-change="setWatched"/>
 							</div>
 						</div>
 					</div>
@@ -107,7 +107,9 @@ import { Prop } from 'vue-property-decorator'
 import { State, Action, Getter, namespace } from 'vuex-class'
 
 import format from 'date-fns/format'
-import VueFlatpickr from 'vue-flatpickr'
+// import VueFlatpickr from 'vue-flatpickr'
+import FlatPickr from 'vue-flatpickr-component'
+import 'flatpickr/dist/flatpickr.css'
 
 import { Movie } from '@/types'
 import { hourMinute } from '@/lib/utils'
@@ -166,7 +168,7 @@ const en = {
 @Component({
 	components: {
 		Rating,
-		VueFlatpickr,
+		FlatPickr,
 	},
 	computed: {
 		...mapGetters('domain', { movies: 'getMovies' }),
@@ -178,17 +180,11 @@ export default class MovieX extends Vue {
 
 	private tmdb: number = this.movie.tmdb_id
 	private duplicate: boolean = this.movie.showIfDuplicate === 0
-	private seen: string = new Date().toString()
-	private fpOptions: any = {
-		onValueUpdate: null,
-		onChange: () => this.setWatched(),
+	private seen: Date = new Date()
+	private fpConfig: any = {
 		locale: en,
 	}
 	private loading: boolean = false
-
-	// private mounted() {
-	// 	this.$store.dispatch(constant.FETCH_MOVIES)
-	// }
 
 	private updated() {
 		this.loading = false
@@ -199,9 +195,9 @@ export default class MovieX extends Vue {
 		this.$store.dispatch(constant.SET_SCORE, { id: this.movie.id, score })
 	}
 
-	private setWatched() {
-		// console.log(`seen(${this.seen})`)
-		const watched = format(this.seen, 'YYYY-MM-DDTHH:mm:ssZ')
+	private setWatched(seen: Date) {
+		const watched = format(seen, 'YYYY-MM-DDTHH:mm:ssZ')
+		// console.log(`seen(${this.seen})-args(${seen})-watched(${watched})`)
 		// console.log(`seen(${watched})`)
 		this.$store.dispatch(constant.SET_WATCHED, { id: this.movie.id, watched })
 	}
@@ -264,8 +260,6 @@ export default class MovieX extends Vue {
 
 <style lang="scss" scoped>
 @import '../styles/variables.scss';
-@import '../styles/custom.scss';
-@import '../../node_modules/vue-flatpickr/theme/base16_flat.css';
 
 .c-bg {
 	// height: 765px;

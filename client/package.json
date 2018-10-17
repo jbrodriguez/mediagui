@@ -20,7 +20,7 @@
     "tachyons": "^4.11.1",
     "vue": "^2.5.17",
     "vue-class-component": "^6.0.0",
-    "vue-flatpickr": "^2.3.0",
+    "vue-flatpickr-component": "^8.0.0",
     "vue-property-decorator": "^7.0.0",
     "vue-router": "^3.0.1",
     "vuejs-paginate": "^2.0.1",
