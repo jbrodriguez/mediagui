@@ -1,0 +1,3 @@
+2018-10-17 - 4.0.2
+
+- Fix movie title shade
