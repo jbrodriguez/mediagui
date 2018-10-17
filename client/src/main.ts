@@ -3,7 +3,14 @@ import Vue from 'vue'
 import '@/styles/styles.scss'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faChevronCircleUp, faChevronCircleDown, faStar, faBinoculars, faPlus } from '@fortawesome/free-solid-svg-icons'
+import {
+	faChevronCircleUp,
+	faChevronCircleDown,
+	faStar,
+	faBinoculars,
+	faPlus,
+	faTimesCircle,
+} from '@fortawesome/free-solid-svg-icons'
 import { faStar as faStarO } from '@fortawesome/free-regular-svg-icons'
 
 // https://github.com/FortAwesome/vue-fontawesome/issues/24#issuecomment-417897681
@@ -15,7 +22,7 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
-library.add(faChevronCircleUp, faChevronCircleDown, faStar, faBinoculars, faPlus, faStarO)
+library.add(faChevronCircleUp, faChevronCircleDown, faStar, faBinoculars, faPlus, faTimesCircle, faStarO)
 
 Vue.component('font-awesome-icon', fontawesome.FontAwesomeIcon)
 

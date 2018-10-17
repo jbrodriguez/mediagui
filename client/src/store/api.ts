@@ -186,6 +186,24 @@ class Api {
 
 		return changed
 	}
+
+	public async addFolder(folder: string) {
+		const [err, data] = await to<Response>(
+			retrieve(`${this.ep}/config/folder`, {
+				method: 'PUT',
+				headers: new Headers({ 'Content-Type': 'application/json' }),
+				body: JSON.stringify({ topic: '', payload: folder }),
+			}),
+		)
+		if (err) {
+			// console.log(`reply.err(${err})`)
+		} else {
+			if (data) {
+				// changed = await data.json()
+				// console.log(`data(${d})`)
+			}
+		}
+	}
 }
 
 const api = new Api()

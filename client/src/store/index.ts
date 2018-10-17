@@ -12,15 +12,15 @@ import { domain } from './domain'
 
 Vue.use(Vuex)
 
-const socketPlugin = store => {
+const socketPlugin = local => {
 	socket.receive(message => {
 		const packet = JSON.parse(message.data)
 		if (typeof packet.topic === 'string' && packet.topic.length > 0) {
-			store.commit(packet.topic, packet.payload)
+			local.commit(packet.topic, packet.payload)
 		}
 	})
 
-	store.subscribe(mutation => {
+	local.subscribe(mutation => {
 		if (mutation.type.startsWith('skt')) {
 			socket.send({ topic: mutation.type, payload: mutation.payload })
 		}

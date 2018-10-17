@@ -42,6 +42,8 @@ export const actions: ActionTree<ConfigState, RootState> = {
 		// console.log(`config(${JSON.stringify(conf)})`)
 	},
 
+	[constant.ADD_FOLDER]: async (context, folder: string) => api.addFolder(folder),
+
 	// [constant.LOAD_STATEMENT]: async (context, filepath) => {
 	// 	// tslint:disable-next-line:no-console
 	// 	// console.log(`file(${JSON.stringify(context)})-filepath(${filepath})`)
