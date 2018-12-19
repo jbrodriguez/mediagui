@@ -1,0 +1,9 @@
+2018-12-19 - 5.0.0
+
+This release replaces go-micro with gRPC.
+
+This brings the additional benefit of dropping the consul dependency.
+
+Changes:
+- Replace go-micro with gRPC
+- Cleanup go mod
