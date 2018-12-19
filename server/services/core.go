@@ -13,12 +13,12 @@ import (
 	"github.com/jbrodriguez/actor"
 	"github.com/jbrodriguez/mlog"
 	"github.com/jbrodriguez/pubsub"
-	"github.com/micro/go-micro/client"
+	"google.golang.org/grpc"
 
 	"mediagui/dto"
 	"mediagui/lib"
+	pb "mediagui/mediaagent"
 	"mediagui/model"
-	"mediagui/proto"
 )
 
 const cNotAvailable = "n/a"
@@ -227,10 +227,10 @@ func (c *Core) pruneMovies(_ *pubsub.Message) {
 	list := reply.(*model.MoviesDTO)
 
 	if c.settings.UnraidMode {
-		hostItems := make(map[string][]*agent.Item)
+		hostItems := make(map[string][]*pb.Item)
 
 		for _, host := range c.settings.UnraidHosts {
-			hostItems[host] = make([]*agent.Item, 0)
+			hostItems[host] = make([]*pb.Item, 0)
 		}
 
 		for _, item := range list.Items {
@@ -246,21 +246,26 @@ func (c *Core) pruneMovies(_ *pubsub.Message) {
 			host := item.Location[:index]
 			location := item.Location[index+1:]
 
-			hostItems[host] = append(hostItems[host], &agent.Item{Id: item.ID, Location: location, Title: item.Title})
+			hostItems[host] = append(hostItems[host], &pb.Item{Id: item.ID, Location: location, Title: item.Title})
 		}
 
+		opts := []grpc.DialOption{grpc.WithInsecure()}
+
 		for _, host := range c.settings.UnraidHosts {
-			req := client.NewRequest("io.jbrodriguez.mediagui.agent."+host, "Agent.Exists", &agent.ExistsReq{
-				Items: hostItems[host],
-			})
+			address := fmt.Sprintf("%s.apertoire.org:7624", host)
 
-			rsp := &agent.ExistsRsp{}
+			conn, err := grpc.Dial(address, opts...)
+			if err != nil {
+				mlog.Warning("Unable to connect to host (%s): %s", address, err)
+				continue
+			}
+			defer conn.Close()
 
-			if err := client.Call(context.Background(), req, rsp); err != nil {
-				mlog.Warning("Unable to connect to service (%s): %s", "io.jbrodriguez.mediagui.agent."+host, err)
-				// lib.Notify(s.bus, "import:progress", "Unable to connect to host "+host)
-				// lib.Notify(s.bus, "import:end", "Import process finished")
-				// return
+			client := pb.NewMediaAgentClient(conn)
+
+			rsp, err := client.Exists(context.Background(), &pb.ExistsReq{Items: hostItems[host]})
+			if err != nil {
+				mlog.Warning("Unable to check exist (%s): %s", address, err)
 				continue
 			}
 

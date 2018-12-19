@@ -15,8 +15,9 @@ import (
 	_ "github.com/mattn/go-sqlite3" // sqlite3 doesn't need to be named
 
 	"mediagui/lib"
+	pb "mediagui/mediaagent"
 	"mediagui/model"
-	"mediagui/proto"
+	// "mediagui/proto"
 )
 
 // const DATETIME_LAYOUT = "2006-01-02T15:04:05-07:00"
@@ -636,7 +637,7 @@ func (d *Dal) updateMovie(msg *pubsub.Message) {
 }
 
 func (d *Dal) deleteMovie(msg *pubsub.Message) {
-	movie := msg.Payload.(*agent.Item)
+	movie := msg.Payload.(*pb.Item)
 
 	// d.count = 0
 

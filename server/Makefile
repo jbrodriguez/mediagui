@@ -29,7 +29,7 @@ clean:
 	go clean
 
 protobuf:
-	protoc -I=./src/proto --go_out=./src/proto ./src/proto/agent.proto
+	protoc -I mediaagent/ mediaagent/agent.proto --go_out=plugins=grpc:mediaagent
  
 # run formatting tool and build
 build: dependencies clean
@@ -40,8 +40,11 @@ buildx: dependencies clean
 	go build fmt
 	env GOOS=linux GOARCH=amd64 go build -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v -o ${PROG}
 
-agent: dependencies clean
+agentx: dependencies clean
 	env GOOS=linux GOARCH=amd64 go build -tags agent -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v -o agentx agent.go
+
+agent: dependencies clean
+	go build -tags agent -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v -o agentx agent.go
 
 release: dependencies clean
 	go build fmt

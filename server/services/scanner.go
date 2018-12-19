@@ -2,20 +2,20 @@ package services
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
-	"time"
 
 	"github.com/jbrodriguez/actor"
 	"github.com/jbrodriguez/mlog"
 	"github.com/jbrodriguez/pubsub"
-	"github.com/micro/go-micro/client"
+	"google.golang.org/grpc"
 
 	"mediagui/lib"
+	pb "mediagui/mediaagent"
 	"mediagui/model"
-	"mediagui/proto"
 )
 
 // Scanner -
@@ -118,26 +118,25 @@ func (s *Scanner) scanMovies(_ *pubsub.Message) {
 		// 	"wopr:/mnt/user/films/blurip/10 Things I Hate About You (1999)/movie.mkv",
 		// }
 
-		// mlog.Info("started analysis")
-		// s.analyze(filenames)
-		// mlog.Info("finished analysis")
+		opts := []grpc.DialOption{grpc.WithInsecure()}
 
 		for _, host := range s.settings.UnraidHosts {
-			// Create new request to service go.micro.srv.example, method Example.Call
-			req := client.NewRequest("io.jbrodriguez.mediagui.agent."+host, "Agent.Scan", &agent.ScanReq{
-				// Folders: s.settings.MediaFolders,
-				Folders: s.settings.MediaFolders,
-				Mask:    s.includedMask,
-			})
+			address := fmt.Sprintf("%s.apertoire.org:7624", host)
 
-			rsp := &agent.ScanRsp{}
-
-			// Call service
-			if err := client.Call(context.Background(), req, rsp, client.WithRequestTimeout(time.Duration(5)*time.Minute)); err != nil {
-				mlog.Warning("Unable to connect to service (%s): %s", "io.jbrodriguez.mediagui.agent."+host, err)
+			conn, err := grpc.Dial(address, opts...)
+			if err != nil {
+				mlog.Warning("Unable to connect to host (%s): %s", address, err)
 				lib.Notify(s.bus, "import:progress", "Unable to connect to host "+host)
-				// lib.Notify(s.bus, "import:end", "Import process finished")
-				// return
+				continue
+			}
+			defer conn.Close()
+
+			client := pb.NewMediaAgentClient(conn)
+
+			rsp, err := client.Scan(context.Background(), &pb.ScanReq{Folders: s.settings.MediaFolders, Mask: s.includedMask})
+			if err != nil {
+				mlog.Warning("Unable to scan (%s): %s", address, err)
+				lib.Notify(s.bus, "import:progress", "Unable to scan host "+host)
 				continue
 			}
 
