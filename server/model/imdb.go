@@ -22,7 +22,8 @@ type Rating struct {
 // ImdbJSON -
 type ImdbJSON struct {
 	AggregateRating Rating          `json:"aggregateRating"`
-	Director        Entity          `json:"director"`
+	RawDirector     json.RawMessage `json:"director"`
+	Director        []Entity        `json:"-"`
 	RawCreator      json.RawMessage `json:"creator"`
 	Creator         []Entity        `json:"-"`
 	Actor           []Entity        `json:"actor"`
@@ -35,9 +36,18 @@ func (ij ImdbJSON) Imdb() Imdb {
 	rating, _ := strconv.ParseFloat(ij.AggregateRating.RatingValue, 64)
 
 	imdb := Imdb{
-		Director: ij.Director.Name,
 		Votes:    uint64(ij.AggregateRating.RatingCount),
 		Rating:   rating,
+	}
+
+	for _, director := range ij.Director {
+		if director.Type == "Person" {
+			if imdb.Director == "" {
+				imdb.Director = director.Name
+			} else {
+				imdb.Director += ", " + director.Name
+			}
+		}
 	}
 
 	for _, writer := range ij.Creator {
@@ -83,7 +93,7 @@ func (i *Imdb) UnmarshalJSON(data []byte) error {
 
 	if len(ij.RawCreator) > 0 {
 		switch ij.RawCreator[0] {
-		case '"':
+		case '{':
 			var entity Entity
 			if err := json.Unmarshal(ij.RawCreator, &entity); err != nil {
 				return err
@@ -91,6 +101,21 @@ func (i *Imdb) UnmarshalJSON(data []byte) error {
 			ij.Creator = []Entity{entity}
 		case '[':
 			if err := json.Unmarshal(ij.RawCreator, &ij.Creator); err != nil {
+				return err
+			}
+		}
+	}
+
+	if len(ij.RawDirector) > 0 {
+		switch ij.RawDirector[0] {
+		case '{':
+			var entity Entity
+			if err := json.Unmarshal(ij.RawDirector, &entity); err != nil {
+				return err
+			}
+			ij.Director = []Entity{entity}
+		case '[':
+			if err := json.Unmarshal(ij.RawDirector, &ij.Director); err != nil {
 				return err
 			}
 		}
