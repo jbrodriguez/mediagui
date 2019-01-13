@@ -1,3 +1,7 @@
+Version 5.0.1 - 2019-01-13
+- Fix for multi-director movies
+
+
 Version 5.0.0 - 2018-12-19
 - Replace go-micro with gRPC
 - Cleanup go mod
