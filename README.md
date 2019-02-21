@@ -1,6 +1,6 @@
 # mediaGUI
 
-_tl;dr_ **mediaGUI** is a web based app to catalogue a movie library. It scans the folders you choose looking for movies, then fetch metadata from [themoviedb.org](www.themoviedb.org) and [The OMDB API](www.omdbapi.com).
+_tl;dr_ **mediaGUI** is a web based app to catalogue a movie library. It scans the folders you choose looking for movies, then fetch metadata from [themoviedb.org](www.themoviedb.org) and [iMDB](https://www.imdb.com).
 
 ## Screenshots
 
