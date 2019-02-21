@@ -76,7 +76,7 @@
 									<div class="loading-bar"></div>
 								</div>
 							</div>
-							<div class="col-xs-12 col-sm-4 addon center-xs">
+							<div class="col-xs-12 col-sm-3 addon center-xs">
 								<div v-if="watched">
 									<span class="c-text">History:</span>
 									<span class="label success mv0 mh2 ">{{movie.count_watched}}</span>
@@ -85,7 +85,7 @@
 									</select>
 								</div>
 							</div>
-							<div class="col-xs-12 col-sm-4 addon end-sm">
+							<div class="col-xs-12 col-sm-5 addon end-sm">
 								<span v-if="hasRating" class="label success mv0 mr2">{{movie.score}}</span>
 								<Rating :max="10" :value="movie.score" @rating-selected="setScore" class="mr2" />
 								<flat-pickr v-model="seen" :config="fpConfig" @on-change="setWatched"/>
