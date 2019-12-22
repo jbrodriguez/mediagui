@@ -50,18 +50,16 @@ func (c *Cache) Stop() {
 }
 
 func (c *Cache) cacheMovie(msg *pubsub.Message) {
-	dto := msg.Payload.(*dto.Scrape)
-	movie := dto.Movie.(*model.Movie)
-
-	// mlog.Info("trying to cache movie: [%d] %s", movie.Id, movie.Title)
+	proxy := msg.Payload.(*dto.Scrape)
+	movie := proxy.Movie.(*model.Movie)
 
 	caching := &Caching{
 		bus:      c.bus,
 		path:     c.settings.WebDir,
-		url:      dto.SecureBaseURL,
+		url:      proxy.SecureBaseURL,
 		id:       movie.ID,
 		title:    movie.Title,
-		forced:   dto.Forced,
+		forced:   proxy.Forced,
 		cover:    movie.Cover,
 		backdrop: movie.Backdrop,
 	}
@@ -117,12 +115,4 @@ func (c *Caching) Execute(wid int) {
 			lib.Notify(c.bus, "import:progress", fmt.Sprintf("UNABLE TO DOWNLOAD BACKDROP (%d) [%d] %s (%s)", wid, c.id, c.title, c.cover))
 		}
 	}
-
-	// event := "/event/movie/cached"
-	// if c.forced {
-	// 	event += "/forced"
-	// }
-
-	// cached := &pubsub.Message{}
-	// c.bus.Pub(cached, event)
 }

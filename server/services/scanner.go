@@ -76,16 +76,8 @@ func (s *Scanner) Stop() {
 func (s *Scanner) scanMovies(_ *pubsub.Message) {
 	defer s.bus.Pub(nil, "/event/workunit/done")
 
-	// folders := []string{
-	// 	"/Volumes/hal-films",
-	// 	"/Volumes/wopr-films",
-	// }
-
-	// ping := "ping -c1 %s > /dev/null && echo \"YES\" || echo \"NO\""
-	// lib.Notify(s.bus, "import:begin", "Import process started")
-
 	if s.settings.UnraidMode {
-		// folders := []string{
+		// example; folders := []string{
 		// 	`/mnt/user/films`,
 		// }
 		// filenames := []string{
@@ -150,8 +142,6 @@ func (s *Scanner) scanMovies(_ *pubsub.Message) {
 			}
 		}
 	}
-
-	// lib.Notify(s.bus, "import:end", "Import process finished")
 }
 
 func (s *Scanner) analyze(files []string) {
@@ -173,20 +163,17 @@ func (s *Scanner) analyze(files []string) {
 				resolution = ""
 			}
 
-			movie := &model.Movie{Title: rmap["Name"], File_Title: rmap["Name"], Year: rmap["Year"], Resolution: resolution, FileType: rmap["FileType"], Location: file, Stub: 0}
-			// mlog.Info("FOUND [%s] (%s)", movie.Title, movie.Location)
+			movie := &model.Movie{Title: rmap["Name"], FileTitle: rmap["Name"], Year: rmap["Year"], Resolution: resolution, FileType: rmap["FileType"], Location: file, Stub: 0}
 
-			// mlog.Info("found %s", movie.Location)
 			msg := &pubsub.Message{Payload: movie}
 			s.bus.Pub(msg, "/event/movie/found")
-			// self.Bus.MovieFound <- movie
 		}
 	}
 }
 
 func (s *Scanner) walk(folder string) error {
 	if folder[len(folder)-1] != '/' {
-		folder = folder + "/"
+		folder += "/"
 	}
 
 	err := filepath.Walk(folder, func(path string, f os.FileInfo, err error) error {
@@ -195,7 +182,6 @@ func (s *Scanner) walk(folder string) error {
 		}
 
 		if !strings.Contains(s.includedMask, strings.ToLower(filepath.Ext(path))) {
-			// mlog.Info("[%s] excluding %s", filepath.Ext(path), path)
 			return nil
 		}
 
@@ -215,12 +201,10 @@ func (s *Scanner) walk(folder string) error {
 				resolution = ""
 			}
 
-			movie := &model.Movie{Title: rmap["Name"], File_Title: rmap["Name"], Year: rmap["Year"], Resolution: resolution, FileType: rmap["FileType"], Location: path}
-			// mlog.Info("FOUND [%s] (%s)", movie.Title, movie.Location)
+			movie := &model.Movie{Title: rmap["Name"], FileTitle: rmap["Name"], Year: rmap["Year"], Resolution: resolution, FileType: rmap["FileType"], Location: path}
 
 			msg := &pubsub.Message{Payload: movie}
 			s.bus.Pub(msg, "/event/movie/found")
-			// self.Bus.MovieFound <- movie
 
 			return nil
 		}

@@ -43,16 +43,6 @@ func (a *App) Setup(version string) (*lib.Settings, error) {
 
 // Run app
 func (a *App) Run(settings *lib.Settings) {
-	// if settings.CPUProfile != "" {
-	// 	f, err := os.Create(settings.CPUProfile)
-	// 	if err != nil {
-	// 		log.Printf("Unable to set up profiling: %s", err)
-	// 		os.Exit(3)
-	// 	}
-	// 	pprof.StartCPUProfile(f)
-	// 	defer pprof.StopCPUProfile()
-	// }
-
 	if settings.LogDir != "" {
 		mlog.Start(mlog.LevelInfo, filepath.Join(settings.LogDir, "mediagui.log"))
 	} else {
@@ -88,7 +78,7 @@ func (a *App) Run(settings *lib.Settings) {
 	mlog.Info("Press Ctrl+C to stop ...")
 
 	c := make(chan os.Signal, 1)
-	signal.Notify(c, syscall.SIGTERM, syscall.SIGINT, syscall.SIGKILL)
+	signal.Notify(c, syscall.SIGTERM, syscall.SIGINT)
 	mlog.Info("Received signal: (%s) ... shutting down the app now ...", <-c)
 
 	core.Stop()
@@ -98,5 +88,7 @@ func (a *App) Run(settings *lib.Settings) {
 	server.Stop()
 	dal.Stop()
 
-	mlog.Stop()
+	if err := mlog.Stop(); err != nil {
+		os.Exit(2)
+	}
 }

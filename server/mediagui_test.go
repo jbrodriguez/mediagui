@@ -469,7 +469,6 @@ func TestJsonLd(t *testing.T) {
 	}
 
 	t.Logf("imdb: %+v", &imdb)
-
 }
 
 func TestMain(m *testing.M) {

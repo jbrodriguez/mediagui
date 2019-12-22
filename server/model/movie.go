@@ -11,7 +11,7 @@ type Movie struct {
 	ID                   uint64  `json:"id"`
 	Title                string  `json:"title"`
 	Original_Title       string  `json:"original_title"`
-	File_Title           string  `json:"file_title"`
+	FileTitle            string  `json:"file_title"`
 	Year                 string  `json:"year"`
 	Runtime              uint64  `json:"runtime"`
 	Tmdb_Id              uint64  `json:"tmdb_id"`

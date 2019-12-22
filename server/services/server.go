@@ -51,16 +51,6 @@ func NewServer(bus *pubsub.PubSub, settings *lib.Settings) *Server {
 func (s *Server) Start() {
 	mlog.Info("Starting service Server ...")
 
-	// html := filepath.Join(s.settings.WebDir, "index.html")
-	// mlog.Info("html is %s", html)
-	// if b, _ := lib.Exists(html); !b {
-	// 	mlog.Fatalf("Looked for index.html in %s, but didn't find it", s.settings.WebDir)
-	// }
-
-	// mlog.Info("Serving files from %s", s.settings.WebDir)
-
-	// gin.SetMode(s.settings.GinMode)
-
 	locations := []string{
 		s.settings.WebDir,
 		"/usr/local/share/mediagui",
@@ -95,14 +85,6 @@ func (s *Server) Start() {
 
 	s.router.GET("/ws", echo.WrapHandler(websocket.Handler(s.handleWs)))
 
-	// s.router.GET("/", s.index)
-	// s.router.GET("/ws", s.handleSocket)
-
-	// s.router.Static("/app", filepath.Join(s.settings.WebDir, "app"))
-	// s.router.Static("/img", filepath.Join(s.settings.WebDir, "img"))
-	// s.router.Static("/js", filepath.Join(s.settings.WebDir, "js"))
-	// s.router.Static("/css", filepath.Join(s.settings.WebDir, "css"))
-
 	api := s.router.Group(apiVersion)
 	api.GET("/config", s.getConfig)
 	api.GET("/movies/single/:id", s.getMovie)
@@ -119,23 +101,6 @@ func (s *Server) Start() {
 	api.PUT("/movies/:id/watched", s.setMovieWatched)
 	api.PUT("/movies/:id/fix", s.fixMovie)
 	api.PUT("/movies/:id/duplicate", s.setDuplicate)
-
-	// api := s.router.Group(apiVersion)
-	// {
-	// 	api.GET("/config", s.getConfig)
-	// 	api.GET("/movies/single/:id", s.getMovie)
-	// 	api.GET("/movies/cover", s.getMoviesCover)
-	// 	api.GET("/movies", s.getMovies)
-	// 	api.GET("/movies/duplicates", s.getDuplicates)
-
-	// 	api.POST("/import", s.importMovies)
-	// 	api.POST("/prune", s.pruneMovies)
-
-	// 	api.PUT("/config/folder", s.addMediaFolder)
-	// 	api.PUT("/movies/:id/score", s.setMovieScore)
-	// 	api.PUT("/movies/:id/watched", s.setMovieWatched)
-	// 	api.PUT("/movies/:id/fix", s.fixMovie)
-	// }
 
 	port := ":7623"
 	go s.router.Start(port)
@@ -174,22 +139,8 @@ func (s *Server) getMoviesCover(c echo.Context) error {
 	s.bus.Pub(msg, "/get/movies/cover")
 
 	reply := <-msg.Reply
-	dto := reply.(*model.MoviesDTO)
-
-	// movies := make([]*model.Movie, 0)
-	// movies = append(
-	// 	movies,
-	// 	&model.Movie{Id: 1, Title: "The Godfather", Year: "1971"},
-	// 	&model.Movie{Id: 2, Title: "Pulp Fiction", Year: "1990"},
-	// )
-
-	// dto := &model.MoviesDTO{
-	// 	Total: 2,
-	// 	Items: movies,
-	// }
-
-	// mlog.Info("moviesDTO: %+v", dto)
-	return c.JSON(http.StatusOK, dto)
+	movie := reply.(*model.MoviesDTO)
+	return c.JSON(http.StatusOK, movie)
 }
 
 func (s *Server) getMovies(c echo.Context) error {
@@ -197,17 +148,16 @@ func (s *Server) getMovies(c echo.Context) error {
 	c.Bind(&options) // You can also specify which binder to use. We support binding.Form, binding.JSON and binding.XML.
 
 	mlog.Info("server.getMovies.options: %+v", options)
-	// mlog.Info("request: ", c.Request)
 
 	msg := &pubsub.Message{Payload: &options, Reply: make(chan interface{}, capacity)}
 	s.bus.Pub(msg, "/get/movies")
 
 	reply := <-msg.Reply
-	dto := reply.(*model.MoviesDTO)
+	movie := reply.(*model.MoviesDTO)
 
 	// // mlog.Info("moviesDTO: %+v", dto)
 	// return c.JSON(http.StatusOK, {dto})
-	return c.JSON(http.StatusOK, dto)
+	return c.JSON(http.StatusOK, movie)
 }
 
 func (s *Server) getDuplicates(c echo.Context) error {
@@ -215,25 +165,20 @@ func (s *Server) getDuplicates(c echo.Context) error {
 	s.bus.Pub(msg, "/get/movies/duplicates")
 
 	reply := <-msg.Reply
-	dto := reply.(*model.MoviesDTO)
+	movie := reply.(*model.MoviesDTO)
 
-	return c.JSON(http.StatusOK, dto)
+	return c.JSON(http.StatusOK, movie)
 }
 
 func (s *Server) getMovie(c echo.Context) error {
 	id := c.Param("id")
-	// mlog.Info("server.getMovies.options: %+v", options)
-	// mlog.Info("request: ", c.Request)
 
 	msg := &pubsub.Message{Payload: id, Reply: make(chan interface{}, capacity)}
 	s.bus.Pub(msg, "/get/movie")
 
 	reply := <-msg.Reply
-	dto := reply.(*model.Movie)
-
-	// // mlog.Info("moviesDTO: %+v", dto)
-	// return c.JSON(http.StatusOK, {dto})
-	return c.JSON(http.StatusOK, dto)
+	movie := reply.(*model.Movie)
+	return c.JSON(http.StatusOK, movie)
 }
 
 func (s *Server) importMovies(_ echo.Context) error {
@@ -358,20 +303,16 @@ func (s *Server) handleWs(ws *websocket.Conn) {
 }
 
 func (s *Server) onMessage(packet *dto.Packet) {
-	// mlog.Info("topic(%s)-payload(%+v)", packet.Topic, packet.Payload)
 	s.bus.Pub(&pubsub.Message{Payload: packet.Payload}, packet.Topic)
 }
 
 func (s *Server) onClose(c *net.Connection, err error) {
 	mlog.Warning("closing socket (%+v): %s", c, err)
-	if _, ok := s.pool[c]; ok {
-		delete(s.pool, c)
-	}
+	delete(s.pool, c)
 }
 
 func (s *Server) broadcast(msg *pubsub.Message) {
 	packet := msg.Payload.(*dto.Packet)
-	// mlog.Info("paylod-%+v", packet)
 	for conn := range s.pool {
 		conn.Write(packet)
 	}

@@ -11,13 +11,13 @@ import (
 var Version string
 
 func main() {
-	app := app.App{}
+	mg := app.App{}
 
-	settings, err := app.Setup(Version)
+	settings, err := mg.Setup(Version)
 	if err != nil {
 		log.Printf("Unable to start the app: %s", err)
 		os.Exit(1)
 	}
 
-	app.Run(settings)
+	mg.Run(settings)
 }

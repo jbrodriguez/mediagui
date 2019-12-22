@@ -59,7 +59,6 @@ func RestGet(url string) (string, error) {
 	}
 	defer Close(resp.Body)
 
-	// err = json.NewDecoder(resp.Body).Decode(reply)
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return "", err
@@ -72,21 +71,18 @@ func RestGet(url string) (string, error) {
 func Download(url, dst string) (err error) {
 	out, err := os.Create(dst)
 	if err != nil {
-		// mlog.Info("Unable to create: %s", dst)
 		return err
 	}
 	defer out.Close()
 
 	resp, err := http.Get(url)
 	if err != nil {
-		// mlog.Info("Unable to download %s", url)
 		return err
 	}
 	defer resp.Body.Close()
 
 	_, err = io.Copy(out, resp.Body)
 	if err != nil {
-		// mlog.Info("unable to save to %s", dst)
 		return err
 	}
 
@@ -97,7 +93,6 @@ func Download(url, dst string) (err error) {
 func Notify(bus *pubsub.PubSub, topic, text string) {
 	mlog.Info(text)
 	payload := &dto.Packet{Topic: topic, Payload: text}
-	// payload := &dto.Packet{Topic: topic, Payload: text}
 	bus.Pub(&pubsub.Message{Payload: payload}, "socket:broadcast")
 }
 
@@ -106,7 +101,6 @@ func ResizeImage(src, dst string) (err error) {
 	// open "test.jpg"
 	file, err := os.Open(src)
 	if err != nil {
-		// mlog.Error(err)
 		return err
 	}
 	defer file.Close()
@@ -114,7 +108,6 @@ func ResizeImage(src, dst string) (err error) {
 	// decode jpeg into image.Image
 	img, err := jpeg.Decode(file)
 	if err != nil {
-		// mlog.Error(err)
 		return err
 	}
 	// file.Close()
@@ -125,7 +118,6 @@ func ResizeImage(src, dst string) (err error) {
 
 	out, err := os.Create(dst)
 	if err != nil {
-		// mlog.Error(err)
 		return err
 	}
 	defer out.Close()

@@ -54,11 +54,11 @@ func NewSettings(name, version, home string, locations []string) (*Settings, err
 	flag.StringVar(&workDir, "workDir", filepath.Join(home, "tmp", "mediagui"), "for importer cli tool -> folder where the file with movies to import resides")
 
 	if found, _ := Exists(location); found {
-		flag.Set("config", location)
+		if err := flag.Set("config", location); err != nil {
+			fmt.Println("unable to set config file")
+		}
 	}
 	flag.Parse()
-
-	// fmt.Printf("mediaFolders: %s\n", mediaFolders)
 
 	s := &Settings{}
 	if mediaFolders == "" {
