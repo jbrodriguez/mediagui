@@ -14,7 +14,7 @@ type CloseFunc func(conn *Connection, err error)
 
 // Connection -
 type Connection struct {
-	id        string
+	// id        string
 	ws        *websocket.Conn
 	onMessage MessageFunc
 	onClose   CloseFunc

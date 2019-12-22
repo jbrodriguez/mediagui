@@ -28,7 +28,6 @@ func (r *Rexp) Match(s string) StringMap {
 		}
 
 		captures[name] = match[i]
-
 	}
 	return captures
 }

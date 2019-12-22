@@ -20,7 +20,6 @@ func NewPool(size, queue int) *Pool {
 		tasks: make(chan Task, queue),
 		kill:  make(chan bool),
 	}
-	// pool.Resize(size)
 
 	for i := 0; i < size; i++ {
 		go pool.worker(i)
@@ -30,7 +29,6 @@ func NewPool(size, queue int) *Pool {
 }
 
 func (p *Pool) worker(id int) {
-	// defer p.wg.Done()
 	for {
 		select {
 		case task, ok := <-p.tasks:

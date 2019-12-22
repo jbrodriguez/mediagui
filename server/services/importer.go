@@ -92,9 +92,10 @@ func (i *Importer) runImport(_ *pubsub.Message) {
 				// sign = "+"
 
 				res := fmt.Sprintf("%s|%s|%s|%s", line[0], line[1], line[2], line[3])
-				WriteLine(ofile, res)
+				if err := WriteLine(ofile, res); err != nil {
+					mlog.Warning("unable to writeline: %s", err)
+				}
 			}
-
 		}
 	} else {
 		for index, line := range lines {
@@ -122,12 +123,6 @@ func (i *Importer) runImport(_ *pubsub.Message) {
 			}
 		}
 	}
-
-	// movie := model.Movie{}
-	// movie.Title = ""
-	// add := &pubsub.Message{Payload: &movie, Reply: make(chan interface{}, capacity)}
-	// i.bus.Pub(add, "/post/add")
-
 }
 
 // WriteLine -

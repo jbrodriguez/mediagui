@@ -60,15 +60,13 @@ func (c *Core) Start() {
 	c.actor.Register("/event/movie/tmdbnotfound", c.doMovieTmdbNotFound)
 	c.actor.Register("/event/movie/scraped", c.doMovieScraped)
 	c.actor.Register("/event/movie/rescraped", c.doMovieReScraped)
-	// c.actor.Register("/event/movie/updated", c.doMovieUpdated)
-	// c.actor.Register("/event/movie/cached/forced", c.doMovieCachedForced)
 
 	c.actor.Register("/event/workunit/done", c.doWorkUnitDone)
 
 	c.re = regexp.MustCompile(`(?i)/Volumes/(.*?)/.*`)
 	c.maps = make(map[string]bool)
 
-	// maps["/Volumes/wopr-films"] = true // for example
+	// for example, maps["/Volumes/wopr-films"] = true
 	for _, folder := range c.settings.MediaFolders {
 		c.maps[folder] = false
 		if _, err := os.Stat(folder); err == nil {
@@ -91,21 +89,16 @@ func (c *Core) getConfig(msg *pubsub.Message) {
 
 func (c *Core) importMovies(_ *pubsub.Message) {
 	t0 := time.Now()
-	// mlog.Info("Begin movie scanning ...")
 	lib.Notify(c.bus, "import:begin", "Import process started")
 
 	c.wg.Add(1)
 
 	c.bus.Pub(nil, "/command/movie/scan")
-	//	msg.Reply <- &c.settings.Config
-	// mlog.Info("Import finished")
 
 	go func() {
 		c.wg.Wait()
-		// 𝛥t := float64(time.Since(t0)) / 1e9
 		lib.Notify(c.bus, "import:end", fmt.Sprintf("Import process finished (%s elapsed)", time.Since(t0).String()))
 	}()
-
 }
 
 func (c *Core) addMovie(msg *pubsub.Message) {
@@ -114,7 +107,7 @@ func (c *Core) addMovie(msg *pubsub.Message) {
 	movie := msg.Payload.(*model.Movie)
 
 	// Since it's coming in through this endpoint, we know it's a stub
-	movie.File_Title = movie.Title
+	movie.FileTitle = movie.Title
 	movie.Resolution = cNotAvailable
 	movie.FileType = cNotAvailable
 	movie.Location = cNotAvailable
@@ -166,52 +159,47 @@ func (c *Core) fixMovie(msg *pubsub.Message) {
 		c.wg.Wait()
 		msg.Reply <- movie
 	}()
-	// go c.waitFixMovie(msg.Reply, movie)
 }
 
 func (c *Core) doMovieTmdbNotFound(msg *pubsub.Message) {
-	dto := msg.Payload.(*dto.Scrape)
+	item := msg.Payload.(*dto.Scrape)
 
-	store := &pubsub.Message{Payload: dto.Movie, Reply: make(chan interface{}, 3)}
+	store := &pubsub.Message{Payload: item.Movie, Reply: make(chan interface{}, 3)}
 	c.bus.Pub(store, "/command/movie/partialstore")
 }
 
 func (c *Core) doMovieScraped(msg *pubsub.Message) {
-	dto := msg.Payload.(*dto.Scrape)
+	item := msg.Payload.(*dto.Scrape)
 
-	mlog.Info("ScrapeDTO: %+v", dto)
+	mlog.Info("ScrapeDTO: %+v", item)
 
 	// I treat the following two commands as one, for the sake of the wg
-	// now there are two oustanding locks, which will be decreased by each
+	// now there are two outstanding locks, which will be decreased by each
 	// responding service
 	c.wg.Add(1)
 
-	store := &pubsub.Message{Payload: dto.Movie, Reply: make(chan interface{}, 3)}
+	store := &pubsub.Message{Payload: item.Movie, Reply: make(chan interface{}, 3)}
 	c.bus.Pub(store, "/command/movie/store")
 
-	cache := &pubsub.Message{Payload: dto, Reply: make(chan interface{}, 3)}
+	cache := &pubsub.Message{Payload: item, Reply: make(chan interface{}, 3)}
 	c.bus.Pub(cache, "/command/movie/cache")
-
-	// mlog.Info("ScrapeDTO: %+v", dto)
 }
 
 func (c *Core) doMovieReScraped(msg *pubsub.Message) {
-	dto := msg.Payload.(*dto.Scrape)
+	item := msg.Payload.(*dto.Scrape)
 
-	mlog.Info("ScrapeDTO: %+v", dto)
+	mlog.Info("ScrapeDTO: %+v", item)
 
 	// I treat the following two commands as one, for the sake of the wg
-	// now there are two oustanding locks, which will be decreased by each
+	// now there are two outstanding locks, which will be decreased by each
 	// responding service
 	c.wg.Add(1)
 
-	store := &pubsub.Message{Payload: dto.Movie, Reply: make(chan interface{}, 3)}
+	store := &pubsub.Message{Payload: item.Movie, Reply: make(chan interface{}, 3)}
 	c.bus.Pub(store, "/command/movie/update")
 
-	cache := &pubsub.Message{Payload: dto, Reply: make(chan interface{}, 3)}
+	cache := &pubsub.Message{Payload: item, Reply: make(chan interface{}, 3)}
 	c.bus.Pub(cache, "/command/movie/cache")
-
-	// mlog.Info("ScrapeDTO: %+v", dto)
 }
 
 func (c *Core) pruneMovies(_ *pubsub.Message) {
@@ -234,8 +222,6 @@ func (c *Core) pruneMovies(_ *pubsub.Message) {
 		}
 
 		for _, item := range list.Items {
-			// mlog.Info("Item is %s (%s)", item.Title, item.Location)
-
 			index := strings.Index(item.Location, ":")
 			if index == -1 {
 				// a valid location is wopr:/mnt/user/films/bluray/22 Bullets (2010)/22.Bullets_BLURAY.iso
@@ -275,7 +261,6 @@ func (c *Core) pruneMovies(_ *pubsub.Message) {
 				movie := &pubsub.Message{Payload: item, Reply: make(chan interface{}, capacity)}
 				c.bus.Pub(movie, "/command/movie/delete")
 			}
-
 		}
 	} else {
 		for _, item := range list.Items {
@@ -286,11 +271,8 @@ func (c *Core) pruneMovies(_ *pubsub.Message) {
 
 			folder := filepath.Join("/Volumes", matches[1])
 			if !c.maps[folder] {
-				// mlog.Info("Folder not mapped (%s): %s", folder, item.Location)
 				continue
 			}
-
-			// mlog.Info("Folder mapped (%s): %s", folder, item.Location)
 
 			if _, err := os.Stat(item.Location); err != nil {
 				if os.IsNotExist(err) {
@@ -304,7 +286,6 @@ func (c *Core) pruneMovies(_ *pubsub.Message) {
 	}
 
 	lib.Notify(c.bus, "prune:end", fmt.Sprintf("Prune process finished (%s elapsed)", time.Since(t0).String()))
-
 }
 
 func (c *Core) addMediaFolder(msg *pubsub.Message) {
@@ -312,13 +293,14 @@ func (c *Core) addMediaFolder(msg *pubsub.Message) {
 	mlog.Info("addMediaFolder: %s", folder)
 
 	c.settings.MediaFolders = append(c.settings.MediaFolders, folder)
-	c.settings.Save()
+	if err := c.settings.Save(); err != nil {
+		mlog.Warning("unable to save settings: %s", err)
+	}
 
 	cfg := &pubsub.Message{Payload: c.settings}
 	c.bus.Pub(cfg, "/event/config/changed")
 
 	msg.Reply <- &c.settings.Config
-	// mlog.Info("Sent config")
 }
 
 // func (c *Core) waitFixMovie(ch chan interface{}, movie *model.Movie) {

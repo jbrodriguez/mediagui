@@ -29,19 +29,21 @@ type ImdbJSON struct {
 	Actor           []Entity        `json:"actor"`
 }
 
+const PERSON = "Person"
+
 // https://blog.gopheracademy.com/advent-2016/advanced-encoding-decoding/
 
 // Imdb - Creates an Imdb object from its go/json form
-func (ij ImdbJSON) Imdb() Imdb {
+func (ij *ImdbJSON) Imdb() Imdb {
 	rating, _ := strconv.ParseFloat(ij.AggregateRating.RatingValue, 64)
 
 	imdb := Imdb{
-		Votes:    uint64(ij.AggregateRating.RatingCount),
-		Rating:   rating,
+		Votes:  uint64(ij.AggregateRating.RatingCount),
+		Rating: rating,
 	}
 
 	for _, director := range ij.Director {
-		if director.Type == "Person" {
+		if director.Type == PERSON {
 			if imdb.Director == "" {
 				imdb.Director = director.Name
 			} else {
@@ -51,7 +53,7 @@ func (ij ImdbJSON) Imdb() Imdb {
 	}
 
 	for _, writer := range ij.Creator {
-		if writer.Type == "Person" {
+		if writer.Type == PERSON {
 			if imdb.Writers == "" {
 				imdb.Writers = writer.Name
 			} else {
@@ -61,7 +63,7 @@ func (ij ImdbJSON) Imdb() Imdb {
 	}
 
 	for _, actor := range ij.Actor {
-		if actor.Type == "Person" {
+		if actor.Type == PERSON {
 			if imdb.Actors == "" {
 				imdb.Actors = actor.Name
 			} else {

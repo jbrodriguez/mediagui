@@ -6,7 +6,6 @@ import (
 	"github.com/jbrodriguez/mlog"
 	"github.com/jbrodriguez/pubsub"
 
-	// "io/ioutil"
 	"encoding/json"
 	"fmt"
 	"regexp"
@@ -41,12 +40,6 @@ func NewScraper(bus *pubsub.PubSub, settings *lib.Settings) *Scraper {
 		settings: settings,
 		actor:    actor.NewActor(bus),
 	}
-
-	// reRating = `<span[^>]*itemprop="ratingValue">([^<]*)</span>`
-	// reVotes = `<span[^>]*itemprop="ratingCount">([^<]*)</span>`
-	// reDirector = `<a href="/name[^"]*dr"[^>]*><span[^>]*>([^<]*)?</span>`
-	// reWriter = `<a href="/name[^"]*wr"[^>]*><span[^>]*>([^<]*)?</span>`
-	// reActor = `<a href="/name[^"]*st_sm"[^>]*><span[^>]*>([^<]*)?</span>`
 
 	return scraper
 }
@@ -133,7 +126,9 @@ func (s *Scrape) Execute(wid int) {
 
 	id := movies.Results[0].Id
 
-	_scrape(wid, s.tmdb, id, movie)
+	if err := _scrape(wid, s.tmdb, id, movie); err != nil {
+		mlog.Warning("unable to scrape: %s", err)
+	}
 
 	s.dto.BaseURL = s.tmdb.BaseUrl
 	s.dto.SecureBaseURL = s.tmdb.SecureBaseUrl
@@ -171,7 +166,6 @@ type ReScrape struct {
 func (s *ReScrape) Execute(wid int) {
 	movie := s.dto.Movie.(*model.Movie)
 
-	// lib.Notify(s.bus, "import:progress", fmt.Sprintf("RESCRAPE REQUESTED (%d) [%d] %s", wid, movie.Id, movie.Title))
 	mlog.Info("RESCRAPE REQUESTED (%d) [%d] %s", wid, movie.ID, movie.Title)
 
 	now := time.Now().UTC().Format(time.RFC3339)
@@ -181,7 +175,6 @@ func (s *ReScrape) Execute(wid int) {
 
 	err := _scrape(wid, s.tmdb, id, movie)
 	if err != nil {
-		// lib.Notify(s.bus, "import:progress", fmt.Sprintf("RESCRAPE FAILED (%d) [%d] %s: %s", wid, movie.Id, movie.Title, err))
 		mlog.Warning("RESCRAPE FAILED (%d) [%d] %s: %s", wid, movie.ID, movie.Title, err)
 		s.bus.Pub(nil, "/event/workunit/done")
 
@@ -191,17 +184,14 @@ func (s *ReScrape) Execute(wid int) {
 	s.dto.BaseURL = s.tmdb.BaseUrl
 	s.dto.SecureBaseURL = s.tmdb.SecureBaseUrl
 
-	// lib.Notify(s.bus, "import:progress", fmt.Sprintf("RESCRAPE COMPLETED (%d) [%d] %s", wid, movie.Id, movie.Title))
 	mlog.Info("RESCRAPE COMPLETED (%d) [%d] %s", wid, movie.ID, movie.Title)
 
 	msg := &pubsub.Message{Payload: s.dto}
 	s.bus.Pub(msg, "/event/movie/rescraped")
 }
 
-func _scrape(wid int, tmdb *tmdb.Tmdb, id uint64, movie *model.Movie) error {
-	// log.Printf("before getmovie [%d] %s", id, media.Movie.Title)
-	// mlog.Info("[%s] before getmovie [%s]", movie.Title)
-	gmr, err := tmdb.GetMovie(id)
+func _scrape(wid int, client *tmdb.Tmdb, id uint64, movie *model.Movie) error {
+	gmr, err := client.GetMovie(id)
 	if err != nil {
 		return fmt.Errorf("FAILED GETTING MOVIE (%d) [%s]", wid, movie.Title)
 	}
@@ -249,7 +239,6 @@ func _scrape(wid int, tmdb *tmdb.Tmdb, id uint64, movie *model.Movie) error {
 		}
 	}
 
-	// lib.Notify(s.bus, "import:progress", fmt.Sprintf("STARTED IMDB [%s]", movie.Title))
 	data, err := lib.RestGet(fmt.Sprintf("https://www.imdb.com/title/%s", movie.Imdb_Id))
 	if err != nil {
 		return fmt.Errorf("IMDB Error: %s", err)
