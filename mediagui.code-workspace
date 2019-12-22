@@ -1,11 +1,8 @@
 {
-	"folders": [
-		{
-			"path": "."
-		},
-		{
-			"path": "server"
-		}
-	],
-	"settings": {}
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {}
 }
