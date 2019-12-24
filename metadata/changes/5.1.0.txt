@@ -1,0 +1,6 @@
+2019-12-24 - 5.1.0
+- Add workspace
+- Fix workspace
+- Improve linting
+- Fix npm issues
+- Implement merging of movie watched dates

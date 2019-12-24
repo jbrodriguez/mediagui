@@ -1,3 +1,11 @@
+Version 5.1.0 - 2019-12-24
+- Add workspace
+- Fix workspace
+- Improve linting
+- Fix npm issues
+- Implement merging of movie watched dates
+
+
 Version 5.0.3 - 2019-02-21
 - Fix cix hooks
 
