@@ -1,8 +1,6 @@
 #
 # Makefile to perform "live code reloading" after changes to .go files.
 #
-# n.b. you must install fswatch (OS X: `brew install fswatch`)
-#
 # To start live reloading run the following command:
 # $ make serve
 #
@@ -15,14 +13,10 @@ mb_hash := $(shell git rev-parse --short HEAD)
 PROG = mediagui
  
 # targets not associated with files
-.PHONY: dependencies default build test coverage clean kill restart serve
- 
-# check we have a couple of dependencies
-dependencies:
-	@command -v fswatch --version >/dev/null 2>&1 || { printf >&2 "fswatch is not installed, please run: brew install fswatch\n"; exit 1; }
+.PHONY: default build test coverage clean kill restart serve
  
 # default targets to run when only running `make`
-default: dependencies test
+default: test
  
 # clean up
 clean:
@@ -32,27 +26,27 @@ protobuf:
 	protoc -I mediaagent/ mediaagent/agent.proto --go_out=plugins=grpc:mediaagent
  
 # run formatting tool and build
-build: dependencies clean
+build: clean
 	go build fmt
 	go build -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v -o ${PROG}
 
-buildx: dependencies clean
+buildx: clean
 	go build fmt
 	env GOOS=linux GOARCH=amd64 go build -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v -o ${PROG}
 
-agentx: dependencies clean
+agentx: clean
 	env GOOS=linux GOARCH=amd64 go build -tags agent -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v -o agentx agent.go
 
-agent: dependencies clean
+agent: clean
 	go build -tags agent -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v -o agentx agent.go
 
-release: dependencies clean
+release: clean
 	go build fmt
 	go build -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v -o ${PROG}
 	env GOOS=linux GOARCH=amd64 go build -tags agent -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v -o agentx agent.go
  
 # run unit tests with code coverage
-test: dependencies
+test: 
 	go test -v
  
 # generate code coverage report
@@ -68,12 +62,6 @@ kill:
 restart:
 	@make kill
 	@make build; (if [ "$$?" -eq 0 ]; then (env GIN_MODE=debug ./${PROG} &); fi)
- 
-# watch .go files for changes then recompile & try to start server
-# will also kill server after ctrl+c
-serve: dependencies
-	@make restart 
-	@fswatch -o ./*.go ./services/*.go ./lib/*.go ./dto/*.go | xargs -n1 -I{} make restart || make kill
 
 publish: build
 	cp ./${PROG} ~/bin
