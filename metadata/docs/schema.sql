@@ -162,3 +162,21 @@ END;
 CREATE TRIGGER actor_ai AFTER INSERT ON movie BEGIN
   INSERT INTO movieactor(docid, actors) VALUES (new.rowid, new.actors);
 END;
+
+/* location */
+CREATE VIRTUAL TABLE movielocation USING fts4(content="movie", location);
+CREATE TRIGGER location_bu BEFORE UPDATE ON movie BEGIN
+  DELETE FROM movielocation WHERE docid=old.rowid;
+END;
+
+CREATE TRIGGER location_bd BEFORE DELETE ON movie BEGIN
+  DELETE FROM movielocation WHERE docid=old.rowid;
+END;
+
+CREATE TRIGGER location_au AFTER UPDATE ON movie BEGIN
+  INSERT INTO movielocation(docid, location) VALUES (new.rowid, new.location);
+END;
+
+CREATE TRIGGER location_ai AFTER INSERT ON movie BEGIN
+  INSERT INTO movielocation(docid, location) VALUES (new.rowid, new.location);
+END;

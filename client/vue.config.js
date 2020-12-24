@@ -1,9 +1,9 @@
 module.exports = {
-	devServer: {
-		proxy: {
-			'/img': {
-				target: 'http://blackbeard.apertoire.org:7623',
-			},
-		},
-	},
-}
+  devServer: {
+    proxy: {
+      "/img": {
+        target: "http://newton.apertoire.org:7623",
+      },
+    },
+  },
+};
