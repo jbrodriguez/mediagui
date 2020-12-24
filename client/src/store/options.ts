@@ -14,6 +14,7 @@ export const state: OptionsState = {
 		{ value: 'country', label: 'Country' },
 		{ value: 'director', label: 'Director' },
 		{ value: 'actor', label: 'Actor' },
+		{ value: 'location', label: 'Location' },
 	],
 	filterBy: storage.get('filterBy') || 'title',
 	sortByOptions: [
