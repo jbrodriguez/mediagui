@@ -239,19 +239,22 @@ func _scrape(wid int, client *tmdb.Tmdb, id uint64, movie *model.Movie) error {
 		}
 	}
 
-	data, err := lib.RestGet(fmt.Sprintf("https://www.imdb.com/title/%s", movie.Imdb_Id))
-	if err != nil {
-		return fmt.Errorf("IMDB Error: %s", err)
+	if movie.Imdb_Id != "" {
+		url := fmt.Sprintf("https://www.imdb.com/title/%s", movie.Imdb_Id)
+		data, err := lib.RestGet(url)
+		if err != nil {
+			return fmt.Errorf("IMDB Error: %s", err)
+		}
+
+		imdb := getImdb(data)
+
+		movie.Director = imdb.Director
+		movie.Writer = imdb.Writers
+		movie.Actors = imdb.Actors
+		movie.Awards = imdb.Awards
+		movie.Imdb_Rating = imdb.Rating
+		movie.Imdb_Votes = imdb.Votes
 	}
-
-	imdb := getImdb(data)
-
-	movie.Director = imdb.Director
-	movie.Writer = imdb.Writers
-	movie.Actors = imdb.Actors
-	movie.Awards = imdb.Awards
-	movie.Imdb_Rating = imdb.Rating
-	movie.Imdb_Votes = imdb.Votes
 
 	return nil
 }
