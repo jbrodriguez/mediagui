@@ -271,7 +271,19 @@ func getImdb(data string) *model.Imdb {
 	ld := reJSONLD.FindStringSubmatch(data)
 
 	if err := json.Unmarshal([]byte(ld[1]), &imdb); err != nil {
-		mlog.Warning("Unable to unmarshal imdb data: %s", err)
+		imdbAlt := &model.ImdbAlt{}
+		if err := json.Unmarshal([]byte(ld[1]), &imdbAlt); err != nil {
+			mlog.Warning("Unable to unmarshal imdb data: %s\n%s\n", err, ld[1])
+			return imdb
+		}
+
+		imdb.Actors = imdbAlt.Actors
+		imdb.Awards = imdbAlt.Awards
+		imdb.Director = imdbAlt.Director
+		imdb.Rating = imdbAlt.Rating
+		imdb.Votes = imdbAlt.Votes
+		imdb.Writers = imdbAlt.Writers
+
 		return imdb
 	}
 
