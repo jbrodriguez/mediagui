@@ -206,7 +206,11 @@ func _scrape(wid int, client *tmdb.Tmdb, id uint64, movie *model.Movie) error {
 	movie.Cover = gmr.Poster_Path
 	movie.Backdrop = gmr.Backdrop_Path
 
-	movie.Year = gmr.Release_Date[0:4]
+	if len(gmr.Release_Date) > 0 {
+		movie.Year = gmr.Release_Date[0:4]
+	} else {
+		mlog.Warning("release date is short: (%s)", gmr.Release_Date)
+	}
 
 	movie.Genres = ""
 	for i := 0; i < len(gmr.Genres); i++ {
