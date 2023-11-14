@@ -1,0 +1,32 @@
+syntax = "proto3";
+option go_package = "mediagui/mediaagent";
+
+package mediaagent;
+
+service MediaAgent {
+	rpc Scan(ScanReq) returns (ScanRsp) {}
+	rpc Exists(ExistsReq) returns (ExistsRsp) {}
+}
+
+message ScanReq {
+	repeated string folders = 1;
+	string mask = 2;
+}
+
+message ScanRsp {
+	repeated string filenames = 1;
+}
+
+message Item {
+	uint64 id = 1;
+	string location = 2;
+	string title = 3;
+}
+
+message ExistsReq {
+	repeated Item items = 1;
+}
+
+message ExistsRsp {
+	repeated Item items = 1;
+}

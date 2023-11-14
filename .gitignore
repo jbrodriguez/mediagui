@@ -18,8 +18,7 @@ node_modules
 **/_vendor/pkg/
 **/vendor
 
-server/server
-server/mediagui
-scanner/scanner
-server/importer
-server/agentx
+mediagui
+importer
+agentx
+agent

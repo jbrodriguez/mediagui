@@ -16,38 +16,48 @@ Movies View
 
 **mediaGUI**'s main objective is to be rewritten whenever I want to learn a new technology.
 
--   1st Iteration [(code)](https://github.com/jbrodriguez/mediabase/)<br />
-    The project's first name was [mediabase](http://www.apertoire.net/introducing-mediabase) <br />
-    To learn:
+- 1st Iteration [(code)](https://github.com/jbrodriguez/mediabase/)<br />
+  The project's first name was [mediabase](http://www.apertoire.net/introducing-mediabase) <br />
+  To learn:
 
-    -   [go](https://golang.org/)
-    -   [AngularJS 1](https://angularjs.org/)
+  - [go](https://golang.org/)
+  - [AngularJS 1](https://angularjs.org/)
 
--   2nd Iteration [(code)](https://github.com/jbrodriguez/mediagui/tree/0.5.8/) <br />
-    I renamed the project to **mediaGUI** <br />
-    To learn:
+- 2nd Iteration [(code)](https://github.com/jbrodriguez/mediagui/tree/0.5.8/) <br />
+  I renamed the project to **mediaGUI** <br />
+  To learn:
 
-    -   [go-micro](https://github.com/micro/go-micro/): microservices in go
-    -   [react](http://facebook.github.io/react/)
-    -   [ffux](https://github.com/milankinen/ffux/): A functional approach to state management
-    -   [flexboxgrid-sass](https://github.com/hugeinc/flexboxgrid-sass/)
+  - [go-micro](https://github.com/micro/go-micro/): microservices in go
+  - [react](http://facebook.github.io/react/)
+  - [ffux](https://github.com/milankinen/ffux/): A functional approach to state management
+  - [flexboxgrid-sass](https://github.com/hugeinc/flexboxgrid-sass/)
 
--   3rd Iteration [(code)](https://github.com/jbrodriguez/mediagui/tree/3.8.0/) <br />
-    To learn:
+- 3rd Iteration [(code)](https://github.com/jbrodriguez/mediagui/tree/3.8.0/) <br />
+  To learn:
 
-    -   [vuejs](https://vuejs.org/) - [tachyons-sass](https://github.com/tachyons-css/tachyons-sass)
+  - [vuejs](https://vuejs.org/) - [tachyons-sass](https://github.com/tachyons-css/tachyons-sass)
 
--   4th Iteration [(code)](https://github.com/jbrodriguez/mediagui/tree/4.2.0/) <br />
-    To learn:
+- 4th Iteration [(code)](https://github.com/jbrodriguez/mediagui/tree/4.2.0/) <br />
+  To learn:
 
-    -   [vue-cli](https://cli.vuejs.org/)
-    -   [vuex modules](https://vuex.vuejs.org/guide/modules.html)
+  - [vue-cli](https://cli.vuejs.org/)
+  - [vuex modules](https://vuex.vuejs.org/guide/modules.html)
 
--   5th Iteration [(code)](https://github.com/jbrodriguez/mediagui/) <br />
-    To learn:
-    -   [gRPC](https://gprc.io/)
+- 5th Iteration [(code)](https://github.com/jbrodriguez/mediagui/master) <br />
+  To learn:
+
+  - [gRPC](https://gprc.io/)
+
+- 6th Iteration [(code)](https://github.com/jbrodriguez/mediagui/) <br />
+  To learn:
+  - modernize stack, based on vitejs
 
 ## Summary
+
+### 6th Iteration
+
+- update stack to vitejs
+- modernize go code
 
 ### 5th Iteration
 
@@ -71,8 +81,8 @@ vuejs is a pleasure to work with.
 
 Its main assets are:
 
--   [vue-cli](https://github.com/vuejs/vue-cli): creates a starter project, you just need to start coding and not worry about tooling
--   [vuex](https://github.com/vuejs/vuex): opinionated and easy state management
+- [vue-cli](https://github.com/vuejs/vue-cli): creates a starter project, you just need to start coding and not worry about tooling
+- [vuex](https://github.com/vuejs/vuex): opinionated and easy state management
 
 The combination of vue-cli/vuex takes away a lot of the guess work that you generally find in redux (how to structure the app, etc.).
 
