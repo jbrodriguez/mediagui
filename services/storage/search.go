@@ -55,6 +55,16 @@ func (s *Storage) searchByYear(options *domain.Options) (total uint64, movies []
 	defer lib.Close(stmt)
 
 	var count uint64
+	stmt, err = tx.Prepare("select count(*) from movie;")
+	if err != nil {
+		log.Fatalf("Unable to prepare count rows transaction: %s", err)
+	}
+	defer lib.Close(stmt)
+
+	err = stmt.QueryRow().Scan(&count)
+	if err != nil {
+		log.Fatalf("Unable to count rows: %s", err)
+	}
 
 	var rows *sql.Rows
 	if decade {

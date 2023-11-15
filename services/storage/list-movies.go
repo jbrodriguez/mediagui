@@ -41,6 +41,16 @@ func (s *Storage) listMovies(options *domain.Options) (total uint64, movies []*d
 	// if options.Offset == 0 {
 	// if d.count == 0 {
 	var count uint64
+	stmt, err = tx.Prepare("select count(*) from movie;")
+	if err != nil {
+		log.Fatalf("Unable to prepare count rows transaction: %s", err)
+	}
+	defer lib.Close(stmt)
+
+	err = stmt.QueryRow().Scan(&count)
+	if err != nil {
+		log.Fatalf("Unable to count rows: %s", err)
+	}
 
 	stmt, err = tx.Prepare("select count(*) from movie;")
 	if err != nil {
