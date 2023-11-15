@@ -22,7 +22,7 @@ func Create(ctx *domain.Context) *Storage {
 }
 
 func (s *Storage) Start() error {
-	dbPath := filepath.Join(s.ctx.DataDir, "mediagui.db")
+	dbPath := filepath.Join(s.ctx.DataDir, "db", "mediagui.db")
 
 	db, err := sql.Open("sqlite", dbPath)
 	if err != nil {
