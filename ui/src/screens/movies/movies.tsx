@@ -1,42 +1,80 @@
-// import React from "react";
+import React from "react";
 
 import useSWR from "swr";
+import ReactPaginate from "react-paginate";
 
-import { getMovies } from "~/lib/api";
-import { useOptionsStore } from "~/state/options";
-import type { Movies, Movie } from "~/types";
+import { getMovies } from "~/api";
+import { useOptionsStore, useOptionsActions } from "~/state/options";
+import Movie from "./movie";
 
 const Movies = () => {
-  // const [pageIndex, _] = React.useState(0);
+  const [pageIndex, setPageIndex] = React.useState(0);
+
   const { query, filterBy, sortBy, sortOrder, limit, offset } =
     useOptionsStore();
-  const args = { query, filterBy, sortBy, sortOrder, limit, offset };
-
-  console.log("movies params ", args);
+  const { changeOffset } = useOptionsActions();
 
   const { data, error, isLoading } = useSWR(
-    { url: "/movies", args },
+    {
+      url: "/movies",
+      args: { query, filterBy, sortBy, sortOrder, limit, offset },
+    },
     getMovies,
   );
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error</div>;
 
-  console.log("movies data total", data);
+  const total = data?.total ?? 0;
+  const pageCount = Math.ceil(total / 50);
+
+  const handlePageClick = (e: { selected: number }) => {
+    changeOffset(e.selected);
+    setPageIndex(e.selected);
+  };
 
   return (
     <div>
-      <h1>Movies</h1>
-      <h2>{data?.total}</h2>
+      <ReactPaginate
+        breakLabel="..."
+        nextLabel="Next"
+        onPageChange={handlePageClick}
+        pageRangeDisplayed={5}
+        pageCount={pageCount}
+        previousLabel="Prev"
+        renderOnZeroPageCount={null}
+        forcePage={pageIndex}
+        disableInitialCallback={true}
+        containerClassName="flex flex-row justify-start items-center"
+        pageClassName="px-1"
+        pageLinkClassName="px-4 py-1 flex items-center justify-center p-0 text-gray-500 transition duration-150 ease-in-out hover:bg-light-300"
+        activeLinkClassName="border bg-sky-600 text-neutral-100 cursor-default"
+        breakLinkClassName="text-gray-500"
+        previousLinkClassName="pr-4 py-1 flex items-center justify-center p-0 text-gray-500 transition duration-150 ease-in-out hover:bg-light-300"
+        nextLinkClassName="px-4 py-1 flex items-center justify-center p-0 text-gray-500 transition duration-150 ease-in-out hover:bg-light-300"
+      />
+      <div className="mb-2" />
       <div>
-        {data?.items.map((movie: Movie) => (
-          <div key={movie.id}>
-            <h3>{movie.title}</h3>
-            <p>{movie.score}</p>
-          </div>
-        ))}
+        {data?.items.map((movie) => <Movie key={movie.id} item={movie} />)}
       </div>
-      {/* Add your movie content here */}
+      <ReactPaginate
+        breakLabel="..."
+        nextLabel="Next"
+        onPageChange={handlePageClick}
+        pageRangeDisplayed={5}
+        pageCount={pageCount}
+        previousLabel="Prev"
+        renderOnZeroPageCount={null}
+        forcePage={pageIndex}
+        disableInitialCallback={true}
+        containerClassName="flex flex-row justify-start items-center"
+        pageClassName="px-1"
+        pageLinkClassName="px-4 py-1 flex items-center justify-center p-0 text-gray-500 transition duration-150 ease-in-out hover:bg-light-300"
+        activeLinkClassName="border bg-sky-600 text-neutral-100 cursor-default"
+        breakLinkClassName="text-gray-500"
+        previousLinkClassName="pr-4 py-1 flex items-center justify-center p-0 text-gray-500 transition duration-150 ease-in-out hover:bg-light-300"
+        nextLinkClassName="px-4 py-1 flex items-center justify-center p-0 text-gray-500 transition duration-150 ease-in-out hover:bg-light-300"
+      />
     </div>
   );
 };

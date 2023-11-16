@@ -10,8 +10,14 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = () => {
-  const { filterBy, filterByOptions, sortBy, sortByOptions } =
-    useOptionsStore();
+  const { filterBy, filterByOptions, sortBy, sortByOptions } = useOptionsStore(
+    (state) => ({
+      filterBy: state.filterBy,
+      sortBy: state.sortBy,
+      filterByOptions: state.filterByOptions,
+      sortByOptions: state.sortByOptions,
+    }),
+  );
   const { setFilterBy, setSortBy } = useOptionsActions();
 
   const onFilterByChange = (e: React.ChangeEvent<HTMLSelectElement>) =>
@@ -20,8 +26,8 @@ const Header: React.FC<HeaderProps> = () => {
   const onSortByChange = (e: React.ChangeEvent<HTMLSelectElement>) =>
     setSortBy(e.target.value);
 
-  console.log("filterBy", filterBy);
-  console.log("setFilterBy", setFilterBy);
+  // console.log("filterBy", filterBy);
+  // console.log("setFilterBy", setFilterBy);
 
   return (
     <>

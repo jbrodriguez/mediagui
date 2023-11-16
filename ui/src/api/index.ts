@@ -1,10 +1,6 @@
 // import React from "react";
 
-import { type Movies } from "~/types";
-
-type OptionsParams = {
-  [key: string]: string | number | boolean;
-};
+import type { Movies, OptionsParams } from "~/types";
 
 const encode = (params: OptionsParams): string => {
   const str = [];

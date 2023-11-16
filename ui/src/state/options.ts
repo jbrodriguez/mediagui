@@ -1,5 +1,6 @@
-import { create } from "zustand";
+import { createWithEqualityFn } from "zustand/traditional";
 import { persist } from "zustand/middleware";
+import { shallow } from "zustand/shallow";
 
 interface OptionsState {
   query: string;
@@ -17,11 +18,12 @@ interface OptionsState {
     setQuery: (query: string) => void;
     setSortBy: (sortBy: string) => void;
     setOffset: (offset: number) => void;
+    changeOffset: (index: number) => void;
     flipOrder: () => void;
   };
 }
 
-export const useOptionsStore = create<OptionsState>()(
+export const useOptionsStore = createWithEqualityFn<OptionsState>()(
   persist(
     (set) => ({
       query: "",
@@ -56,6 +58,8 @@ export const useOptionsStore = create<OptionsState>()(
         setFilterBy: (filterBy) => set({ filterBy, offset: 0 }),
         setSortBy: (sortBy) => set({ sortBy }),
         setOffset: (offset) => set({ offset }),
+        changeOffset: (index) =>
+          set((state) => ({ offset: Math.ceil(index * state.limit) })),
         flipOrder: () =>
           set((state) => ({
             sortOrder: state.sortOrder === "asc" ? "desc" : "asc",
@@ -84,6 +88,7 @@ export const useOptionsStore = create<OptionsState>()(
       }) => rest,
     },
   ),
+  shallow,
 );
 
 export const useOptionsActions = () =>

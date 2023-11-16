@@ -34,6 +34,8 @@ export interface OptionsParams {
   sortOrder: string;
   limit: number;
   offset: number;
+  // this is to please ts
+  [key: string]: string | number | boolean;
 }
 
 export interface DomainState {
@@ -54,6 +56,7 @@ export interface MovieList {
 export interface Movie {
   id: number;
   title: string;
+  year: string;
   runtime: number;
   count_watched: number;
   tmdb_id: number;
@@ -65,6 +68,13 @@ export interface Movie {
   overview: string;
   all_watched: string;
   showIfDuplicate: number;
+  imdb_rating: number;
+  director: string;
+  production_countries: string;
+  actors: string;
+  genres: string;
+  resolution: string;
+  location: string;
 }
 
 export interface Movies {
