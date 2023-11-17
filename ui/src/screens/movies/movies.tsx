@@ -25,6 +25,8 @@ const Movies = () => {
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error</div>;
 
+  // console.log("data", data);
+
   const total = data?.total ?? 0;
   const pageCount = Math.ceil(total / 50);
 
