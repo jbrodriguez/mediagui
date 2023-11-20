@@ -7,6 +7,7 @@ import (
 
 func (c *Core) FixMovie(dto *domain.FixMovieDTO) *domain.Movie {
 	movie := c.storage.GetMovie(dto.ID)
+	movie.Tmdb_Id = dto.TmdbID
 
 	// 3 operations, rescrape, update and cache
 	m, err := c.scraper.ReScrape(movie)
@@ -17,9 +18,11 @@ func (c *Core) FixMovie(dto *domain.FixMovieDTO) *domain.Movie {
 
 	c.storage.UpdateMovie(m)
 
-	// c.wg.Add(1)
+	c.wg.Add(1)
 	// go c.cache.CacheImages(movie, true)
 	c.cache.CacheImages(movie, true)
+
+	c.wg.Wait()
 
 	return m
 }

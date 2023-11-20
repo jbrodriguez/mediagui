@@ -156,7 +156,7 @@ func (s *Storage) regularSearch(options *domain.Options) (total uint64, movies [
 	// self.searchArgs = args
 
 	countQuery := fmt.Sprintf(`select count(*) from movie dt, %s vt
-		where vt.%s match ? and dt.rowid = vt.docid;`,
+		where vt.%s match ? and dt.rowid = vt.rowid;`,
 		"movie"+options.FilterBy, "movie"+options.FilterBy)
 
 	stmt, err := tx.Prepare(countQuery)
@@ -180,7 +180,7 @@ func (s *Storage) regularSearch(options *domain.Options) (total uint64, movies [
 			dt.all_watched, dt.count_watched, dt.score, dt.director, dt.writer, dt.actors,
 			dt.awards, dt.imdb_rating, dt.imdb_votes, dt.show_if_duplicate, dt.stub
 			from movie dt, %s vt
-			where vt.%s match ? and dt.rowid = vt.docid order by dt.%s %s limit ? offset ?`,
+			where vt.%s match ? and dt.rowid = vt.rowid order by dt.%s %s limit ? offset ?`,
 		"movie"+options.FilterBy, "movie"+options.FilterBy, options.SortBy, options.SortOrder)
 
 	stmt, err = tx.Prepare(listQuery)

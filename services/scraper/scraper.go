@@ -4,7 +4,6 @@ import (
 	"errors"
 
 	"github.com/jbrodriguez/go-tmdb"
-	"github.com/labstack/gommon/log"
 
 	"encoding/json"
 	"fmt"
@@ -50,7 +49,7 @@ func (s *Scraper) Start() error {
 
 // Stop -
 func (s *Scraper) Stop() {
-	log.Info("stopped service scraper ...")
+	logger.Blue("stopped service scraper ...")
 }
 
 func (s *Scraper) ScrapeMovie(movie *domain.Movie) (code int, e error) {
@@ -91,7 +90,7 @@ func (s *Scraper) ScrapeMovie(movie *domain.Movie) (code int, e error) {
 }
 
 func (s *Scraper) ReScrape(movie *domain.Movie) (*domain.Movie, error) {
-	// mlog.Info("RESCRAPE REQUESTED (%d) [%d] %s", wid, movie.ID, movie.Title)
+	logger.Blue("RESCRAPE REQUESTED TMDB [%d]", movie.Tmdb_Id)
 
 	now := time.Now().UTC().Format(time.RFC3339)
 	movie.Modified = now
@@ -107,7 +106,7 @@ func (s *Scraper) ReScrape(movie *domain.Movie) (*domain.Movie, error) {
 	movie.BaseURL = s.tmdb.BaseUrl
 	movie.SecureBaseURL = s.tmdb.SecureBaseUrl
 
-	logger.Blue("RESCRAPE COMPLETED [%d] %s", movie.ID, movie.Title)
+	logger.Blue("RESCRAPE COMPLETED TMDB [%d]", movie.Tmdb_Id)
 
 	// msg := &pubsub.Message{Payload: s.dto}
 	// s.bus.Pub(msg, "/event/movie/rescraped")
@@ -118,7 +117,7 @@ func (s *Scraper) ReScrape(movie *domain.Movie) (*domain.Movie, error) {
 func scrape(client *tmdb.Tmdb, id uint64, movie *domain.Movie, agent string) error {
 	gmr, err := client.GetMovie(id)
 	if err != nil {
-		return fmt.Errorf("FAILED GETTING MOVIE [%s]", movie.Title)
+		return fmt.Errorf("FAILED GETTING MOVIE [%d]", movie.Tmdb_Id)
 	}
 
 	movie.Title = gmr.Title
