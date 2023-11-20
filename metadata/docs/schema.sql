@@ -4,6 +4,7 @@ DROP TABLE IF EXISTS moviegenre;
 DROP TABLE IF EXISTS moviecountry;
 DROP TABLE IF EXISTS moviedirector;
 DROP TABLE IF EXISTS movieactor;
+DROP TABLE IF EXISTS movielocation;
 
 DROP INDEX IF EXISTS movie_filetype_idx;
 DROP INDEX IF EXISTS movie_location_idx;
@@ -33,6 +34,11 @@ DROP TRIGGER IF EXISTS actor_ai;
 DROP TRIGGER IF EXISTS actor_au;
 DROP TRIGGER IF EXISTS actor_bd;
 DROP TRIGGER IF EXISTS actor_bu;
+
+DROP TRIGGER IF EXISTS location_ai;
+DROP TRIGGER IF EXISTS location_au;
+DROP TRIGGER IF EXISTS location_bd;
+DROP TRIGGER IF EXISTS location_bu;
 
 CREATE TABLE movie
 (
