@@ -1,6 +1,6 @@
 // import React from "react";
 
-import type { Movies, OptionsParams } from "~/types";
+import type { Movies, OptionsParams, Movie } from "~/types";
 
 const encode = (params: OptionsParams): string => {
   const str = [];
@@ -23,6 +23,25 @@ export async function getMovies(params: {
   const response = await fetch(
     `${apiEndpoint}${params.url}?${encode(params.args)}`,
   );
+  // if (!response.ok) {
+  //   throw new Error(response.statusText);
+  // }
+
+  return await response.json();
+}
+
+export async function fixMovie(params: {
+  id: number;
+  tmdb_id: number;
+}): Promise<Movie> {
+  console.log("fixMovie", params);
+  const response = await fetch(`${apiEndpoint}/movies/${params.id}/fix`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(params),
+  });
   // if (!response.ok) {
   //   throw new Error(response.statusText);
   // }

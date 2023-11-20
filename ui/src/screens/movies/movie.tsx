@@ -9,15 +9,17 @@ import { Rating } from "~/shared/components/rating";
 import { Calendar } from "~/shared/components/calendar";
 
 interface MovieProps {
+  index: number;
   item: Movie;
+  onFixMovie: ({ index, tmdb_id }: { index: number; tmdb_id: number }) => void;
 }
 
-const Movie: React.FC<MovieProps> = ({ item }) => {
-  const [tmdb, setTmdb] = React.useState(item.tmdb_id);
+const Movie: React.FC<MovieProps> = ({ index, item, onFixMovie }) => {
+  const [value, setValue] = React.useState<number>();
   // const bgImage = `http://localhost:7623/img/b${item.backdrop}`;
 
   React.useEffect(() => {
-    setTmdb(item.tmdb_id);
+    setValue(item.tmdb_id);
   }, [item.tmdb_id]);
 
   const shows =
@@ -26,6 +28,15 @@ const Movie: React.FC<MovieProps> = ({ item }) => {
           .split("|")
           .map((show) => format(new Date(show), "MMM dd, yyyy"))
       : [];
+
+  const onValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setValue(+e.target.value);
+  };
+
+  const onFix = () => {
+    // console.log("fix", index, value, onFixMovie);
+    onFixMovie({ index, tmdb_id: value ?? 0 });
+  };
 
   return (
     <article
@@ -129,10 +140,15 @@ const Movie: React.FC<MovieProps> = ({ item }) => {
             <div className="flex flex-row">
               <input
                 type="number"
-                value={tmdb}
+                defaultValue={item.tmdb_id}
+                value={value}
+                onChange={onValueChange}
                 className="bg-white text-slate-600 px-2 py-1"
               />
-              <button className="bg-blue-700 text-white px-4 py-1 ml-2">
+              <button
+                className="bg-blue-700 text-white px-4 py-1 ml-2"
+                onClick={onFix}
+              >
                 fix
               </button>
               <button className="bg-blue-700 text-white px-2 py-1 ml-2">

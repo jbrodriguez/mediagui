@@ -5,7 +5,9 @@ import (
 	"mediagui/logger"
 )
 
-func (c *Core) FixMovie(movie *domain.Movie) *domain.Movie {
+func (c *Core) FixMovie(dto *domain.FixMovieDTO) *domain.Movie {
+	movie := c.storage.GetMovie(dto.ID)
+
 	// 3 operations, rescrape, update and cache
 	m, err := c.scraper.ReScrape(movie)
 	if err != nil {

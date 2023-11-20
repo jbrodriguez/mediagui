@@ -3,7 +3,7 @@ import React from "react";
 import useSWR from "swr";
 import ReactPaginate from "react-paginate";
 
-import { getMovies } from "~/api";
+import { getMovies, fixMovie } from "~/api";
 import { useOptionsStore, useOptionsActions } from "~/state/options";
 import Movie from "./movie";
 
@@ -14,7 +14,7 @@ const Movies = () => {
     useOptionsStore();
   const { changeOffset } = useOptionsActions();
 
-  const { data, error, isLoading } = useSWR(
+  const { data, error, mutate, isLoading } = useSWR(
     {
       url: "/movies",
       args: { query, filterBy, sortBy, sortOrder, limit, offset },
@@ -24,15 +24,31 @@ const Movies = () => {
 
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error</div>;
+  if (!data) return <div>No data</div>;
 
   // console.log("data", data);
-
-  const total = data?.total ?? 0;
+  const total = data.total ?? 0;
   const pageCount = Math.ceil(total / 50);
 
   const handlePageClick = (e: { selected: number }) => {
     changeOffset(e.selected);
     setPageIndex(e.selected);
+  };
+
+  const onFixMovie = async ({
+    index,
+    tmdb_id,
+  }: {
+    index: number;
+    tmdb_id: number;
+  }) => {
+    // const index = data.items.findIndex((item) => item.id === id);
+    const id = data.items[index].id;
+    data.items[index] = await fixMovie({ id, tmdb_id });
+    mutate(
+      { items: [...data.items], total: data.total },
+      { revalidate: false },
+    );
   };
 
   return (
@@ -57,7 +73,14 @@ const Movies = () => {
       />
       <div className="mb-2" />
       <div>
-        {data?.items.map((movie) => <Movie key={movie.id} item={movie} />)}
+        {data?.items.map((movie, index) => (
+          <Movie
+            key={movie.id}
+            index={index}
+            item={movie}
+            onFixMovie={onFixMovie}
+          />
+        ))}
       </div>
       <ReactPaginate
         breakLabel="..."

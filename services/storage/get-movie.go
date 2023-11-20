@@ -15,7 +15,7 @@ select rowid, title, original_title, file_title, year, runtime, tmdb_id, imdb_id
 				from movie where rowid = ?
 `
 
-func (s *Storage) GetMovie(id string) *domain.Movie {
+func (s *Storage) GetMovie(id uint64) *domain.Movie {
 	stmt, err := s.db.Prepare(getMovie)
 	if err != nil {
 		log.Fatalf("Unable to prepare transaction: %s", err)
