@@ -1,6 +1,7 @@
 import React from "react";
 
 import { Link } from "react-router-dom";
+import debounce from "lodash.debounce";
 
 import { useOptionsStore, useOptionsActions } from "~/state/options";
 import Chevron from "~/shared/components/chevron";
@@ -18,7 +19,7 @@ const Header: React.FC<HeaderProps> = () => {
       sortByOptions: state.sortByOptions,
     }),
   );
-  const { setFilterBy, setSortBy } = useOptionsActions();
+  const { setFilterBy, setSortBy, setQuery } = useOptionsActions();
 
   const onFilterByChange = (e: React.ChangeEvent<HTMLSelectElement>) =>
     setFilterBy(e.target.value);
@@ -26,8 +27,10 @@ const Header: React.FC<HeaderProps> = () => {
   const onSortByChange = (e: React.ChangeEvent<HTMLSelectElement>) =>
     setSortBy(e.target.value);
 
-  // console.log("filterBy", filterBy);
-  // console.log("setFilterBy", setFilterBy);
+  const updateQuery = debounce((e: React.ChangeEvent<HTMLInputElement>) => {
+    // console.log("search", e.target.value);
+    setQuery(e.target.value);
+  }, 750);
 
   return (
     <>
@@ -62,6 +65,7 @@ const Header: React.FC<HeaderProps> = () => {
                   type="search"
                   className="px-2 text-slate-600 border-r border-l border-slate-200 placeholder-slate-400 shadow-sm outline-0"
                   placeholder="enter search string"
+                  onChange={updateQuery}
                 />
 
                 <select
