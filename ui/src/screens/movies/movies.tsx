@@ -6,9 +6,12 @@ import ReactPaginate from "react-paginate";
 import { getMovies, fixMovie } from "~/api";
 import { useOptionsStore, useOptionsActions } from "~/state/options";
 import Movie from "./movie";
+import { Spinner } from "~/shared/components/spinner";
 
 const Movies = () => {
   const [pageIndex, setPageIndex] = React.useState(0);
+  const [total, setTotal] = React.useState(0);
+  const [items, setItems] = React.useState<Movie[]>([]);
 
   const { query, filterBy, sortBy, sortOrder, limit, offset } =
     useOptionsStore();
@@ -22,12 +25,25 @@ const Movies = () => {
     getMovies,
   );
 
-  if (isLoading) return <div>Loading...</div>;
+  // console.log("data", data?.total);
+
+  React.useEffect(() => {
+    if (data && total !== data.total) {
+      setTotal(data.total);
+    }
+  }, [data, total]);
+
+  React.useEffect(() => {
+    if (data && items !== data.items) {
+      setItems(data.items);
+    }
+  }, [data, items]);
+
   if (error) return <div>Error</div>;
-  if (!data) return <div>No data</div>;
+  // if (!data) return <div>No data</div>;
 
   // console.log("data", data);
-  const total = data.total ?? 0;
+  // const total = data?.total ?? 0;
   const pageCount = Math.ceil(total / 50);
 
   const handlePageClick = (e: { selected: number }) => {
@@ -43,37 +59,41 @@ const Movies = () => {
     tmdb_id: number;
   }) => {
     // const index = data.items.findIndex((item) => item.id === id);
-    const id = data.items[index].id;
-    data.items[index] = await fixMovie({ id, tmdb_id });
-    mutate(
-      { items: [...data.items], total: data.total },
-      { revalidate: false },
-    );
+    const id = items[index].id;
+    items[index] = await fixMovie({ id, tmdb_id });
+    mutate({ items: [...items], total }, { revalidate: false });
   };
 
   return (
-    <div>
-      <ReactPaginate
-        breakLabel="..."
-        nextLabel="Next"
-        onPageChange={handlePageClick}
-        pageRangeDisplayed={5}
-        pageCount={pageCount}
-        previousLabel="Prev"
-        renderOnZeroPageCount={null}
-        forcePage={pageIndex}
-        disableInitialCallback={true}
-        containerClassName="flex flex-row justify-start items-center"
-        pageClassName="px-1"
-        pageLinkClassName="px-4 py-1 flex items-center justify-center p-0 text-gray-500 transition duration-150 ease-in-out hover:bg-light-300"
-        activeLinkClassName="border bg-sky-600 text-neutral-100 cursor-default"
-        breakLinkClassName="text-gray-500"
-        previousLinkClassName="pr-4 py-1 flex items-center justify-center p-0 text-gray-500 transition duration-150 ease-in-out hover:bg-light-300"
-        nextLinkClassName="px-4 py-1 flex items-center justify-center p-0 text-gray-500 transition duration-150 ease-in-out hover:bg-light-300"
-      />
+    <>
+      <div className="flex items-center justify-between">
+        <ReactPaginate
+          breakLabel="..."
+          nextLabel="Next"
+          onPageChange={handlePageClick}
+          pageRangeDisplayed={5}
+          pageCount={pageCount}
+          previousLabel="Prev"
+          renderOnZeroPageCount={null}
+          forcePage={pageIndex}
+          disableInitialCallback={true}
+          containerClassName="flex flex-row justify-start items-center"
+          pageClassName="px-1"
+          pageLinkClassName="px-4 py-1 flex items-center justify-center p-0 text-gray-500 transition duration-150 ease-in-out hover:bg-light-300"
+          activeLinkClassName="border bg-sky-600 text-neutral-100 cursor-default"
+          breakLinkClassName="text-gray-500"
+          previousLinkClassName="pr-4 py-1 flex items-center justify-center p-0 text-gray-500 transition duration-150 ease-in-out hover:bg-light-300"
+          nextLinkClassName="px-4 py-1 flex items-center justify-center p-0 text-gray-500 transition duration-150 ease-in-out hover:bg-light-300"
+        />
+        <div className="flex flex-row items-center">
+          {isLoading ? <Spinner /> : null}
+          <span className="text-slate-500">TOTAL</span>
+          <span className="text-sky-950 font-bold ml-1">{total}</span>
+        </div>
+      </div>
       <div className="mb-2" />
       <div>
-        {data?.items.map((movie, index) => (
+        {items.map((movie, index) => (
           <Movie
             key={movie.id}
             index={index}
@@ -100,7 +120,7 @@ const Movies = () => {
         previousLinkClassName="pr-4 py-1 flex items-center justify-center p-0 text-gray-500 transition duration-150 ease-in-out hover:bg-light-300"
         nextLinkClassName="px-4 py-1 flex items-center justify-center p-0 text-gray-500 transition duration-150 ease-in-out hover:bg-light-300"
       />
-    </div>
+    </>
   );
 };
 
