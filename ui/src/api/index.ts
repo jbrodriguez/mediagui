@@ -65,3 +65,21 @@ export async function copyMovie(params: {
 
   return await response.json();
 }
+
+export async function rateMovie(params: {
+  id: number;
+  score: number; // score
+}): Promise<Movie> {
+  const response = await fetch(`${apiEndpoint}/movies/${params.id}/score`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(params),
+  });
+  // if (!response.ok) {
+  //   throw new Error(response.statusText);
+  // }
+
+  return await response.json();
+}

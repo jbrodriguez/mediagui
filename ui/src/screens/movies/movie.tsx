@@ -13,6 +13,7 @@ interface MovieProps {
   item: Movie;
   onFixMovie: ({ index, tmdb_id }: { index: number; tmdb_id: number }) => void;
   onCopyMovie: ({ index, tmdb_id }: { index: number; tmdb_id: number }) => void;
+  onRateMovie: ({ index, score }: { index: number; score: number }) => void;
 }
 
 const Movie: React.FC<MovieProps> = ({
@@ -20,6 +21,7 @@ const Movie: React.FC<MovieProps> = ({
   item,
   onFixMovie,
   onCopyMovie,
+  onRateMovie,
 }) => {
   const [value, setValue] = React.useState<number>();
   // const bgImage = `http://localhost:7623/img/b${item.backdrop}`;
@@ -40,8 +42,8 @@ const Movie: React.FC<MovieProps> = ({
   };
 
   const onFix = () => onFixMovie({ index, tmdb_id: value ?? 0 });
-
   const onCopy = () => onCopyMovie({ index, tmdb_id: value ?? 0 });
+  const onRating = (score: number) => onRateMovie({ index, score });
 
   return (
     <article
@@ -190,7 +192,7 @@ const Movie: React.FC<MovieProps> = ({
                   {item.score}
                 </span>
               ) : null}
-              <Rating rating={item.score} setRating={() => {}} />
+              <Rating rating={item.score} setRating={onRating} />
               <Calendar />
             </div>
           </div>
