@@ -12,6 +12,7 @@ import { Movies } from "~/screens/movies/movies.tsx";
 import { Import } from "~/screens/import/import.tsx";
 import { Prune } from "~/screens/prune/prune.tsx";
 import { Duplicates } from "~/screens/duplicates/duplicates.tsx";
+import { CoversScreen } from "~/screens/covers/covers.tsx";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
       {
         path: "/duplicates",
         element: <Duplicates />,
+      },
+      {
+        path: "/covers",
+        element: <CoversScreen />,
       },
     ],
   },

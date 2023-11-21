@@ -33,7 +33,7 @@ export const Header: React.FC = () => {
       <nav className="grid grid-cols-12 gap-2 py-2">
         <ul className="col-span-2 flex items-center justify-center py-2 bg-red-600 text-neutral-50">
           <li>
-            <Link to="/">mediaGUI</Link>
+            <Link to="/covers">mediaGUI</Link>
           </li>
         </ul>
 
