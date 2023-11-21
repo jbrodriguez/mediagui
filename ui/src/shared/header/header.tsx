@@ -80,12 +80,8 @@ export const Header: React.FC = () => {
 
                 <span className="mx-2">|</span>
                 <Link to="/import">IMPORT</Link>
-                <span className="ml-2"></span>
-                <Link to="/add">ADD</Link>
               </div>
               <div className="col-span-4 flex justify-end">
-                <Link to="/settings">SETTINGS</Link>
-                <span className="mx-2">|</span>
                 <Link to="/duplicates">DUPLICATES</Link>
                 <Link to="/prune" className="mx-2">
                   PRUNE
