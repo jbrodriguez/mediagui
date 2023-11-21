@@ -2,7 +2,8 @@
 
 import { Outlet } from "react-router-dom";
 
-import Header from "./shared/header/header";
+import { Header } from "./shared/header/header";
+import { Footer } from "./shared/footer/Footer";
 
 function App() {
   return (
@@ -13,7 +14,9 @@ function App() {
       <main>
         <Outlet />
       </main>
-      <footer>footer</footer>
+      <footer>
+        <Footer />
+      </footer>
     </div>
   );
 }

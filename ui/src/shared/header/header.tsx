@@ -6,11 +6,7 @@ import debounce from "lodash.debounce";
 import { useOptionsStore, useOptionsActions } from "~/state/options";
 import Chevron from "~/shared/components/chevron";
 
-interface HeaderProps {
-  title?: string;
-}
-
-const Header: React.FC<HeaderProps> = () => {
+export const Header: React.FC = () => {
   const { filterBy, filterByOptions, sortBy, sortByOptions } = useOptionsStore(
     (state) => ({
       filterBy: state.filterBy,
@@ -102,5 +98,3 @@ const Header: React.FC<HeaderProps> = () => {
     </>
   );
 };
-
-export default Header;
