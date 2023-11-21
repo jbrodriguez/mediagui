@@ -10,8 +10,8 @@ import { Spinner } from "~/shared/components/spinner";
 
 const Movies = () => {
   const [pageIndex, setPageIndex] = React.useState(0);
-  const [total, setTotal] = React.useState(0);
-  const [items, setItems] = React.useState<Movie[]>([]);
+  // const [total, setTotal] = React.useState(0);
+  // const [items, setItems] = React.useState<Movie[]>([]);
 
   const { query, filterBy, sortBy, sortOrder, limit, offset } =
     useOptionsStore();
@@ -23,27 +23,30 @@ const Movies = () => {
       args: { query, filterBy, sortBy, sortOrder, limit, offset },
     },
     getMovies,
+    {
+      keepPreviousData: true,
+    },
   );
 
   // console.log("data", data?.total);
 
-  React.useEffect(() => {
-    if (data && total !== data.total) {
-      setTotal(data.total);
-    }
-  }, [data, total]);
+  // React.useEffect(() => {
+  //   if (data && total !== data.total) {
+  //     setTotal(data.total);
+  //   }
+  // }, [data, total]);
 
-  React.useEffect(() => {
-    if (data && items !== data.items) {
-      setItems(data.items);
-    }
-  }, [data, items]);
+  // React.useEffect(() => {
+  //   if (data && items !== data.items) {
+  //     setItems(data.items);
+  //   }
+  // }, [data, items]);
 
   if (error) return <div>Error</div>;
-  // if (!data) return <div>No data</div>;
+  if (!data) return <div>No data</div>;
 
   // console.log("data", data);
-  // const total = data?.total ?? 0;
+  const total = data.total ?? 0;
   const pageCount = Math.ceil(total / 50);
 
   const handlePageClick = (e: { selected: number }) => {
@@ -59,9 +62,9 @@ const Movies = () => {
     tmdb_id: number;
   }) => {
     // const index = data.items.findIndex((item) => item.id === id);
-    const id = items[index].id;
-    items[index] = await fixMovie({ id, tmdb_id });
-    mutate({ items: [...items], total }, { revalidate: false });
+    const id = data.items[index].id;
+    data.items[index] = await fixMovie({ id, tmdb_id });
+    mutate({ items: [...data.items], total }, { revalidate: false });
   };
 
   return (
@@ -93,7 +96,7 @@ const Movies = () => {
       </div>
       <div className="mb-2" />
       <div>
-        {items.map((movie, index) => (
+        {data.items.map((movie, index) => (
           <Movie
             key={movie.id}
             index={index}
