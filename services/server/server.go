@@ -28,22 +28,22 @@ var upgrader = websocket.Upgrader{
 }
 
 type Server struct {
-	ctx    *domain.Context
-	engine *echo.Echo
-	core   *core.Core
-	ws     *websocket.Conn
+	ctx           *domain.Context
+	engine        *echo.Echo
+	core          *core.Core
+	ws            *websocket.Conn
+	broadcastChan chan any
 }
 
 func Create(ctx *domain.Context, core *core.Core) *Server {
 	return &Server{
-		ctx:  ctx,
-		core: core,
+		ctx:           ctx,
+		core:          core,
+		broadcastChan: ctx.Hub.Sub("socket:broadcast"),
 	}
 }
 
 func (s *Server) Start() error {
-	// s.ctx.Hub.Sub("socket:broadcast", s.onBroadcast)
-
 	s.engine = echo.New()
 
 	s.engine.HideBanner = true
@@ -79,6 +79,8 @@ func (s *Server) Start() error {
 	api.PUT("/movies/:id/fix", s.fixMovie)
 	api.PUT("/movies/:id/copy", s.copyMovie)
 	api.PUT("/movies/:id/duplicate", s.setDuplicate)
+
+	go s.onBroadcast()
 
 	// Always listen on http port, but based on above setting, we could be redirecting to https
 	go func() {
@@ -141,16 +143,18 @@ func (s *Server) wsWrite(packet *domain.Packet) (err error) {
 	return
 }
 
-func (s *Server) onBroadcast(msg any) {
-	message := msg.(*domain.Packet)
+func (s *Server) onBroadcast() {
+	for msg := range s.broadcastChan {
+		message := msg.(*domain.Packet)
 
-	packet := &domain.Packet{
-		Topic:   message.Topic,
-		Payload: message.Payload,
-	}
+		packet := &domain.Packet{
+			Topic:   message.Topic,
+			Payload: message.Payload,
+		}
 
-	err := s.wsWrite(packet)
-	if err != nil {
-		logger.Red("unable to write websocket message: %s", err)
+		err := s.wsWrite(packet)
+		if err != nil {
+			logger.Red("unable to write websocket message: %s", err)
+		}
 	}
 }

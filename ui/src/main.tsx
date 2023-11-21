@@ -8,7 +8,8 @@ import {
 
 import App from "./App.tsx";
 import "./index.css";
-import Movies from "~/screens/movies/movies.tsx";
+import { Movies } from "~/screens/movies/movies.tsx";
+import { Import } from "~/screens/import/import.tsx";
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
       {
         path: "/movies",
         element: <Movies />,
+      },
+      {
+        path: "/import",
+        element: <Import />,
       },
     ],
   },

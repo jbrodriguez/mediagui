@@ -8,7 +8,7 @@ import { useOptionsStore, useOptionsActions } from "~/state/options";
 import Movie from "./movie";
 import { Spinner } from "~/shared/components/spinner";
 
-const Movies = () => {
+export const Movies = () => {
   const [pageIndex, setPageIndex] = React.useState(0);
 
   const { query, filterBy, sortBy, sortOrder, limit, offset } =
@@ -152,5 +152,3 @@ const Movies = () => {
     </>
   );
 };
-
-export default Movies;

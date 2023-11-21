@@ -12,7 +12,11 @@ const encode = (params: OptionsParams): string => {
   return str.join("&");
 };
 
-const apiEndpoint = `${document.location.origin}/api/v1`;
+export const apiEndpoint = `${document.location.origin}/api/v1`;
+
+export const wsEndpoint = `${
+  document.location.protocol === "http:" ? "ws:" : "wss:"
+}//${document.location.host}/ws`;
 
 export async function getMovies(params: {
   url: string;
@@ -100,4 +104,18 @@ export async function watchedMovie(params: {
   // }
 
   return await response.json();
+}
+
+export async function importMovies() {
+  fetch(`${apiEndpoint}/import`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  // if (!response.ok) {
+  //   throw new Error(response.statusText);
+  // }
+
+  return;
 }
