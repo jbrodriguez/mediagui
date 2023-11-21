@@ -10,6 +10,7 @@ import App from "./App.tsx";
 import "./index.css";
 import { Movies } from "~/screens/movies/movies.tsx";
 import { Import } from "~/screens/import/import.tsx";
+import { Prune } from "~/screens/prune/prune.tsx";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
       {
         path: "/import",
         element: <Import />,
+      },
+      {
+        path: "/prune",
+        element: <Prune />,
       },
     ],
   },

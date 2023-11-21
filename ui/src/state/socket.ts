@@ -19,6 +19,10 @@ export const useSocketStore = create<SocketState>()((set, get) => ({
   messages: [],
   actions: {
     connect: (url) => {
+      if (get().socket) {
+        return;
+      }
+
       const socket = new WebSocket(url);
 
       socket.onopen = () => {
@@ -43,6 +47,9 @@ export const useSocketStore = create<SocketState>()((set, get) => ({
     },
     send: (message) => {
       get().socket?.send(JSON.stringify(message));
+    },
+    close: () => {
+      get().socket?.close();
     },
   },
   // connect: (url) => {

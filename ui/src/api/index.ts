@@ -119,3 +119,17 @@ export async function importMovies() {
 
   return;
 }
+
+export async function pruneMovies() {
+  fetch(`${apiEndpoint}/prune`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  // if (!response.ok) {
+  //   throw new Error(response.statusText);
+  // }
+
+  return;
+}
