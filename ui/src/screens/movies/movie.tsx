@@ -12,9 +12,15 @@ interface MovieProps {
   index: number;
   item: Movie;
   onFixMovie: ({ index, tmdb_id }: { index: number; tmdb_id: number }) => void;
+  onCopyMovie: ({ index, tmdb_id }: { index: number; tmdb_id: number }) => void;
 }
 
-const Movie: React.FC<MovieProps> = ({ index, item, onFixMovie }) => {
+const Movie: React.FC<MovieProps> = ({
+  index,
+  item,
+  onFixMovie,
+  onCopyMovie,
+}) => {
   const [value, setValue] = React.useState<number>();
   // const bgImage = `http://localhost:7623/img/b${item.backdrop}`;
 
@@ -33,10 +39,9 @@ const Movie: React.FC<MovieProps> = ({ index, item, onFixMovie }) => {
     setValue(+e.target.value);
   };
 
-  const onFix = () => {
-    // console.log("fix", index, value, onFixMovie);
-    onFixMovie({ index, tmdb_id: value ?? 0 });
-  };
+  const onFix = () => onFixMovie({ index, tmdb_id: value ?? 0 });
+
+  const onCopy = () => onCopyMovie({ index, tmdb_id: value ?? 0 });
 
   return (
     <article
@@ -151,7 +156,10 @@ const Movie: React.FC<MovieProps> = ({ index, item, onFixMovie }) => {
               >
                 fix
               </button>
-              <button className="bg-blue-700 text-white px-2 py-1 ml-2">
+              <button
+                className="bg-blue-700 text-white px-2 py-1 ml-2"
+                onClick={onCopy}
+              >
                 copy
               </button>
               <span className="ml-2 flex items-center">

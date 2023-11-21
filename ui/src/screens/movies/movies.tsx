@@ -3,15 +3,13 @@ import React from "react";
 import useSWR from "swr";
 import ReactPaginate from "react-paginate";
 
-import { getMovies, fixMovie } from "~/api";
+import { getMovies, fixMovie, copyMovie } from "~/api";
 import { useOptionsStore, useOptionsActions } from "~/state/options";
 import Movie from "./movie";
 import { Spinner } from "~/shared/components/spinner";
 
 const Movies = () => {
   const [pageIndex, setPageIndex] = React.useState(0);
-  // const [total, setTotal] = React.useState(0);
-  // const [items, setItems] = React.useState<Movie[]>([]);
 
   const { query, filterBy, sortBy, sortOrder, limit, offset } =
     useOptionsStore();
@@ -27,20 +25,6 @@ const Movies = () => {
       keepPreviousData: true,
     },
   );
-
-  // console.log("data", data?.total);
-
-  // React.useEffect(() => {
-  //   if (data && total !== data.total) {
-  //     setTotal(data.total);
-  //   }
-  // }, [data, total]);
-
-  // React.useEffect(() => {
-  //   if (data && items !== data.items) {
-  //     setItems(data.items);
-  //   }
-  // }, [data, items]);
 
   if (error) return <div>Error</div>;
   if (!data) return <div>No data</div>;
@@ -64,6 +48,19 @@ const Movies = () => {
     // const index = data.items.findIndex((item) => item.id === id);
     const id = data.items[index].id;
     data.items[index] = await fixMovie({ id, tmdb_id });
+    mutate({ items: [...data.items], total }, { revalidate: false });
+  };
+
+  const onCopyMovie = async ({
+    index,
+    tmdb_id,
+  }: {
+    index: number;
+    tmdb_id: number;
+  }) => {
+    // const index = data.items.findIndex((item) => item.id === id);
+    const id = data.items[index].id;
+    data.items[index] = await copyMovie({ id, tmdb_id });
     mutate({ items: [...data.items], total }, { revalidate: false });
   };
 
@@ -102,6 +99,7 @@ const Movies = () => {
             index={index}
             item={movie}
             onFixMovie={onFixMovie}
+            onCopyMovie={onCopyMovie}
           />
         ))}
       </div>

@@ -12,11 +12,11 @@ import (
 )
 
 func (s *Storage) CopyMovie(movie *domain.Movie) *domain.Movie {
-	logger.Blue("STARTED COPYING MOVIE WATCHED TIMES [%d] %s (%s)", movie.ID, movie.Title, movie.Last_Watched)
+	logger.Blue("STARTED COPYING MOVIE [%d] %s", movie.ID, movie.Title)
 
 	now := time.Now().UTC().Format(time.RFC3339)
 
-	stmt, err := s.db.Prepare("select all_watched, tmdb_id from movie where rowid = ?")
+	stmt, err := s.db.Prepare("select all_watched, tmdb_id, score from movie where rowid = ?")
 	if err != nil {
 		log.Fatalf("at prepare: %s", err)
 	}
@@ -24,7 +24,8 @@ func (s *Storage) CopyMovie(movie *domain.Movie) *domain.Movie {
 	// get all watched times for the movie I'm copying from
 	var when string
 	var tmdb uint64
-	err = stmt.QueryRow(movie.Tmdb_Id).Scan(&when, &tmdb)
+	var score uint64
+	err = stmt.QueryRow(movie.Tmdb_Id).Scan(&when, &tmdb, &score)
 	if err != nil {
 		log.Fatalf("at queryrow: %s", err)
 	}
@@ -64,6 +65,7 @@ func (s *Storage) CopyMovie(movie *domain.Movie) *domain.Movie {
 								last_watched = ?,
 								all_watched = ?,
 								count_watched = ?,
+								score = ?
 								modified = ?
 								where rowid = ?`)
 	if err != nil {
@@ -72,14 +74,14 @@ func (s *Storage) CopyMovie(movie *domain.Movie) *domain.Movie {
 	}
 	defer lib.Close(stmt)
 
-	_, err = stmt.Exec(lastWatched, allWatched, countWatched, now, movie.ID)
+	_, err = stmt.Exec(lastWatched, allWatched, countWatched, score, now, movie.ID)
 	if err != nil {
 		rollback(tx)
 		log.Fatalf("at exec: %s", err)
 	}
 
 	commit(tx)
-	logger.Blue("FINISHED COPYING MOVIE WATCHED TIMES [%d] %s", movie.ID, movie.Title)
+	logger.Blue("FINISHED COPYING MOVIE [%d] %s", movie.ID, movie.Title)
 
 	movie.All_Watched = allWatched
 	movie.Count_Watched = countWatched
