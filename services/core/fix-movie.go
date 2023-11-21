@@ -5,7 +5,7 @@ import (
 	"mediagui/logger"
 )
 
-func (c *Core) FixMovie(dto *domain.FixMovieDTO) *domain.Movie {
+func (c *Core) FixMovie(dto *domain.MovieDTO) *domain.Movie {
 	movie := c.storage.GetMovie(dto.ID)
 	movie.Tmdb_Id = dto.TmdbID
 
