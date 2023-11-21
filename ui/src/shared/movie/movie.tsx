@@ -23,7 +23,7 @@ interface MovieProps {
   }) => void;
 }
 
-const Movie: React.FC<MovieProps> = ({
+export const MovieScreen: React.FC<MovieProps> = ({
   index,
   item,
   onFixMovie,
@@ -210,5 +210,3 @@ const Movie: React.FC<MovieProps> = ({
     </article>
   );
 };
-
-export default Movie;

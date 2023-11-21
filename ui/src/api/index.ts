@@ -22,8 +22,6 @@ export async function getMovies(params: {
   url: string;
   args: OptionsParams;
 }): Promise<Movies> {
-  console.log("getMovies", params.url, params.args);
-  console.log("document.location", document.location);
   const response = await fetch(
     `${apiEndpoint}${params.url}?${encode(params.args)}`,
   );
@@ -132,4 +130,13 @@ export async function pruneMovies() {
   // }
 
   return;
+}
+
+export async function getDuplicates(url: string): Promise<Movies> {
+  const response = await fetch(`${apiEndpoint}${url}`);
+  // if (!response.ok) {
+  //   throw new Error(response.statusText);
+  // }
+
+  return await response.json();
 }

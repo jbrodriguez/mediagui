@@ -5,7 +5,7 @@ import ReactPaginate from "react-paginate";
 
 import { getMovies, fixMovie, copyMovie, rateMovie, watchedMovie } from "~/api";
 import { useOptionsStore, useOptionsActions } from "~/state/options";
-import Movie from "./movie";
+import { MovieScreen } from "~/shared/movie/movie";
 import { Spinner } from "~/shared/components/spinner";
 
 export const Movies = () => {
@@ -120,7 +120,7 @@ export const Movies = () => {
       <div className="mb-2" />
       <div>
         {data.items.map((movie, index) => (
-          <Movie
+          <MovieScreen
             key={movie.id}
             index={index}
             item={movie}
