@@ -2,7 +2,6 @@ package server
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/labstack/echo/v4"
 
@@ -11,15 +10,13 @@ import (
 )
 
 func (s *Server) setMovieWatched(c echo.Context) error {
-	var movie domain.Movie
-	if err := c.Bind(&movie); err != nil {
-		logger.Yellow("Unable to obtain setMovieWatched: %s", err.Error())
+	var dto domain.MovieDTO
+	if err := c.Bind(&dto); err != nil {
+		logger.Yellow("Unable to bind watchedMovie body: %s", err.Error())
 		return c.JSON(http.StatusBadRequest, nil)
 	}
 
-	movie.ID, _ = strconv.ParseUint(c.Param("id"), 0, 64)
-
-	r := s.core.SetMovieWatched(&movie)
+	r := s.core.SetMovieWatched(&dto)
 
 	return c.JSON(http.StatusOK, &r)
 }

@@ -16,17 +16,7 @@ func (s *Storage) SetMovieWatched(movie *domain.Movie) *domain.Movie {
 
 	now := time.Now().UTC().Format(time.RFC3339)
 
-	stmt, err := s.db.Prepare("select all_watched from movie where rowid = ?")
-	if err != nil {
-		log.Fatalf("at prepare: %s", err)
-	}
-
-	// get all watched times from the db
-	var when string
-	err = stmt.QueryRow(movie.ID).Scan(&when)
-	if err != nil {
-		log.Fatalf("at queryrow: %s", err)
-	}
+	when := movie.All_Watched
 
 	// create an array with all watched times
 	var watchedTimes []string
@@ -59,7 +49,7 @@ func (s *Storage) SetMovieWatched(movie *domain.Movie) *domain.Movie {
 		log.Fatalf("at begin: %s", err)
 	}
 
-	stmt, err = tx.Prepare(`update movie set
+	stmt, err := tx.Prepare(`update movie set
 								last_watched = ?,
 								all_watched = ?,
 								count_watched = ?,

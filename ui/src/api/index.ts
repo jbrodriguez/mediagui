@@ -83,3 +83,21 @@ export async function rateMovie(params: {
 
   return await response.json();
 }
+
+export async function watchedMovie(params: {
+  id: number;
+  watched: string;
+}): Promise<Movie> {
+  const response = await fetch(`${apiEndpoint}/movies/${params.id}/watched`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(params),
+  });
+  // if (!response.ok) {
+  //   throw new Error(response.statusText);
+  // }
+
+  return await response.json();
+}

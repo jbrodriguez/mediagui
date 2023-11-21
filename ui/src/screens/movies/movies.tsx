@@ -3,7 +3,7 @@ import React from "react";
 import useSWR from "swr";
 import ReactPaginate from "react-paginate";
 
-import { getMovies, fixMovie, copyMovie, rateMovie } from "~/api";
+import { getMovies, fixMovie, copyMovie, rateMovie, watchedMovie } from "~/api";
 import { useOptionsStore, useOptionsActions } from "~/state/options";
 import Movie from "./movie";
 import { Spinner } from "~/shared/components/spinner";
@@ -77,6 +77,19 @@ const Movies = () => {
     mutate({ items: [...data.items], total }, { revalidate: false });
   };
 
+  const onWatchedMovie = async ({
+    index,
+    watched,
+  }: {
+    index: number;
+    watched: string;
+  }) => {
+    // const index = data.items.findIndex((item) => item.id === id);
+    const id = data.items[index].id;
+    data.items[index] = await watchedMovie({ id, watched });
+    mutate({ items: [...data.items], total }, { revalidate: false });
+  };
+
   return (
     <>
       <div className="flex items-center justify-between">
@@ -114,6 +127,7 @@ const Movies = () => {
             onFixMovie={onFixMovie}
             onCopyMovie={onCopyMovie}
             onRateMovie={onRateMovie}
+            onWatchedMovie={onWatchedMovie}
           />
         ))}
       </div>
