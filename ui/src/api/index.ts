@@ -1,6 +1,6 @@
 // import React from "react";
 
-import type { Movies, OptionsParams, Movie } from "~/types";
+import type { Movies, OptionsParams, Movie, ConfigState } from "~/types";
 
 const encode = (params: OptionsParams): string => {
   const str = [];
@@ -17,6 +17,15 @@ export const apiEndpoint = `${document.location.origin}/api/v1`;
 export const wsEndpoint = `${
   document.location.protocol === "http:" ? "ws:" : "wss:"
 }//${document.location.host}/ws`;
+
+export async function getConfig(): Promise<ConfigState> {
+  const response = await fetch(`${apiEndpoint}/config`);
+  // if (!response.ok) {
+  //   throw new Error(response.statusText);
+  // }
+
+  return await response.json();
+}
 
 export async function getMovies(params: {
   url: string;

@@ -9,9 +9,8 @@ export interface RootState {
 
 export interface ConfigState {
   version: string;
-  unraidMode: boolean;
   unraidHosts: string[];
-  mediaFolders: string[];
+  mediaFolder: string[];
 }
 
 export interface OptionsState {

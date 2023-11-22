@@ -1,6 +1,13 @@
 import React from "react";
 
+import useSWR from "swr";
+
+import { getConfig } from "~/api";
+import { Spinner } from "~/shared/components/spinner";
+
 export const Footer: React.FC = () => {
+  const { data, isLoading } = useSWR("/config", getConfig);
+
   return (
     <section className="flex flex-row items-center justify-between bg-neutral-100 p-2 mt-4 mb-4">
       <div>
@@ -10,8 +17,14 @@ export const Footer: React.FC = () => {
         </a>
       </div>
       <div className="text-red-600">
-        <span>mediaGUI &nbsp;</span>
-        <span>v1.0</span>
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          <>
+            <span>mediaGUI &nbsp;</span>
+            <span>v{data?.version}</span>
+          </>
+        )}
       </div>
       <div className="flex flex-row items-center">
         <a
