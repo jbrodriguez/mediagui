@@ -1,6 +1,7 @@
 import React from "react";
 
 import type { Movie } from "~/types";
+import { hourMinute } from "~/lib/hour-minute";
 
 interface Props {
   movie: Movie;
@@ -24,7 +25,7 @@ export const CoverScreen: React.FC<Props> = ({ movie }) => {
         <div className="flex justify-between text-gray-500">
           <span>{movie.year}</span>
           <span>{movie.imdb_rating}</span>
-          <span>{movie.runtime}</span>
+          <span>{hourMinute(movie.runtime)}</span>
         </div>
       </div>
     </div>
