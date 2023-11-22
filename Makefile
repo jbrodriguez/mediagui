@@ -5,8 +5,7 @@
 # $ make serve
 #
 
-mb_version := $(shell cat ../VERSION)
-mb_count := $(shell git rev-list HEAD --count)
+mb_date := $(shell date '+%Y.%m.%d')
 mb_hash := $(shell git rev-parse --short HEAD)
 
 # binary name to kill/restart
@@ -23,28 +22,20 @@ clean:
 	go clean
 
 protobuf:
-	protoc -I mediaagent/ mediaagent/agent.proto --go_out=plugins=grpc:mediaagent
- 
-# run formatting tool and build
-build: clean
+	protoc --go_out=. --go_opt=paths=source_relative --go-drpc_out=. --go-drpc_opt=paths=source_relative import.proto
+
+local: clean
+	pushd ./ui && npm run build && popd
 	go build fmt
-	go build -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v -o ${PROG}
-
-buildx: clean
-	go build fmt
-	env GOOS=linux GOARCH=amd64 go build -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v -o ${PROG}
-
-agentx: clean
-	env GOOS=linux GOARCH=amd64 go build -tags agent -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v -o agentx agent.go
-
-agent: clean
-	go build -tags agent -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v -o agentx agent.go
+	go build -ldflags "-X main.Version=$(mb_date)-$(mb_hash)" -v -o ${PROG}
+	go build -ldflags "-X main.Version=$(mb_date)-$(mb_hash)" -v -o agentx agent.go
 
 release: clean
+	pushd ./ui && npm run build && popd
 	go build fmt
-	go build -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v -o ${PROG}
-	env GOOS=linux GOARCH=amd64 go build -tags agent -ldflags "-X main.Version=$(mb_version)-$(mb_count).$(mb_hash)" -v -o agentx agent.go
- 
+	GOOS=linux GOARCH=amd64 go build -ldflags "-X main.Version=$(mb_date)-$(mb_hash)" -v -o ${PROG}
+	GOOS=linux GOARCH=amd64 go build -ldflags "-X main.Version=$(mb_date)-$(mb_hash)" -v -o agentx agent.go
+
 # run unit tests with code coverage
 test: 
 	go test -v
