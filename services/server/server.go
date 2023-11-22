@@ -139,6 +139,9 @@ func (s *Server) wsRead() (err error) {
 }
 
 func (s *Server) wsWrite(packet *domain.Packet) (err error) {
+	if (s.ws == nil) || (s.ws.RemoteAddr() == nil) {
+		return
+	}
 	err = s.ws.WriteJSON(packet)
 	return
 }
