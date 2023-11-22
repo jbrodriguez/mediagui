@@ -43,14 +43,15 @@ Movies View
   - [vue-cli](https://cli.vuejs.org/)
   - [vuex modules](https://vuex.vuejs.org/guide/modules.html)
 
-- 5th Iteration [(code)](https://github.com/jbrodriguez/mediagui/master) <br />
+- 5th Iteration [(code)](https://github.com/jbrodriguez/mediagui/tree/master) <br />
   To learn:
 
   - [gRPC](https://gprc.io/)
 
 - 6th Iteration [(code)](https://github.com/jbrodriguez/mediagui/) <br />
   To learn:
-  - modernize stack, based on vitejs
+
+  - [swr](https://swr.vercel.app/)
 
 ## Summary
 
@@ -58,6 +59,8 @@ Movies View
 
 - update stack to vitejs
 - modernize go code
+- i touch this project sparingly, so I'm switching back to react for easier maintenance
+- swr for data fetching
 
 ### 5th Iteration
 
