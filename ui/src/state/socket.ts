@@ -32,7 +32,6 @@ export const useSocketStore = create<SocketState>()((set, get) => ({
 
       socket.onmessage = (event) => {
         const packet: Packet = JSON.parse(event.data);
-        console.log("packet", packet);
         const messages =
           packet.topic === "import:begin" || packet.topic === "prune:begin"
             ? [packet.payload]
