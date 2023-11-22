@@ -58,7 +58,7 @@ export const MovieScreen: React.FC<MovieProps> = ({
     <article
       className="bg-cover bg-center bg-no-repeat pb-2 mb-4"
       style={{
-        backgroundImage: `url/img/b${item.backdrop})`,
+        backgroundImage: `url(/img/b${item.backdrop})`,
       }}
     >
       {/* title, year */}
