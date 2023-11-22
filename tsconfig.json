@@ -1,4 +1,0 @@
-// workaround - https://github.com/vuejs/vetur/issues/423#issuecomment-384255018
-{
-	"extends": "./client/tsconfig.json"
-}

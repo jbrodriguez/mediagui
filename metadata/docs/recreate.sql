@@ -1,3 +1,5 @@
+ALTER TABLE movie RENAME TO tmp_movie;
+
 DROP TABLE IF EXISTS movie;
 DROP TABLE IF EXISTS movietitle;
 DROP TABLE IF EXISTS moviegenre;
@@ -80,109 +82,113 @@ CREATE INDEX movie_location_idx ON movie (location);
 CREATE INDEX movie_filetype_idx ON movie (filetype);
 
 /* titles */
-CREATE VIRTUAL TABLE movietitle USING fts4(content="movie", title, original_title, file_title);
+CREATE VIRTUAL TABLE movietitle USING fts5(content="movie", title, original_title, file_title);
 CREATE TRIGGER movie_bu BEFORE UPDATE ON movie BEGIN
-	DELETE FROM movietitle WHERE docid=old.rowid;
+	DELETE FROM movietitle WHERE rowid=old.rowid;
 END;
 
 CREATE TRIGGER movie_bd BEFORE DELETE ON movie BEGIN
-	DELETE FROM movietitle WHERE docid=old.rowid;
+	DELETE FROM movietitle WHERE rowid=old.rowid;
 END;
 
 CREATE TRIGGER movie_au AFTER UPDATE ON movie BEGIN
-	INSERT INTO movietitle(docid, title, original_title, file_title) VALUES (new.rowid, new.title, new.original_title, new.file_title);
+	INSERT INTO movietitle(rowid, title, original_title, file_title) VALUES (new.rowid, new.title, new.original_title, new.file_title);
 END;
 
 CREATE TRIGGER movie_ai AFTER INSERT ON movie BEGIN
-	INSERT INTO movietitle(docid, title, original_title, file_title) VALUES (new.rowid, new.title, new.original_title, new.file_title);
+	INSERT INTO movietitle(rowid, title, original_title, file_title) VALUES (new.rowid, new.title, new.original_title, new.file_title);
 END;
 
 /* genres */
-CREATE VIRTUAL TABLE moviegenre USING fts4(content="movie", genres);
+CREATE VIRTUAL TABLE moviegenre USING fts5(content="movie", genres);
 CREATE TRIGGER genre_bu BEFORE UPDATE ON movie BEGIN
-  DELETE FROM moviegenre WHERE docid=old.rowid;
+  DELETE FROM moviegenre WHERE rowid=old.rowid;
 END;
 
 CREATE TRIGGER genre_bd BEFORE DELETE ON movie BEGIN
-  DELETE FROM moviegenre WHERE docid=old.rowid;
+  DELETE FROM moviegenre WHERE rowid=old.rowid;
 END;
 
 CREATE TRIGGER genre_au AFTER UPDATE ON movie BEGIN
-  INSERT INTO moviegenre(docid, genres) VALUES (new.rowid, new.genres);
+  INSERT INTO moviegenre(rowid, genres) VALUES (new.rowid, new.genres);
 END;
 
 CREATE TRIGGER genre_ai AFTER INSERT ON movie BEGIN
-  INSERT INTO moviegenre(docid, genres) VALUES (new.rowid, new.genres);
+  INSERT INTO moviegenre(rowid, genres) VALUES (new.rowid, new.genres);
 END;
 
 /* country */
-CREATE VIRTUAL TABLE moviecountry USING fts4(content="movie", countries);
+CREATE VIRTUAL TABLE moviecountry USING fts5(content="movie", countries);
 CREATE TRIGGER country_bu BEFORE UPDATE ON movie BEGIN
-  DELETE FROM moviecountry WHERE docid=old.rowid;
+  DELETE FROM moviecountry WHERE rowid=old.rowid;
 END;
 
 CREATE TRIGGER country_bd BEFORE DELETE ON movie BEGIN
-  DELETE FROM moviecountry WHERE docid=old.rowid;
+  DELETE FROM moviecountry WHERE rowid=old.rowid;
 END;
 
 CREATE TRIGGER country_au AFTER UPDATE ON movie BEGIN
-  INSERT INTO moviecountry(docid, countries) VALUES (new.rowid, new.countries);
+  INSERT INTO moviecountry(rowid, countries) VALUES (new.rowid, new.countries);
 END;
 
 CREATE TRIGGER country_ai AFTER INSERT ON movie BEGIN
-  INSERT INTO moviecountry(docid, countries) VALUES (new.rowid, new.countries);
+  INSERT INTO moviecountry(rowid, countries) VALUES (new.rowid, new.countries);
 END;
 
 /* director */
-CREATE VIRTUAL TABLE moviedirector USING fts4(content="movie", director);
+CREATE VIRTUAL TABLE moviedirector USING fts5(content="movie", director);
 CREATE TRIGGER director_bu BEFORE UPDATE ON movie BEGIN
-  DELETE FROM moviedirector WHERE docid=old.rowid;
+  DELETE FROM moviedirector WHERE rowid=old.rowid;
 END;
 
 CREATE TRIGGER director_bd BEFORE DELETE ON movie BEGIN
-  DELETE FROM moviedirector WHERE docid=old.rowid;
+  DELETE FROM moviedirector WHERE rowid=old.rowid;
 END;
 
 CREATE TRIGGER director_au AFTER UPDATE ON movie BEGIN
-  INSERT INTO moviedirector(docid, director) VALUES (new.rowid, new.director);
+  INSERT INTO moviedirector(rowid, director) VALUES (new.rowid, new.director);
 END;
 
 CREATE TRIGGER director_ai AFTER INSERT ON movie BEGIN
-  INSERT INTO moviedirector(docid, director) VALUES (new.rowid, new.director);
+  INSERT INTO moviedirector(rowid, director) VALUES (new.rowid, new.director);
 END;
 
 /* actor */
-CREATE VIRTUAL TABLE movieactor USING fts4(content="movie", actors);
+CREATE VIRTUAL TABLE movieactor USING fts5(content="movie", actors);
 CREATE TRIGGER actor_bu BEFORE UPDATE ON movie BEGIN
-  DELETE FROM movieactor WHERE docid=old.rowid;
+  DELETE FROM movieactor WHERE rowid=old.rowid;
 END;
 
 CREATE TRIGGER actor_bd BEFORE DELETE ON movie BEGIN
-  DELETE FROM movieactor WHERE docid=old.rowid;
+  DELETE FROM movieactor WHERE rowid=old.rowid;
 END;
 
 CREATE TRIGGER actor_au AFTER UPDATE ON movie BEGIN
-  INSERT INTO movieactor(docid, actors) VALUES (new.rowid, new.actors);
+  INSERT INTO movieactor(rowid, actors) VALUES (new.rowid, new.actors);
 END;
 
 CREATE TRIGGER actor_ai AFTER INSERT ON movie BEGIN
-  INSERT INTO movieactor(docid, actors) VALUES (new.rowid, new.actors);
+  INSERT INTO movieactor(rowid, actors) VALUES (new.rowid, new.actors);
 END;
 
 /* location */
-CREATE VIRTUAL TABLE movielocation USING fts4(content="movie", location);
+CREATE VIRTUAL TABLE movielocation USING fts5(content="movie", location);
 CREATE TRIGGER location_bu BEFORE UPDATE ON movie BEGIN
-  DELETE FROM movielocation WHERE docid=old.rowid;
+  DELETE FROM movielocation WHERE rowid=old.rowid;
 END;
 
 CREATE TRIGGER location_bd BEFORE DELETE ON movie BEGIN
-  DELETE FROM movielocation WHERE docid=old.rowid;
+  DELETE FROM movielocation WHERE rowid=old.rowid;
 END;
 
 CREATE TRIGGER location_au AFTER UPDATE ON movie BEGIN
-  INSERT INTO movielocation(docid, location) VALUES (new.rowid, new.location);
+  INSERT INTO movielocation(rowid, location) VALUES (new.rowid, new.location);
 END;
 
 CREATE TRIGGER location_ai AFTER INSERT ON movie BEGIN
-  INSERT INTO movielocation(docid, location) VALUES (new.rowid, new.location);
+  INSERT INTO movielocation(rowid, location) VALUES (new.rowid, new.location);
 END;
+
+insert into movie(title, original_title, file_title, year, runtime, tmdb_id, imdb_id, overview, tagline, resolution, filetype, location, cover, backdrop, genres, vote_average, vote_count, countries, added, modified, last_watched, all_watched, count_watched, score, director, writer, actors, awards, imdb_rating, imdb_votes, show_if_duplicate, stub) select title, original_title, file_title, year, runtime, tmdb_id, imdb_id, overview, tagline, resolution, filetype, location, cover, backdrop, genres, vote_average, vote_count, countries, added, modified, last_watched, all_watched, count_watched, score, director, writer, actors, awards, imdb_rating, imdb_votes, show_if_duplicate, stub from tmp_movie;
+
+drop table tmp_movie;
