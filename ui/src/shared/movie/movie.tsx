@@ -58,7 +58,7 @@ export const MovieScreen: React.FC<MovieProps> = ({
     <article
       className="bg-cover bg-center bg-no-repeat pb-2 mb-4"
       style={{
-        backgroundImage: `url(http://localhost:7623/img/b${item.backdrop})`,
+        backgroundImage: `url/img/b${item.backdrop})`,
       }}
     >
       {/* title, year */}
@@ -75,7 +75,7 @@ export const MovieScreen: React.FC<MovieProps> = ({
       <div className="pl-2 mt-2">
         <div className="relative overflow-hidden">
           <img
-            src={`http://localhost:7623/img/p${item.cover}`}
+            src={`/img/p${item.cover}`}
             className="h-96 opacity-75"
             alt={item.title}
           />
