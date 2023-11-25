@@ -68,7 +68,7 @@ func (s *Storage) CopyMovie(movie *domain.Movie) *domain.Movie {
 								last_watched = ?,
 								all_watched = ?,
 								count_watched = ?,
-								score = ?
+								score = ?,
 								modified = ?
 								where rowid = ?`)
 	if err != nil {
