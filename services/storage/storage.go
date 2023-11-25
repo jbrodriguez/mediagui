@@ -3,6 +3,7 @@ package storage
 import (
 	"database/sql"
 	"path/filepath"
+	"sync"
 
 	_ "modernc.org/sqlite"
 
@@ -13,6 +14,7 @@ import (
 type Storage struct {
 	ctx *domain.Context
 	db  *sql.DB
+	mu  sync.Mutex
 }
 
 func Create(ctx *domain.Context) *Storage {

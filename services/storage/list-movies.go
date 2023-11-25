@@ -18,22 +18,25 @@ select rowid, title, original_title, file_title, year, runtime, tmdb_id, imdb_id
 `
 
 func (s *Storage) listMovies(options *domain.Options) (total uint64, movies []*domain.Movie) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	tx, err := s.db.Begin()
 	if err != nil {
-		log.Fatalf("listMovies:Unable to begin transaction: %s", err)
+		log.Fatalf("at list movies begin: %s", err)
 	}
 
 	statement := fmt.Sprintf(listMovies, options.SortBy, options.SortOrder)
 
 	stmt, err := tx.Prepare(statement)
 	if err != nil {
-		log.Fatalf("Unable to prepare transaction: %s", err)
+		log.Fatalf("at list movies prepare 1: %s", err)
 	}
 	defer lib.Close(stmt)
 
 	rows, err := stmt.Query(options.Limit, options.Offset)
 	if err != nil {
-		log.Fatalf("Unable to prepare transaction: %s", err)
+		log.Fatalf("at list movies query: %s", err)
 	}
 
 	items := make([]*domain.Movie, 0)
@@ -43,26 +46,14 @@ func (s *Storage) listMovies(options *domain.Options) (total uint64, movies []*d
 	var count uint64
 	stmt, err = tx.Prepare("select count(*) from movie;")
 	if err != nil {
-		log.Fatalf("Unable to prepare count rows transaction: %s", err)
+		log.Fatalf("at list movies prepare 2: %s", err)
 	}
 	defer lib.Close(stmt)
 
 	err = stmt.QueryRow().Scan(&count)
 	if err != nil {
-		log.Fatalf("Unable to count rows: %s", err)
+		log.Fatalf("at list movies queryrow: %s", err)
 	}
-
-	stmt, err = tx.Prepare("select count(*) from movie;")
-	if err != nil {
-		log.Fatalf("Unable to prepare transaction: %s", err)
-	}
-	defer lib.Close(stmt)
-
-	// err = s.countRows.QueryRow().Scan(&count)
-	if err != nil {
-		log.Fatalf("Unable to count rows: %s", err)
-	}
-	// }
 
 	for rows.Next() {
 		movie := domain.Movie{}

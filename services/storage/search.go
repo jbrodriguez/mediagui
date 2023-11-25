@@ -23,6 +23,9 @@ func (s *Storage) searchMovies(options *domain.Options) (total uint64, movies []
 }
 
 func (s *Storage) searchByYear(options *domain.Options) (total uint64, movies []*domain.Movie) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	var start, end, year uint64
 	decade := false
 
@@ -140,11 +143,14 @@ func (s *Storage) searchByYear(options *domain.Options) (total uint64, movies []
 }
 
 func (s *Storage) regularSearch(options *domain.Options) (total uint64, movies []*domain.Movie) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	logger.Blue("searchMovies.options: %+v", options)
 
 	tx, err := s.db.Begin()
 	if err != nil {
-		log.Fatalf("searchMovies:Unable to begin transaction: %s", err)
+		log.Fatalf("at regular search begin: %s", err)
 	}
 
 	term := options.Query + "*"
@@ -161,7 +167,7 @@ func (s *Storage) regularSearch(options *domain.Options) (total uint64, movies [
 
 	stmt, err := tx.Prepare(countQuery)
 	if err != nil {
-		log.Fatalf("searchMovies:Unable to prepare transaction: %s", err)
+		log.Fatalf("at regular search prepare: %s", err)
 	}
 	defer lib.Close(stmt)
 
@@ -170,7 +176,7 @@ func (s *Storage) regularSearch(options *domain.Options) (total uint64, movies [
 	var count uint64
 	err = stmt.QueryRow(term).Scan(&count)
 	if err != nil {
-		log.Fatalf("searchMovies:Unable to count rows: %s", err)
+		log.Fatalf("at regular search queryrow: %s", err)
 	}
 
 	listQuery := fmt.Sprintf(`select dt.rowid, dt.title, dt.original_title, dt.year, dt.runtime,
@@ -185,13 +191,13 @@ func (s *Storage) regularSearch(options *domain.Options) (total uint64, movies [
 
 	stmt, err = tx.Prepare(listQuery)
 	if err != nil {
-		log.Fatalf("searchMovies:listQuery:Unable to prepare transaction: %s", err)
+		log.Fatalf("at regular search prepare 2: %s", err)
 	}
 	defer lib.Close(stmt)
 
 	rows, err := stmt.Query(term, options.Limit, options.Offset)
 	if err != nil {
-		log.Fatalf("searchMovies:listQuery:Unable to begin transaction: %s", err)
+		log.Fatalf("at regular search query: %s", err)
 	}
 
 	items := make([]*domain.Movie, 0)

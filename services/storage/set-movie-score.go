@@ -10,11 +10,14 @@ import (
 )
 
 func (s *Storage) SetMovieScore(movie *domain.Movie) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	logger.Blue("STARTED UPDATING MOVIE SCORE [%d] %s (%d)", movie.ID, movie.Title, movie.Score)
 
 	tx, err := s.db.Begin()
 	if err != nil {
-		log.Fatalf("at begin: %s", err)
+		log.Fatalf("at set movie score begin: %s", err)
 	}
 
 	stmt, err := tx.Prepare(`update movie set
@@ -23,7 +26,7 @@ func (s *Storage) SetMovieScore(movie *domain.Movie) {
 								where rowid = ?`)
 	if err != nil {
 		rollback(tx)
-		log.Fatalf("at prepare: %s", err)
+		log.Fatalf("at set movie score prepare: %s", err)
 	}
 	defer lib.Close(stmt)
 
@@ -32,7 +35,7 @@ func (s *Storage) SetMovieScore(movie *domain.Movie) {
 	_, err = stmt.Exec(movie.Score, now, movie.ID)
 	if err != nil {
 		rollback(tx)
-		log.Fatalf("at exec: %s", err)
+		log.Fatalf("at set movie score exec: %s", err)
 	}
 
 	commit(tx)

@@ -10,6 +10,9 @@ import (
 )
 
 func (s *Storage) PartialStoreMovie(movie *domain.Movie) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	now := time.Now().UTC().Format(time.RFC3339)
 	movie.Added = now
 	movie.Modified = now
@@ -19,7 +22,7 @@ func (s *Storage) PartialStoreMovie(movie *domain.Movie) {
 
 	tx, err := s.db.Begin()
 	if err != nil {
-		log.Fatalf("at begin: %s", err)
+		log.Fatalf("at partial store movie begin: %s", err)
 	}
 
 	stmt, err := tx.Prepare(`insert into movie(title, original_title, file_title,
@@ -32,7 +35,7 @@ func (s *Storage) PartialStoreMovie(movie *domain.Movie) {
 									?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		rollback(tx)
-		log.Fatalf("at prepare: %s", err)
+		log.Fatalf("at partial store movie prepare: %s", err)
 	}
 	defer lib.Close(stmt)
 
@@ -45,7 +48,7 @@ func (s *Storage) PartialStoreMovie(movie *domain.Movie) {
 		movie.Imdb_Votes, movie.ShowIfDuplicate, movie.Stub)
 	if e != nil {
 		rollback(tx)
-		log.Fatalf("at exec: %s", e)
+		log.Fatalf("at partial store movie exec: %s", e)
 	}
 
 	id, _ := res.LastInsertId()

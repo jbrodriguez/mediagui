@@ -33,7 +33,7 @@ func (c *Cache) Stop() {
 }
 
 func (c *Cache) CacheImages(movie *domain.Movie, forced bool) {
-	defer c.ctx.Hub.Pub(nil, "/event/workunit/done")
+	// defer c.ctx.Hub.Pub(nil, "/event/workunit/done")
 
 	coverPath := filepath.Join(c.ctx.DataDir, "img", "p", movie.Cover)
 	if _, err := os.Stat(coverPath); err == nil && !forced {

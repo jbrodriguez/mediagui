@@ -9,15 +9,18 @@ import (
 )
 
 func (s *Storage) CheckExists(movie *domain.Movie) bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	tx, err := s.db.Begin()
 	if err != nil {
-		log.Fatalf("at begin: %s", err)
+		log.Fatalf("at check exists begin: %s", err)
 	}
 
 	stmt, err := tx.Prepare("select rowid from movie where location = ?")
 	if err != nil {
 		rollback(tx)
-		log.Fatalf("at prepare: %s", err)
+		log.Fatalf("at check exists prepare: %s", err)
 	}
 	defer lib.Close(stmt)
 
@@ -25,7 +28,7 @@ func (s *Storage) CheckExists(movie *domain.Movie) bool {
 	err = stmt.QueryRow(movie.Location).Scan(&id)
 	if err != sql.ErrNoRows && err != nil {
 		rollback(tx)
-		log.Fatalf("at queryrow: %s", err)
+		log.Fatalf("at check exists queryrow: %s", err)
 	}
 
 	commit(tx)
