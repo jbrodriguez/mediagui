@@ -48,7 +48,7 @@ export const Movies = () => {
     // const index = data.items.findIndex((item) => item.id === id);
     const id = data.items[index].id;
     data.items[index] = await fixMovie({ id, tmdb_id });
-    mutate({ items: data.items, total }, { revalidate: false });
+    mutate({ items: [...data.items], total }, { revalidate: false });
   };
 
   const onCopyMovie = async ({
@@ -61,7 +61,7 @@ export const Movies = () => {
     // const index = data.items.findIndex((item) => item.id === id);
     const id = data.items[index].id;
     data.items[index] = await copyMovie({ id, tmdb_id });
-    mutate({ items: data.items, total }, { revalidate: false });
+    mutate({ items: [...data.items], total }, { revalidate: false });
   };
 
   const onRateMovie = async ({
