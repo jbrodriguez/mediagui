@@ -12,6 +12,9 @@ import (
 )
 
 func (s *Storage) SetMovieWatched(movie *domain.Movie) *domain.Movie {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	logger.Blue("STARTED UPDATING MOVIE WATCHED DATE [%d] %s (%s)", movie.ID, movie.Title, movie.Last_Watched)
 
 	now := time.Now().UTC().Format(time.RFC3339)
@@ -46,7 +49,7 @@ func (s *Storage) SetMovieWatched(movie *domain.Movie) *domain.Movie {
 
 	tx, err := s.db.Begin()
 	if err != nil {
-		log.Fatalf("at begin: %s", err)
+		log.Fatalf("at set movie watchd begin: %s", err)
 	}
 
 	stmt, err := tx.Prepare(`update movie set
@@ -57,14 +60,14 @@ func (s *Storage) SetMovieWatched(movie *domain.Movie) *domain.Movie {
 								where rowid = ?`)
 	if err != nil {
 		rollback(tx)
-		log.Fatalf("at prepare: %s", err)
+		log.Fatalf("at set movie watchd prepare: %s", err)
 	}
 	defer lib.Close(stmt)
 
 	_, err = stmt.Exec(lastWatched, allWatched, countWatched, now, movie.ID)
 	if err != nil {
 		rollback(tx)
-		log.Fatalf("at exec: %s", err)
+		log.Fatalf("at set movie watchd exec: %s", err)
 	}
 
 	commit(tx)

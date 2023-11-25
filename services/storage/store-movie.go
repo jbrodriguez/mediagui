@@ -8,11 +8,14 @@ import (
 )
 
 func (s *Storage) StoreMovie(movie *domain.Movie) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	logger.Blue("STARTED SAVING %s", movie.Title)
 
 	tx, err := s.db.Begin()
 	if err != nil {
-		log.Fatalf("at begin: %s", err)
+		log.Fatalf("at store movie begin: %s", err)
 	}
 
 	stmt, err := tx.Prepare(`insert into movie(title, original_title, file_title,
@@ -25,7 +28,7 @@ func (s *Storage) StoreMovie(movie *domain.Movie) {
 									?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		rollback(tx)
-		log.Fatalf("at prepare: %s", err)
+		log.Fatalf("at store movie prepare: %s", err)
 	}
 	defer lib.Close(stmt)
 
@@ -38,7 +41,7 @@ func (s *Storage) StoreMovie(movie *domain.Movie) {
 		movie.Imdb_Votes, movie.ShowIfDuplicate, movie.Stub)
 	if e != nil {
 		rollback(tx)
-		log.Fatalf("at exec: %s", e)
+		log.Fatalf("at store movie exec: %s", e)
 	}
 
 	id, _ := res.LastInsertId()

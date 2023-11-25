@@ -132,7 +132,7 @@ func main() {
 	}
 
 	grpcServer := grpc.NewServer()
-	pb.RegisterMediaAgentServer(grpcServer, &mediaAgentServer{})
+	pb.RegisterMediaAgentServer(grpcServer, newServer())
 	log.Printf("started mediaagent v%s listening on %s", Version, address)
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %s", err)

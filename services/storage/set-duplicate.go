@@ -10,11 +10,14 @@ import (
 )
 
 func (s *Storage) SetDuplicate(movie *domain.Movie) *domain.Movie {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	logger.Blue("STARTED UPDATING MOVIE DUPLICATE STATUS [%d] %s (%d)", movie.ID, movie.Title, movie.ShowIfDuplicate)
 
 	tx, err := s.db.Begin()
 	if err != nil {
-		log.Fatalf("at begin: %s", err)
+		log.Fatalf("at set duplicate begin: %s", err)
 	}
 
 	stmt, err := tx.Prepare(`update movie set
@@ -23,7 +26,7 @@ func (s *Storage) SetDuplicate(movie *domain.Movie) *domain.Movie {
 								where rowid = ?`)
 	if err != nil {
 		rollback(tx)
-		log.Fatalf("at prepare: %s", err)
+		log.Fatalf("at set duplicate prepare: %s", err)
 	}
 	defer lib.Close(stmt)
 
@@ -32,7 +35,7 @@ func (s *Storage) SetDuplicate(movie *domain.Movie) *domain.Movie {
 	_, err = stmt.Exec(movie.ShowIfDuplicate, now, movie.ID)
 	if err != nil {
 		rollback(tx)
-		log.Fatalf("at exec: %s", err)
+		log.Fatalf("at set duplicate exec: %s", err)
 	}
 
 	commit(tx)

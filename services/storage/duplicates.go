@@ -8,11 +8,14 @@ import (
 )
 
 func (s *Storage) GetDuplicates() (total uint64, items []*domain.Movie) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	logger.Blue("getDuplicates.starting")
 
 	tx, err := s.db.Begin()
 	if err != nil {
-		log.Fatalf("Unable to begin transaction: %s", err)
+		log.Fatalf("at get duplicates begin: %s", err)
 	}
 
 	rows, err := s.db.Query(`select a.rowid, a.title, a.original_title, a.file_title,
@@ -27,7 +30,7 @@ func (s *Storage) GetDuplicates() (total uint64, items []*domain.Movie) {
 				(select title, show_if_duplicate from movie where show_if_duplicate = 1 group by title having count(*) > 1) b
 				on a.title = b.title;`)
 	if err != nil {
-		log.Fatalf("Unable to prepare transaction: %s", err)
+		log.Fatalf("at get duplicates query: %s", err)
 	}
 
 	items = make([]*domain.Movie, 0)

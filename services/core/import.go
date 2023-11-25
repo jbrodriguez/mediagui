@@ -23,29 +23,33 @@ func (c *Core) ImportMovies() {
 
 func (c *Core) movieFoundListener() {
 	for item := range c.movieFoundChan {
-		movie := item.(*domain.Movie)
-		exists := c.storage.CheckExists(movie)
-		if exists {
-			logger.LightBlue("SKIPPED: exists [%s] (%s)", movie.Title, movie.Location)
-			continue
-		}
-
-		lib.Notify(c.ctx.Hub, "import:progress", fmt.Sprintf("NEW: [%s] (%s)", movie.Title, movie.Location))
-
-		code, err := c.scraper.ScrapeMovie(movie)
-		if err != nil {
-			logger.Red("SCRAPE MOVIE ERROR: %s", err)
-			if code == 2 {
-				c.storage.PartialStoreMovie(movie)
-			}
-			continue
-		}
-
-		c.storage.StoreMovie(movie)
-
 		c.wg.Add(1)
-		go c.cache.CacheImages(movie, false)
+		go c.processMovie(item.(*domain.Movie))
 	}
+}
+
+func (c *Core) processMovie(movie *domain.Movie) {
+	defer c.ctx.Hub.Pub(nil, "/event/workunit/done")
+
+	exists := c.storage.CheckExists(movie)
+	if exists {
+		logger.LightBlue("SKIPPED: exists [%s] (%s)", movie.Title, movie.Location)
+		return
+	}
+
+	lib.Notify(c.ctx.Hub, "import:progress", fmt.Sprintf("NEW: [%s] (%s)", movie.Title, movie.Location))
+
+	code, err := c.scraper.ScrapeMovie(movie)
+	if err != nil {
+		logger.Red("SCRAPE MOVIE ERROR: %s", err)
+		if code == 2 {
+			c.storage.PartialStoreMovie(movie)
+		}
+		return
+	}
+
+	c.storage.StoreMovie(movie)
+	c.cache.CacheImages(movie, false)
 }
 
 func (c *Core) workUnitDoneListener() {

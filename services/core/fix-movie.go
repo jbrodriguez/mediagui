@@ -17,12 +17,7 @@ func (c *Core) FixMovie(dto *domain.MovieDTO) *domain.Movie {
 	}
 
 	c.storage.UpdateMovie(m)
-
-	c.wg.Add(1)
-	// go c.cache.CacheImages(movie, true)
 	c.cache.CacheImages(movie, true)
-
-	c.wg.Wait()
 
 	return m
 }
