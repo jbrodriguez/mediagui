@@ -74,7 +74,7 @@ export const Movies = () => {
     // const index = data.items.findIndex((item) => item.id === id);
     const id = data.items[index].id;
     data.items[index] = await rateMovie({ id, score });
-    mutate({ items: data.items, total }, { revalidate: false });
+    mutate({ items: [...data.items], total }, { revalidate: false });
   };
 
   const onWatchedMovie = async ({
@@ -87,7 +87,7 @@ export const Movies = () => {
     // const index = data.items.findIndex((item) => item.id === id);
     const id = data.items[index].id;
     data.items[index] = await watchedMovie({ id, watched });
-    mutate({ items: data.items, total }, { revalidate: false });
+    mutate({ items: [...data.items], total }, { revalidate: false });
   };
 
   return (
