@@ -1,6 +1,6 @@
 import React from "react";
 
-import format from "date-fns/format";
+import { format } from "date-fns/format";
 
 import type { Movie } from "~/types";
 import { hourMinute } from "~/lib/hour-minute";
