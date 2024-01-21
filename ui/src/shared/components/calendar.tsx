@@ -3,7 +3,7 @@ import React from "react";
 import DatePicker from "react-date-picker";
 import "react-date-picker/dist/DatePicker.css";
 import "react-calendar/dist/Calendar.css";
-import formatRFC3339 from "date-fns/formatRFC3339";
+import { formatRFC3339 } from "date-fns/formatRFC3339";
 
 type ValuePiece = Date | null;
 type Value = ValuePiece | [ValuePiece, ValuePiece];
