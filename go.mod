@@ -11,7 +11,7 @@ require (
 	github.com/labstack/echo/v4 v4.11.3
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	google.golang.org/grpc v1.59.0
-	google.golang.org/protobuf v1.31.0
+	google.golang.org/protobuf v1.33.0
 	modernc.org/sqlite v1.27.0
 )
 
