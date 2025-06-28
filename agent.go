@@ -62,11 +62,23 @@ func (m *mediaAgentServer) walk(folder, mask string) []string {
 		folder = folder + "/"
 	}
 
+	// Check if the folder exists before trying to walk it
+	if _, err := os.Stat(folder); os.IsNotExist(err) {
+		log.Printf("Agent.Scan.walk: folder does not exist: %s", folder)
+		return []string{}
+	}
+
 	var files []string
 
 	filepath.Walk(folder, func(path string, f os.FileInfo, err error) error {
 		if err != nil {
 			log.Printf("Agent.Scan.walk: %s (%s) - [%+v]\n", err, path, f)
+			return nil // Continue walking even if there's an error
+		}
+
+		// Check if f is nil before accessing its methods
+		if f == nil {
+			return nil
 		}
 
 		if f.IsDir() {

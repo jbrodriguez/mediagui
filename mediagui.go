@@ -14,7 +14,7 @@ import (
 var Version string
 
 var cli struct {
-	MediaFolders string
+	MediaFolders []string
 	UnraidHosts  []string
 	UserAgent    string
 	TmdbKey      string
@@ -28,13 +28,13 @@ func main() {
 
 	ctx := kong.Parse(&cli)
 	err := ctx.Run(&domain.Context{
-		DataDir:     dataDir,
-		MediaFolder: cli.MediaFolders,
-		UnraidHosts: cli.UnraidHosts,
-		UserAgent:   cli.UserAgent,
-		TmdbKey:     cli.TmdbKey,
-		Version:     Version,
-		Hub:         pubsub.New(23),
+		DataDir:      dataDir,
+		MediaFolders: cli.MediaFolders,
+		UnraidHosts:  cli.UnraidHosts,
+		UserAgent:    cli.UserAgent,
+		TmdbKey:      cli.TmdbKey,
+		Version:      Version,
+		Hub:          pubsub.New(23),
 	})
 	ctx.FatalIfErrorf(err)
 }

@@ -67,7 +67,7 @@ func (s *Scanner) ScanMovies() {
 
 		client := pb.NewMediaAgentClient(conn)
 
-		rsp, err := client.Scan(context.Background(), &pb.ScanReq{Folders: []string{s.ctx.MediaFolder}, Mask: s.includedMask})
+		rsp, err := client.Scan(context.Background(), &pb.ScanReq{Folders: s.ctx.MediaFolders, Mask: s.includedMask})
 		if err != nil {
 			// logger.Yellow("Unable to scan (%s): %s", address, err)
 			lib.Notify(s.ctx.Hub, "import:progress", "Unable to scan host "+host)
