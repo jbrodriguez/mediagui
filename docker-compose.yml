@@ -3,16 +3,9 @@ services:
     container_name: mediagui
     image: ghcr.io/jbrodriguez/mediagui
     environment:
-      - MEDIA_FOLDERS=${MEDIA_FOLDERS:-}
-      - UNRAID_HOSTS=${UNRAID_HOSTS:-}
-      - USER_AGENT=${USER_AGENT:-mediagui/1.0}
-      - TMDB_KEY=${TMDB_KEY:-}
-      - DATA_DIR=${DATA_DIR:-}
-      - USER_ID=${USER_ID:-1000}
-      - GROUP_ID=${GROUP_ID:-1000}
+      - TZ=America/Panama
     volumes:
       - ${HOME}/.local/share/mediagui:/data
-      - ${HOME}/config:/app/config:ro
     ports:
       - "7623:7623"
 
