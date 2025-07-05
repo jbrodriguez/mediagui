@@ -9,7 +9,7 @@ WORKDIR /app/ui
 
 # Copy package files first for better caching
 COPY ui/package*.json ./
-RUN npm ci --only=production
+RUN npm ci
 
 # Copy UI source and build
 COPY ui/ ./
