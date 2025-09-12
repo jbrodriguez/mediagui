@@ -3,7 +3,6 @@ package core
 import (
 	"os"
 	"os/signal"
-	"sync"
 	"syscall"
 
 	"mediagui/domain"
@@ -21,10 +20,6 @@ type Core struct {
 	scanner *scanner.Scanner
 	scraper *scraper.Scraper
 	cache   *cache.Cache
-
-	wg             sync.WaitGroup
-	movieFoundChan chan any
-	workUnitDone   chan any
 }
 
 func Create(ctx *domain.Context) *Core {
@@ -35,9 +30,6 @@ func Create(ctx *domain.Context) *Core {
 		scanner: scanner.Create(ctx),
 		scraper: scraper.Create(ctx),
 		cache:   cache.Create(ctx),
-
-		movieFoundChan: ctx.Hub.Sub("/event/movie/found"),
-		workUnitDone:   ctx.Hub.Sub("/event/workunit/done"),
 	}
 }
 
@@ -54,9 +46,6 @@ func (c *Core) Start() error {
 
 	c.scanner.Start()
 	c.cache.Start()
-
-	go c.movieFoundListener()
-	go c.workUnitDoneListener()
 
 	w := make(chan os.Signal, 1)
 	signal.Notify(w, syscall.SIGTERM, syscall.SIGINT)

@@ -51,8 +51,8 @@ func (s *Scanner) Start() {
 	logger.Blue("started service scanner ...")
 }
 
-func (s *Scanner) ScanMovies() {
-	defer s.ctx.Hub.Pub(nil, "/event/workunit/done")
+func (s *Scanner) ScanMovies() []*domain.Movie {
+	var allMovies []*domain.Movie
 
 	for _, host := range s.ctx.UnraidHosts {
 		address := fmt.Sprintf("%s:7624", host)
@@ -74,11 +74,14 @@ func (s *Scanner) ScanMovies() {
 			continue
 		}
 
-		s.analyze(rsp.Filenames)
+		movies := s.analyze(rsp.Filenames)
+		allMovies = append(allMovies, movies...)
 	}
+
+	return allMovies
 }
 
-func (s *Scanner) analyze(files []string) {
+func (s *Scanner) analyze(files []string) []*domain.Movie {
 	logger.Blue("Found %d files", len(files))
 
 	// Collect movies in order to preserve sequence
@@ -130,13 +133,8 @@ func (s *Scanner) analyze(files []string) {
 		}
 	}
 
-	// Publish movies sequentially in the same order they were found
-	for i, movie := range foundMovies {
-		logger.Blue("Publishing movie %d/%d: %s (%s)", i+1, len(foundMovies), movie.Title, movie.Year)
-		s.ctx.Hub.Pub(movie, "/event/movie/found")
-	}
-
-	logger.Blue("Published %d movies in order", len(foundMovies))
+	logger.Blue("Found %d movies in scan order", len(foundMovies))
+	return foundMovies
 }
 
 // func (s *Scanner) configChanged(msg *pubsub.Message) {
