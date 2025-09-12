@@ -25,12 +25,6 @@ type Core struct {
 	wg             sync.WaitGroup
 	movieFoundChan chan any
 	workUnitDone   chan any
-
-	// Order coordination
-	orderMutex           sync.Mutex
-	completedMovies      map[int]*domain.Movie
-	nextSequence         int
-	orderCoordinatorChan chan *domain.Movie
 }
 
 func Create(ctx *domain.Context) *Core {
@@ -44,11 +38,6 @@ func Create(ctx *domain.Context) *Core {
 
 		movieFoundChan: ctx.Hub.Sub("/event/movie/found"),
 		workUnitDone:   ctx.Hub.Sub("/event/workunit/done"),
-
-		// Order coordination initialization
-		completedMovies:      make(map[int]*domain.Movie),
-		nextSequence:         0,
-		orderCoordinatorChan: make(chan *domain.Movie, 100),
 	}
 }
 
@@ -68,7 +57,6 @@ func (c *Core) Start() error {
 
 	go c.movieFoundListener()
 	go c.workUnitDoneListener()
-	go c.orderCoordinator()
 
 	w := make(chan os.Signal, 1)
 	signal.Notify(w, syscall.SIGTERM, syscall.SIGINT)
