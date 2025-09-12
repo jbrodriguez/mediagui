@@ -2,19 +2,22 @@ package storage
 
 import (
 	"database/sql"
-	_ "embed"
+	"embed"
+	"fmt"
 	"os"
 	"path/filepath"
 	"sync"
 
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/source/iofs"
 	_ "modernc.org/sqlite"
 
 	"mediagui/domain"
 	"mediagui/logger"
 )
 
-//go:embed ../../metadata/schema.sql
-var schemaSQL string
+//go:embed all:migrations
+var migrationsFS embed.FS
 
 type Storage struct {
 	ctx *domain.Context
@@ -49,12 +52,15 @@ func (s *Storage) Start() error {
 	}
 	s.db = db
 
-	// Initialize database schema if it doesn't exist
+	// Run migrations
+	if err := s.runMigrations(dbPath); err != nil {
+		return fmt.Errorf("failed to run migrations: %w", err)
+	}
+
 	if !dbExists {
-		if err := s.initializeSchema(); err != nil {
-			return err
-		}
-		logger.Blue("initialized new database with schema (%s)", dbPath)
+		logger.Blue("initialized new database with migrations (%s)", dbPath)
+	} else {
+		logger.Blue("applied migrations to existing database (%s)", dbPath)
 	}
 
 	logger.Blue("started service storage (%s)", dbPath)
@@ -62,7 +68,25 @@ func (s *Storage) Start() error {
 	return nil
 }
 
-func (s *Storage) initializeSchema() error {
-	_, err := s.db.Exec(schemaSQL)
-	return err
+func (s *Storage) runMigrations(dbPath string) error {
+	// Create source from embedded filesystem
+	sourceDriver, err := iofs.New(migrationsFS, "migrations")
+	if err != nil {
+		return fmt.Errorf("could not create migration source: %w", err)
+	}
+
+	// Create migrate instance using database URL
+	databaseURL := fmt.Sprintf("sqlite://%s", dbPath)
+	m, err := migrate.NewWithSourceInstance("iofs", sourceDriver, databaseURL)
+	if err != nil {
+		return fmt.Errorf("could not create migrate instance: %w", err)
+	}
+	defer m.Close()
+
+	// Run migrations
+	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+		return fmt.Errorf("could not run migrations: %w", err)
+	}
+
+	return nil
 }
