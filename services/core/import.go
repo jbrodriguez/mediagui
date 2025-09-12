@@ -14,29 +14,27 @@ func (c *Core) ImportMovies() {
 	t0 := time.Now()
 	lib.Notify(c.ctx.Hub, "import:begin", "Import process started")
 
-	c.wg.Add(1)
+	// Get all movies from scanner in scan order
+	movies := c.scanner.ScanMovies()
 
-	c.scanner.ScanMovies()
+	// Process each movie sequentially with jittered delays
+	for i, movie := range movies {
+		logger.Blue("Processing movie %d/%d: %s (%s)", i+1, len(movies), movie.Title, movie.Year)
+		c.processMovie(movie)
 
-	c.wg.Wait()
+		// Add delay with jitter between movies (except for the last one)
+		if i < len(movies)-1 {
+			jitter := rand.Intn(10) - 5 // -5 to +5 seconds
+			delay := 20 + jitter
+			logger.Blue("Waiting %d seconds before next movie...", delay)
+			time.Sleep(time.Duration(delay) * time.Second)
+		}
+	}
+
 	lib.Notify(c.ctx.Hub, "import:end", fmt.Sprintf("Import process finished (%s elapsed)", time.Since(t0).String()))
 }
 
-func (c *Core) movieFoundListener() {
-	for item := range c.movieFoundChan {
-		c.wg.Add(1)
-		c.processMovie(item.(*domain.Movie))
-		// Wait 20 seconds ± 5 seconds (jitter) between each movie to avoid rate limiting
-		jitter := rand.Intn(10) - 5 // -5 to +5 seconds
-		delay := 25 + jitter
-		logger.Blue("Waiting %d seconds before next movie...", delay)
-		time.Sleep(time.Duration(delay) * time.Second)
-	}
-}
-
 func (c *Core) processMovie(movie *domain.Movie) {
-	defer c.ctx.Hub.Pub(nil, "/event/workunit/done")
-
 	exists := c.storage.CheckExists(movie)
 	if exists {
 		logger.LightBlue("SKIPPED: exists [%s] (%s)", movie.Title, movie.Location)
@@ -56,10 +54,4 @@ func (c *Core) processMovie(movie *domain.Movie) {
 
 	c.storage.StoreMovie(movie)
 	c.cache.CacheImages(movie, false)
-}
-
-func (c *Core) workUnitDoneListener() {
-	for range c.workUnitDone {
-		c.wg.Done()
-	}
 }
