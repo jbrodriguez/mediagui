@@ -109,7 +109,7 @@ func (m *mediaAgentServer) walk(folder, mask string) []string {
 
 	// Sort by modification time, newest last (oldest first)
 	sort.Slice(fileInfos, func(i, j int) bool {
-		return fileInfos[i].modTime.Before(fileInfos[j].modTime)
+		return fileInfos[i].modTime.After(fileInfos[j].modTime)
 	})
 
 	// Extract just the file paths
