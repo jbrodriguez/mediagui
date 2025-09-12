@@ -130,10 +130,9 @@ func (s *Scanner) analyze(files []string) {
 		}
 	}
 
-	// Publish movies in the same order they were found with sequence numbers
+	// Publish movies sequentially in the same order they were found
 	for i, movie := range foundMovies {
-		movie.Sequence = i
-		logger.Blue("Publishing movie %d/%d (seq:%d): %s (%s)", i+1, len(foundMovies), movie.Sequence, movie.Title, movie.Year)
+		logger.Blue("Publishing movie %d/%d: %s (%s)", i+1, len(foundMovies), movie.Title, movie.Year)
 		s.ctx.Hub.Pub(movie, "/event/movie/found")
 	}
 

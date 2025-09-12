@@ -35,7 +35,6 @@ type Movie struct {
 	Imdb_Votes           uint64  `json:"imdb_votes"`
 	ShowIfDuplicate      uint64  `json:"showIfDuplicate"`
 	Stub                 uint64  `json:"stub"`
-	Sequence             int     `json:"sequence"`
 	BaseURL              string
 	SecureBaseURL        string
 }
