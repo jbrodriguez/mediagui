@@ -81,11 +81,17 @@ func (s *Scanner) ScanMovies() {
 func (s *Scanner) analyze(files []string) {
 	logger.Blue("Found %d files", len(files))
 
+	// Collect movies in order to preserve sequence
+	var foundMovies []*domain.Movie
+	var unmatchedFiles []string
+	matchedFiles := 0
+
 	for _, file := range files {
 		// comparePath := strings.TrimPrefix(path, file)
 		// mlog.Info("folder: %s, comparePath: %s", folder, comparePath)
 		// TODO: remove folder from path to match against rexp
 
+		matched := false
 		for i := 0; i < 3; i++ {
 			rmap := s.re[i].Match(file)
 			if rmap == nil {
@@ -98,10 +104,40 @@ func (s *Scanner) analyze(files []string) {
 			}
 
 			movie := &domain.Movie{Title: rmap["Name"], FileTitle: rmap["Name"], Year: rmap["Year"], Resolution: resolution, FileType: rmap["FileType"], Location: file, Stub: 0}
+			foundMovies = append(foundMovies, movie)
+			matched = true
+			break // Only match first regex that succeeds
+		}
 
-			s.ctx.Hub.Pub(movie, "/event/movie/found")
+		if matched {
+			matchedFiles++
+		} else {
+			unmatchedFiles = append(unmatchedFiles, file)
 		}
 	}
+
+	// Integrity check
+	logger.Blue("Integrity check: received %d files, matched %d files, found %d movies", len(files), matchedFiles, len(foundMovies))
+	if matchedFiles != len(foundMovies) {
+		logger.Yellow("WARNING: Matched files count (%d) doesn't equal found movies count (%d)", matchedFiles, len(foundMovies))
+	}
+
+	// Log unmatched files
+	if len(unmatchedFiles) > 0 {
+		logger.Yellow("WARNING: %d files were not matched by regex patterns and won't be added to DB:", len(unmatchedFiles))
+		for i, file := range unmatchedFiles {
+			logger.Yellow("  Unmatched file %d: %s", i+1, file)
+		}
+	}
+
+	// Publish movies in the same order they were found with sequence numbers
+	for i, movie := range foundMovies {
+		movie.Sequence = i
+		logger.Blue("Publishing movie %d/%d (seq:%d): %s (%s)", i+1, len(foundMovies), movie.Sequence, movie.Title, movie.Year)
+		s.ctx.Hub.Pub(movie, "/event/movie/found")
+	}
+
+	logger.Blue("Published %d movies in order", len(foundMovies))
 }
 
 // func (s *Scanner) configChanged(msg *pubsub.Message) {
