@@ -11,7 +11,9 @@ import (
 	"net"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
+	"time"
 
 	"google.golang.org/grpc"
 
@@ -57,6 +59,11 @@ func (m *mediaAgentServer) Scan(_ context.Context, req *pb.ScanReq) (*pb.ScanRsp
 	return rep, nil
 }
 
+type fileInfo struct {
+	path    string
+	modTime time.Time
+}
+
 func (m *mediaAgentServer) walk(folder, mask string) []string {
 	if folder[len(folder)-1] != '/' {
 		folder = folder + "/"
@@ -68,7 +75,7 @@ func (m *mediaAgentServer) walk(folder, mask string) []string {
 		return []string{}
 	}
 
-	var files []string
+	var fileInfos []fileInfo
 
 	filepath.Walk(folder, func(path string, f os.FileInfo, err error) error {
 		if err != nil {
@@ -92,10 +99,24 @@ func (m *mediaAgentServer) walk(folder, mask string) []string {
 
 		// log.Infof("file=%s", path)
 
-		files = append(files, m.host+":"+path)
+		fileInfos = append(fileInfos, fileInfo{
+			path:    m.host + ":" + path,
+			modTime: f.ModTime(),
+		})
 
 		return nil
 	})
+
+	// Sort by modification time, newest last
+	sort.Slice(fileInfos, func(i, j int) bool {
+		return fileInfos[i].modTime.Before(fileInfos[j].modTime)
+	})
+
+	// Extract just the file paths
+	files := make([]string, len(fileInfos))
+	for i, fi := range fileInfos {
+		files[i] = fi.path
+	}
 
 	return files
 }
