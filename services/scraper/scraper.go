@@ -1,16 +1,14 @@
 package scraper
 
 import (
-	"errors"
-	"math/rand"
-
-	"github.com/jbrodriguez/go-tmdb"
-
 	"encoding/json"
+	"errors"
 	"fmt"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/jbrodriguez/go-tmdb"
 
 	"mediagui/domain"
 	"mediagui/lib"
@@ -63,10 +61,10 @@ func (s *Scraper) ScrapeMovie(movie *domain.Movie) (code int, e error) {
 	movie.Score = 0
 	movie.ShowIfDuplicate = 1
 
-	// Add delay with random jitter to avoid rate limiting
-	delay := 5*time.Second + time.Duration(rand.Intn(3000))*time.Millisecond
-	logger.Blue("TMDB rate limit delay: %v for [%s]", delay, movie.Title)
-	time.Sleep(delay)
+	// // Add delay with random jitter to avoid rate limiting
+	// delay := 5*time.Second + time.Duration(rand.Intn(3000))*time.Millisecond
+	// logger.Blue("TMDB rate limit delay: %v for [%s]", delay, movie.Title)
+	// time.Sleep(delay)
 
 	lib.Notify(s.ctx.Hub, "import:progress", fmt.Sprintf("STARTED TMDB [%s]", movie.Title))
 	movies, err := s.tmdb.SearchMovie(movie.Title)
