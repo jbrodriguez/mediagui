@@ -20,10 +20,10 @@ func (c *Core) ImportMovies() {
 	// Process each movie sequentially with jittered delays
 	for i, movie := range movies {
 		logger.Blue("Processing movie %d/%d: %s (%s)", i+1, len(movies), movie.Title, movie.Year)
-		c.processMovie(movie)
+		skipped := c.processMovie(movie)
 
 		// Add delay with jitter between movies (except for the last one)
-		if i < len(movies)-1 {
+		if i < len(movies)-1 && !skipped {
 			jitter := rand.Intn(10) - 5 // -5 to +5 seconds
 			delay := 20 + jitter
 			logger.Blue("Waiting %d seconds before next movie...", delay)
@@ -34,11 +34,11 @@ func (c *Core) ImportMovies() {
 	lib.Notify(c.ctx.Hub, "import:end", fmt.Sprintf("Import process finished (%s elapsed)", time.Since(t0).String()))
 }
 
-func (c *Core) processMovie(movie *domain.Movie) {
+func (c *Core) processMovie(movie *domain.Movie) bool {
 	exists := c.storage.CheckExists(movie)
 	if exists {
 		logger.LightBlue("SKIPPED: exists [%s] (%s)", movie.Title, movie.Location)
-		return
+		return true
 	}
 
 	lib.Notify(c.ctx.Hub, "import:progress", fmt.Sprintf("NEW: [%s] (%s)", movie.Title, movie.Location))
@@ -49,9 +49,11 @@ func (c *Core) processMovie(movie *domain.Movie) {
 		if code == 2 {
 			c.storage.PartialStoreMovie(movie)
 		}
-		return
+		return false
 	}
 
 	c.storage.StoreMovie(movie)
 	c.cache.CacheImages(movie, false)
+
+	return false
 }
