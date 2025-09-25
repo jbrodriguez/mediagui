@@ -19,7 +19,9 @@ import (
 type Scraper struct {
 	ctx *domain.Context
 
-	tmdb *tmdb.Tmdb
+	tmdb            *tmdb.Tmdb
+	tmdbRateLimiter *lib.RateLimiter
+	imdbRateLimiter *lib.RateLimiter
 }
 
 func Create(ctx *domain.Context) *Scraper {
@@ -37,6 +39,10 @@ func (s *Scraper) Start() error {
 		return fmt.Errorf("unable to create tmdb client: %s", err)
 	}
 
+	// Initialize rate limiters
+	s.tmdbRateLimiter = lib.NewRateLimiter(s.ctx.TmdbRateLimit, s.ctx.TmdbRateInterval)
+	s.imdbRateLimiter = lib.NewRateLimiter(s.ctx.ImdbRateLimit, s.ctx.ImdbRateInterval)
+
 	// s.actor.Register("/command/movie/scrape", s.scrapeMovie)
 	// s.actor.Register("/command/movie/rescrape", s.reScrapeMovie)
 	// s.actor.Register("/event/config/changed", s.configChanged)
@@ -48,6 +54,14 @@ func (s *Scraper) Start() error {
 
 // Stop -
 func (s *Scraper) Stop() {
+	// Clean up rate limiters
+	if s.tmdbRateLimiter != nil {
+		s.tmdbRateLimiter.Stop()
+	}
+	if s.imdbRateLimiter != nil {
+		s.imdbRateLimiter.Stop()
+	}
+
 	logger.Blue("stopped service scraper ...")
 }
 
@@ -67,6 +81,11 @@ func (s *Scraper) ScrapeMovie(movie *domain.Movie) (code int, e error) {
 	// time.Sleep(delay)
 
 	lib.Notify(s.ctx.Hub, "import:progress", fmt.Sprintf("STARTED TMDB [%s]", movie.Title))
+
+	// Rate limit TMDB search API call
+	logger.Blue("TMDB: Waiting for rate limit token for SearchMovie [%s]", movie.Title)
+	s.tmdbRateLimiter.Wait()
+
 	movies, err := s.tmdb.SearchMovie(movie.Title)
 	if err != nil {
 		return 1, err
@@ -81,7 +100,7 @@ func (s *Scraper) ScrapeMovie(movie *domain.Movie) (code int, e error) {
 
 	id := movies.Results[0].Id
 
-	if err := scrape(s.tmdb, id, movie, s.ctx.UserAgent); err != nil {
+	if err := scrape(s.tmdb, id, movie, s.ctx.UserAgent, s.tmdbRateLimiter, s.imdbRateLimiter); err != nil {
 		logger.Yellow("SCRAPE FAILED [%d] %s: %s", movie.ID, movie.Title, err)
 	}
 
@@ -101,7 +120,7 @@ func (s *Scraper) ReScrape(movie *domain.Movie) (*domain.Movie, error) {
 
 	id := movie.Tmdb_Id
 
-	err := scrape(s.tmdb, id, movie, s.ctx.UserAgent)
+	err := scrape(s.tmdb, id, movie, s.ctx.UserAgent, s.tmdbRateLimiter, s.imdbRateLimiter)
 	if err != nil {
 		// logger.Yellow("RESCRAPE FAILED [%d] %s: %s", movie.ID, movie.Title, err)
 		return nil, err
@@ -118,7 +137,11 @@ func (s *Scraper) ReScrape(movie *domain.Movie) (*domain.Movie, error) {
 	return movie, nil
 }
 
-func scrape(client *tmdb.Tmdb, id uint64, movie *domain.Movie, agent string) error {
+func scrape(client *tmdb.Tmdb, id uint64, movie *domain.Movie, agent string, tmdbRateLimiter *lib.RateLimiter, imdbRateLimiter *lib.RateLimiter) error {
+	// Rate limit TMDB GetMovie API call
+	logger.Blue("TMDB: Waiting for rate limit token for GetMovie [%d]", id)
+	tmdbRateLimiter.Wait()
+
 	gmr, err := client.GetMovie(id)
 	if err != nil {
 		return fmt.Errorf("FAILED GETTING MOVIE [%d]", movie.Tmdb_Id)
@@ -173,6 +196,11 @@ func scrape(client *tmdb.Tmdb, id uint64, movie *domain.Movie, agent string) err
 
 	if movie.Imdb_Id != "" {
 		url := fmt.Sprintf("https://www.imdb.com/title/%s", movie.Imdb_Id)
+
+		// Rate limit IMDB scraping call
+		logger.Blue("IMDB: Waiting for rate limit token for scraping [%s]", movie.Imdb_Id)
+		imdbRateLimiter.Wait()
+
 		data, err := lib.RestGet(url, agent)
 		if err != nil {
 			return fmt.Errorf("IMDB Error: %s", err)

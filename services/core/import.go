@@ -2,7 +2,6 @@ package core
 
 import (
 	"fmt"
-	"math/rand"
 	"time"
 
 	"mediagui/domain"
@@ -17,18 +16,10 @@ func (c *Core) ImportMovies() {
 	// Get all movies from scanner in scan order
 	movies := c.scanner.ScanMovies()
 
-	// Process each movie sequentially with jittered delays
+	// Process each movie sequentially
 	for i, movie := range movies {
 		logger.Blue("Processing movie %d/%d: %s (%s)", i+1, len(movies), movie.Title, movie.Year)
-		skipped := c.processMovie(movie)
-
-		// Add delay with jitter between movies (except for the last one)
-		if i < len(movies)-1 && !skipped {
-			jitter := rand.Intn(10) - 5 // -5 to +5 seconds
-			delay := 20 + jitter
-			logger.Blue("Waiting %d seconds before next movie...", delay)
-			time.Sleep(time.Duration(delay) * time.Second)
-		}
+		c.processMovie(movie)
 	}
 
 	lib.Notify(c.ctx.Hub, "import:end", fmt.Sprintf("Import process finished (%s elapsed)", time.Since(t0).String()))

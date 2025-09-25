@@ -1,6 +1,10 @@
 package domain
 
-import "github.com/cskr/pubsub"
+import (
+	"time"
+
+	"github.com/cskr/pubsub"
+)
 
 type Context struct {
 	MediaFolders []string       `json:"mediaFolders"`
@@ -10,4 +14,10 @@ type Context struct {
 	Hub          *pubsub.PubSub `json:"-"`
 	UserAgent    string         `json:"-"`
 	TmdbKey      string         `json:"-"`
+
+	// Rate limiting configuration
+	TmdbRateLimit    int           `json:"-"`
+	TmdbRateInterval time.Duration `json:"-"`
+	ImdbRateLimit    int           `json:"-"`
+	ImdbRateInterval time.Duration `json:"-"`
 }
