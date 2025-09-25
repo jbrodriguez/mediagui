@@ -4,6 +4,7 @@ import (
 	"mediagui/domain"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/alecthomas/kong"
 	"github.com/cskr/pubsub"
@@ -41,6 +42,14 @@ func main() {
 		TmdbKey:      cli.TmdbKey,
 		Version:      Version,
 		Hub:          pubsub.New(23),
+
+		// TMDB rate limiting: 40 requests per 10 seconds (official limit)
+		TmdbRateLimit:    40,
+		TmdbRateInterval: 250 * time.Millisecond, // 40 req/10s = 1 req per 250ms
+
+		// IMDB rate limiting: more conservative for web scraping
+		ImdbRateLimit:    10,
+		ImdbRateInterval: 1 * time.Second, // 10 req per 10s = 1 req per second
 	})
 	ctx.FatalIfErrorf(err)
 }
