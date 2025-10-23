@@ -224,28 +224,146 @@ func scrape(client *tmdb.Tmdb, id uint64, movie *domain.Movie, agent string, tmd
 // }
 
 var reJSONLD = regexp.MustCompile(`<script type="application/ld\+json">([^\<]*)`)
+var reNextData = regexp.MustCompile(`<script id="__NEXT_DATA__" type="application/json">([^<]+)</script>`)
 
 func getImdb(data string) *domain.Imdb {
 	imdb := &domain.Imdb{}
 
+	// Try JSON-LD first (legacy)
 	ld := reJSONLD.FindStringSubmatch(data)
-
-	if err := json.Unmarshal([]byte(ld[1]), &imdb); err != nil {
-		imdbAlt := &domain.ImdbAlt{}
-		if err := json.Unmarshal([]byte(ld[1]), &imdbAlt); err != nil {
-			logger.Yellow("Unable to unmarshal imdb data: %s\n%s\n", err, ld[1])
-			return imdb
+	if len(ld) > 1 {
+		if err := json.Unmarshal([]byte(ld[1]), &imdb); err != nil {
+			imdbAlt := &domain.ImdbAlt{}
+			if err := json.Unmarshal([]byte(ld[1]), &imdbAlt); err != nil {
+				logger.Yellow("Unable to unmarshal imdb JSON-LD data: %s", err)
+			} else {
+				imdb.Actors = imdbAlt.Actors
+				imdb.Awards = imdbAlt.Awards
+				imdb.Director = imdbAlt.Director
+				imdb.Rating = imdbAlt.Rating
+				imdb.Votes = imdbAlt.Votes
+				imdb.Writers = imdbAlt.Writers
+			}
 		}
+	}
 
-		imdb.Actors = imdbAlt.Actors
-		imdb.Awards = imdbAlt.Awards
-		imdb.Director = imdbAlt.Director
-		imdb.Rating = imdbAlt.Rating
-		imdb.Votes = imdbAlt.Votes
-		imdb.Writers = imdbAlt.Writers
-
-		return imdb
+	// If director/actors are missing, try __NEXT_DATA__ fallback
+	if imdb.Director == "" || imdb.Actors == "" {
+		logger.Blue("Director or actors missing from JSON-LD, trying __NEXT_DATA__ fallback")
+		getImdbFromNextData(data, imdb)
 	}
 
 	return imdb
+}
+
+func getImdbFromNextData(data string, imdb *domain.Imdb) {
+	nextData := reNextData.FindStringSubmatch(data)
+	if len(nextData) < 2 {
+		logger.Yellow("No __NEXT_DATA__ found in IMDB page")
+		return
+	}
+
+	var nextJSON map[string]interface{}
+	if err := json.Unmarshal([]byte(nextData[1]), &nextJSON); err != nil {
+		logger.Yellow("Unable to unmarshal __NEXT_DATA__: %s", err)
+		return
+	}
+
+	// Navigate: props -> pageProps -> aboveTheFoldData -> principalCreditsV2
+	props, ok := nextJSON["props"].(map[string]interface{})
+	if !ok {
+		return
+	}
+
+	pageProps, ok := props["pageProps"].(map[string]interface{})
+	if !ok {
+		return
+	}
+
+	atfData, ok := pageProps["aboveTheFoldData"].(map[string]interface{})
+	if !ok {
+		return
+	}
+
+	// Extract rating if missing
+	if imdb.Rating == 0 {
+		if ratingsSummary, ok := atfData["ratingsSummary"].(map[string]interface{}); ok {
+			if aggRating, ok := ratingsSummary["aggregateRating"].(float64); ok {
+				imdb.Rating = aggRating
+			}
+			if voteCount, ok := ratingsSummary["voteCount"].(float64); ok {
+				imdb.Votes = uint64(voteCount)
+			}
+		}
+	}
+
+	// Extract credits
+	principalCredits, ok := atfData["principalCreditsV2"].([]interface{})
+	if !ok {
+		logger.Yellow("No principalCreditsV2 found in __NEXT_DATA__")
+		return
+	}
+
+	for _, pc := range principalCredits {
+		pcMap, ok := pc.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		// Get grouping (category)
+		grouping := ""
+		if group, ok := pcMap["grouping"].(map[string]interface{}); ok {
+			if text, ok := group["text"].(string); ok {
+				grouping = text
+			}
+		}
+
+		// Get credits (people)
+		credits, ok := pcMap["credits"].([]interface{})
+		if !ok {
+			continue
+		}
+
+		var names []string
+		for _, credit := range credits {
+			creditMap, ok := credit.(map[string]interface{})
+			if !ok {
+				continue
+			}
+
+			if name, ok := creditMap["name"].(map[string]interface{}); ok {
+				if nameText, ok := name["nameText"].(map[string]interface{}); ok {
+					if text, ok := nameText["text"].(string); ok {
+						names = append(names, text)
+					}
+				}
+			}
+		}
+
+		// Assign to appropriate field based on grouping
+		nameStr := ""
+		for i, name := range names {
+			if i > 0 {
+				nameStr += ", "
+			}
+			nameStr += name
+		}
+
+		switch grouping {
+		case "Director", "Directors":
+			if imdb.Director == "" {
+				imdb.Director = nameStr
+			}
+		case "Writer", "Writers":
+			if imdb.Writers == "" {
+				imdb.Writers = nameStr
+			}
+		case "Star", "Stars":
+			if imdb.Actors == "" {
+				imdb.Actors = nameStr
+			}
+		}
+	}
+
+	logger.Blue("Extracted from __NEXT_DATA__: Director=%s, Writers=%s, Actors=%s", imdb.Director, imdb.Writers, imdb.Actors)
 }
