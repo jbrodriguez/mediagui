@@ -1,6 +1,6 @@
 module mediagui
 
-go 1.24.0
+go 1.25.6
 
 require (
 	github.com/alecthomas/kong v0.9.0
@@ -8,7 +8,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.19.0
 	github.com/gookit/color v1.5.4
 	github.com/gorilla/websocket v1.5.3
-	github.com/jbrodriguez/go-tmdb v0.0.0-20151103115148-c1c9b4a6a2a8
+	github.com/jbrodriguez/go-tmdb v0.0.0-20260124171813-13d87140bbe8
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	google.golang.org/grpc v1.67.0
@@ -24,7 +24,6 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
 	github.com/jmcvetta/napping v3.2.0+incompatible // indirect
-	github.com/jmcvetta/randutil v0.0.0-20150817122601-2bb1b664bcff // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
