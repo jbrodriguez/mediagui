@@ -93,7 +93,7 @@ func (s *Scraper) ScrapeMovie(movie *domain.Movie) (code int, e error) {
 
 	id := movies.Results[0].Id
 
-	if err := scrape(s.tmdb, id, movie, s.tmdbRateLimiter); err != nil {
+	if err := scrape(s.tmdb, id, movie, s.tmdbRateLimiter, s.ctx.OmdbKey); err != nil {
 		logger.Yellow("SCRAPE FAILED [%d] %s: %s", movie.ID, movie.Title, err)
 	}
 
@@ -113,7 +113,7 @@ func (s *Scraper) ReScrape(movie *domain.Movie) (*domain.Movie, error) {
 
 	id := movie.Tmdb_Id
 
-	err := scrape(s.tmdb, id, movie, s.tmdbRateLimiter)
+	err := scrape(s.tmdb, id, movie, s.tmdbRateLimiter, s.ctx.OmdbKey)
 	if err != nil {
 		// logger.Yellow("RESCRAPE FAILED [%d] %s: %s", movie.ID, movie.Title, err)
 		return nil, err
@@ -130,7 +130,7 @@ func (s *Scraper) ReScrape(movie *domain.Movie) (*domain.Movie, error) {
 	return movie, nil
 }
 
-func scrape(client *tmdb.Tmdb, id uint64, movie *domain.Movie, tmdbRateLimiter *lib.RateLimiter) error {
+func scrape(client *tmdb.Tmdb, id uint64, movie *domain.Movie, tmdbRateLimiter *lib.RateLimiter, omdbKey string) error {
 	// Rate limit TMDB GetMovie API call
 	logger.Blue("TMDB: Waiting for rate limit token for GetMovie [%d]", id)
 	tmdbRateLimiter.Wait()
@@ -172,8 +172,6 @@ func scrape(client *tmdb.Tmdb, id uint64, movie *domain.Movie, tmdbRateLimiter *
 
 	movie.Vote_Average = gmr.Vote_Average
 	movie.Vote_Count = gmr.Vote_Count
-	movie.Imdb_Rating = gmr.Vote_Average
-	movie.Imdb_Votes = gmr.Vote_Count
 
 	movie.Production_Countries = ""
 	for i := 0; i < len(gmr.Production_Countries); i++ {
@@ -189,51 +187,27 @@ func scrape(client *tmdb.Tmdb, id uint64, movie *domain.Movie, tmdbRateLimiter *
 		}
 	}
 
-	// Get credits from TMDB
-	logger.Blue("TMDB: Waiting for rate limit token for GetCredits [%d]", id)
-	tmdbRateLimiter.Wait()
+	// Get data from OMDb (director, actors, writer, rating)
+	if movie.Imdb_Id != "" && omdbKey != "" {
+		logger.Blue("OMDb: Fetching data for [%s]", movie.Imdb_Id)
+		omdb, err := lib.FetchOmdb(movie.Imdb_Id, omdbKey)
+		if err != nil {
+			logger.Yellow("OMDb: Failed to fetch data for [%s]: %s", movie.Imdb_Id, err)
+		} else {
+			movie.Director = omdb.Director
+			movie.Writer = omdb.Writer
+			movie.Actors = omdb.Actors
+			movie.Awards = omdb.Awards
+			movie.Imdb_Rating = omdb.GetImdbRating()
+			movie.Imdb_Votes = omdb.GetImdbVotes()
 
-	credits, err := client.GetCredits(id)
-	if err != nil {
-		logger.Yellow("TMDB: Failed to get credits for [%d]: %s", id, err)
-	} else {
-		// Extract directors from crew
-		var directors []string
-		var writers []string
-		for _, crew := range credits.Crew {
-			if crew.Job == "Director" {
-				directors = append(directors, crew.Name)
-			}
-			if crew.Department == "Writing" {
-				writers = append(writers, crew.Name)
+			// Use OMDb genre if TMDB didn't provide one
+			if movie.Genres == "" && omdb.Genre != "" {
+				movie.Genres = strings.ReplaceAll(omdb.Genre, ", ", "|")
 			}
 		}
-		movie.Director = strings.Join(directors, ", ")
-		movie.Writer = strings.Join(removeDuplicates(writers), ", ")
-
-		// Extract actors from cast (top billed)
-		var actors []string
-		for i, cast := range credits.Cast {
-			if i >= 5 {
-				break
-			}
-			actors = append(actors, cast.Name)
-		}
-		movie.Actors = strings.Join(actors, ", ")
 	}
 
 	return nil
-}
-
-func removeDuplicates(slice []string) []string {
-	seen := make(map[string]bool)
-	result := []string{}
-	for _, item := range slice {
-		if !seen[item] {
-			seen[item] = true
-			result = append(result, item)
-		}
-	}
-	return result
 }
 

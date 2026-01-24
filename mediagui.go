@@ -19,6 +19,7 @@ var cli struct {
 	UnraidHosts  []string `env:"UNRAID_HOSTS" help:"Unraid hosts to monitor"`
 	UserAgent    string   `env:"USER_AGENT" help:"User agent for API requests"`
 	TmdbKey      string   `env:"TMDB_KEY" help:"TMDB API key"`
+	OmdbKey      string   `env:"OMDB_KEY" help:"OMDb API key"`
 	DataDir      string   `env:"DATA_DIR" help:"Data directory for application files"`
 
 	Boot cmd.Boot `cmd:"" default:"1" help:"start processing"`
@@ -40,6 +41,7 @@ func main() {
 		UnraidHosts:  cli.UnraidHosts,
 		UserAgent:    cli.UserAgent,
 		TmdbKey:      cli.TmdbKey,
+		OmdbKey:      cli.OmdbKey,
 		Version:      Version,
 		Hub:          pubsub.New(23),
 
