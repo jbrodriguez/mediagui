@@ -3,7 +3,7 @@ ARG USER_ID=1000
 ARG GROUP_ID=1000
 
 # Stage 1: Build UI
-FROM node:20-alpine AS ui-builder
+FROM node:22-alpine AS ui-builder
 
 WORKDIR /app/ui
 
@@ -16,7 +16,7 @@ COPY ui/ ./
 RUN npm run build
 
 # Stage 2: Build Go binary
-FROM golang:1.24-alpine AS go-builder
+FROM golang:1.25-alpine AS go-builder
 
 WORKDIR /app
 
