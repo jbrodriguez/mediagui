@@ -41,7 +41,7 @@ RUN if [ -z "$VERSION" ]; then \
         VERSION="$MB_DATE-$MB_HASH"; \
     fi && \
     go build \
-    -ldflags "-X main.Version=${VERSION}" \
+    -ldflags "-s -w -X main.Version=${VERSION}" \
     -o mediagui ./mediagui.go
 
 # Stage 3: Runtime image
